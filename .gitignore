@@ -1,5 +1,9 @@
-*~
-src/build
-src/bin
-src/objs
-.sconsign.dblite
+out
+bin
+include
+lib
+share
+src/ext/glog
+src/ext/openexr
+src/ext/ptex
+src/ext/zlib
