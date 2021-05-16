@@ -1,9 +1,7 @@
 /bin
 /out
-/deps/*/bin
-/deps/*/include
-/deps/*/lib
-/deps/*/share
+/deps/*/Release
+/deps/*/Debug
 /deps/*/src
 /deps/*/out
 
