@@ -1,0 +1,26 @@
+{
+    "files.exclude": {
+        "bin": true,
+        "out": true,
+        "deps/*/bin": true,
+        "deps/*/include": true,
+        "deps/*/lib": true,
+        "deps/*/share": true,
+        "deps/*/src": true,
+        "deps/*/out": true,
+    },
+    "files.watcherExclude": {
+        "bin": true,
+        "out": true,
+        "deps": true,
+    },
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/src/",
+        "${workspaceFolder}/src/core/",
+        "${workspaceFolder}/deps/glog/include/",
+    ],
+    "C_Cpp.default.defines": [
+        "UNICODE",
+    ],
+    "C_Cpp.default.cppStandard": "c++11",
+}

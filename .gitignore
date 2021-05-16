@@ -1,9 +1,8 @@
-out
-bin
-include
-lib
-share
-src/ext/glog
-src/ext/openexr
-src/ext/ptex
-src/ext/zlib
+/bin
+/out
+/deps/*/bin
+/deps/*/include
+/deps/*/lib
+/deps/*/share
+/deps/*/src
+/deps/*/out
