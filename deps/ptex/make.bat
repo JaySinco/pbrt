@@ -11,6 +11,7 @@ IF NOT EXIST %OUTDIR% (MKDIR %OUTDIR%)
 PUSHD %OUTDIR%
 cmake -G Ninja ^
     -DZLIB_LIBRARY=%~dp0..\zlib\lib\zlibstatic.lib ^
+    -DZLIB_INCLUDE_DIR=%~dp0..\zlib\include ^
     -DPTEX_BUILD_SHARED_LIBS=off ^
     -DCMAKE_INSTALL_PREFIX=%~dp0 ^
     -DCMAKE_BUILD_TYPE=Release ^

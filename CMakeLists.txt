@@ -30,33 +30,6 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "MinSizeRel" "RelWithDebInfo")
 endif()
 
-if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/openexr/OpenEXR")
-  message(FATAL_ERROR "The OpenEXR submodule directory is missing! "
-    "You probably did not clone the project with --recursive. It is possible to recover "
-    "by running \"git submodule update --init --recursive\"")
-endif()
-
-if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/glog/cmake")
-  message(FATAL_ERROR "The glog submodule directory is missing! "
-    "You probably did not clone the project with --recursive, or you first checked out "
-    "pbrt before it was added. It is possible to recover by running "
-    "\"git submodule update --init --recursive\"")
-endif()
-
-if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/ptex/src")
-  message(FATAL_ERROR "The ptex submodule directory is missing! "
-    "You probably did not clone the project with --recursive, or you first checked out "
-    "pbrt before it was added. It is possible to recover by running "
-    "\"git submodule update --init --recursive\"")
-endif()
-
-if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/zlib/doc")
-  message(FATAL_ERROR "The zlib submodule directory is missing! "
-    "You probably did not clone the project with --recursive, or you first checked out "
-    "pbrt before it was added. It is possible to recover by running "
-    "\"git submodule update --init --recursive\"")
-endif()
-
 FIND_PACKAGE ( Sanitizers )
 FIND_PACKAGE ( Threads )
 
@@ -290,42 +263,26 @@ ENDIF ()
 ###########################################################################
 # zlib
 
-FIND_PACKAGE ( ZLIB )
-IF(NOT ZLIB_FOUND)
-  # Build zlib
-  SET(ZLIB_BUILD_STATIC_LIBS ON CACHE BOOL " " FORCE)
-  SET(ZLIB_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
-  ADD_SUBDIRECTORY(src/ext/zlib)
-
-  SET(ZLIB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/zlib")
-  SET(ZLIB_LIBRARY zlibstatic)
-  SET_PROPERTY(TARGET zlibstatic PROPERTY FOLDER "ext")
-  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/src/ext/zlib")
-ENDIF()
-INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIRS})
+ADD_LIBRARY( zlibstatic STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( zlibstatic PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/zlib/lib/zlibstatic.lib )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/deps/zlib/include )
 
 ###########################################################################
 # OpenEXR
 
-SET(ILMBASE_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
-SET(OPENEXR_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
-SET(OPENEXR_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
-SET(ILMBASE_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
-
-ADD_SUBDIRECTORY(src/ext/openexr)
-
-SET_PROPERTY(TARGET IexMath eLut toFloat b44ExpLogTable dwaLookups IlmThread Half Iex Imath IlmImf PROPERTY FOLDER "ext")
-
-INCLUDE_DIRECTORIES (
-  src/ext/openexr/IlmBase/Imath
-  src/ext/openexr/IlmBase/Half
-  src/ext/openexr/IlmBase/Iex
-  src/ext/openexr/OpenEXR/IlmImf
-  ${CMAKE_BINARY_DIR}/src/ext/openexr/IlmBase/config
-  ${CMAKE_BINARY_DIR}/src/ext/openexr/OpenEXR/config
-)
+ADD_LIBRARY( IlmImf STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( IlmImf PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/openexr/lib/IlmImf.lib )
+ADD_LIBRARY( IlmThread STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( IlmThread PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/openexr/lib/IlmThread.lib )
+ADD_LIBRARY( Iex STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( Iex PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/openexr/lib/Iex.lib )
+ADD_LIBRARY( Imath STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( Imath PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/openexr/lib/Imath.lib )
+ADD_LIBRARY( Half STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( Half PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/openexr/lib/Half.lib )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/deps/openexr/include/OpenEXR )
 IF(WIN32)
-  SET(OPENEXR_LIBS IlmImf Imath Half ${ZLIB_LIBRARY})
+  SET(OPENEXR_LIBS IlmImf IlmThread Iex Imath Half zlibstatic)
 ELSE()
   SET(OPENEXR_LIBS IlmImf Imath Half)
 ENDIF()
@@ -333,35 +290,22 @@ ENDIF()
 ###########################################################################
 # glog
 
-SET(WITH_GFLAGS OFF CACHE BOOL "Use gflags")
-SET(BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
 IF(WIN32)
-  ADD_DEFINITIONS( -D GOOGLE_GLOG_DLL_DECL= )
+  ADD_DEFINITIONS( /D GOOGLE_GLOG_DLL_DECL= )
 ENDIF()
-ADD_SUBDIRECTORY(src/ext/glog)
-SET_PROPERTY(TARGET glog logging_unittest demangle_unittest utilities_unittest stl_logging_unittest PROPERTY FOLDER "ext")
-INCLUDE_DIRECTORIES (
-  src/ext/glog/src
-  ${CMAKE_BINARY_DIR}/src/ext/glog
-)
+ADD_LIBRARY( glog STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( glog PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/glog/lib/glog.lib )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/deps/glog/include )
 
 ###########################################################################
 # ptex
 
-# work around https://github.com/wdas/ptex/issues/28
-IF ( CMAKE_BUILD_TYPE )
-  STRING ( TOLOWER ${CMAKE_BUILD_TYPE} LOWER_BUILD_TYPE )
-  SET ( ENV{FLAVOR} ${LOWER_BUILD_TYPE} )
-ENDIF ()
-SET(PTEX_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
-
-SET(CMAKE_MACOSX_RPATH 1)
 IF ( WIN32 )
-  ADD_DEFINITIONS ( /D PTEX_STATIC)
+  ADD_DEFINITIONS( /D PTEX_STATIC )
 ENDIF ()
-ADD_SUBDIRECTORY(src/ext/ptex)
-SET_PROPERTY(TARGET Ptex_static ptxinfo halftest ftest rtest wtest PROPERTY FOLDER "ext")
-INCLUDE_DIRECTORIES ( src/ext/ptex/src/ptex )
+ADD_LIBRARY( Ptex_static STATIC IMPORTED GLOBAL )
+SET_TARGET_PROPERTIES( Ptex_static PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/ptex/lib/Ptex.lib )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/deps/ptex/include )
 
 ###########################################################################
 # On to pbrt...
@@ -450,7 +394,7 @@ SET ( PBRT_CORE_HEADERS
   )
 
 FILE ( GLOB PBRT_SOURCE
-  src/ext/*
+  deps/.ext/src/*
   src/accelerators/*
   src/cameras/*
   src/filters/*
@@ -465,10 +409,11 @@ FILE ( GLOB PBRT_SOURCE
 
 INCLUDE_DIRECTORIES ( src )
 INCLUDE_DIRECTORIES ( src/core )
+INCLUDE_DIRECTORIES ( deps/.ext/src )
 
 # Visual Studio source folders
 SOURCE_GROUP (core REGULAR_EXPRESSION src/core/.*)
-SOURCE_GROUP (ext REGULAR_EXPRESSION src/ext/.*)
+SOURCE_GROUP (ext REGULAR_EXPRESSION deps/.ext/src/.*)
 SOURCE_GROUP (accelerators REGULAR_EXPRESSION src/accelerators/.*)
 SOURCE_GROUP (cameras REGULAR_EXPRESSION src/cameras/.*)
 SOURCE_GROUP (filters REGULAR_EXPRESSION src/filters/.*)
@@ -515,7 +460,7 @@ SET(ALL_PBRT_LIBS
   ${OPENEXR_LIBS}
   glog
   Ptex_static
-  ${ZLIB_LIBRARY}
+  zlibstatic
 )
 
 # Main renderer

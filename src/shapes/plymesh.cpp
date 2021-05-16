@@ -35,7 +35,7 @@
 #include "shapes/triangle.h"
 #include "textures/constant.h"
 #include "paramset.h"
-#include "ext/rply.h"
+#include "rply.h"
 
 #include <iostream>
 

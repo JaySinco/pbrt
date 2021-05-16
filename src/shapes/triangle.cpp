@@ -37,7 +37,7 @@
 #include "paramset.h"
 #include "sampling.h"
 #include "efloat.h"
-#include "ext/rply.h"
+#include "rply.h"
 #include <array>
 
 namespace pbrt {

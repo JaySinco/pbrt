@@ -6,7 +6,7 @@
         "deps/*/include": true,
         "deps/*/lib": true,
         "deps/*/share": true,
-        "deps/*/src": true,
+        "deps/*/src": false,
         "deps/*/out": true,
     },
     "files.watcherExclude": {
@@ -15,9 +15,13 @@
         "deps": true,
     },
     "C_Cpp.default.includePath": [
-        "${workspaceFolder}/src/",
-        "${workspaceFolder}/src/core/",
-        "${workspaceFolder}/deps/glog/include/",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/src/core",
+        "${workspaceFolder}/deps/.ext/src",
+        "${workspaceFolder}/deps/glog/include",
+        "${workspaceFolder}/deps/zlib/include",
+        "${workspaceFolder}/deps/ptex/include",
+        "${workspaceFolder}/deps/openexr/include/OpenEXR",
     ],
     "C_Cpp.default.defines": [
         "UNICODE",

@@ -11,6 +11,7 @@ IF NOT EXIST %OUTDIR% (MKDIR %OUTDIR%)
 PUSHD %OUTDIR%
 cmake -G Ninja ^
     -DZLIB_LIBRARY=%~dp0..\zlib\lib\zlibstatic.lib ^
+    -DZLIB_INCLUDE_DIR=%~dp0..\zlib\include ^
     -DILMBASE_NAMESPACE_VERSIONING=off ^
     -DOPENEXR_NAMESPACE_VERSIONING=off ^
     -DOPENEXR_BUILD_SHARED_LIBS=off ^
@@ -20,3 +21,6 @@ cmake -G Ninja ^
     ..\src
 IF %ERRORLEVEL% == 0 (ninja && ninja install)
 POPD
+
+XCOPY /Y/I/F src\OpenEXR\IlmImf\*.h include\OpenEXR\
+XCOPY /Y/I/F out\OpenEXR\IlmImf\IlmImf.lib lib\
