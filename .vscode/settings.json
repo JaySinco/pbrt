@@ -37,5 +37,5 @@
         "GOOGLE_GLOG_DLL_DECL=",
         "PTEX_STATIC",
     ],
-    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.default.cppStandard": "c++14",
 }
