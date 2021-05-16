@@ -30,7 +30,6 @@
 
  */
 
-
 // core/spectrum.cpp*
 #include "spectrum.h"
 #include <algorithm>

@@ -30,7 +30,6 @@
 
  */
 
-
 // media/homogeneous.cpp*
 #include "media/homogeneous.h"
 #include "sampler.h"

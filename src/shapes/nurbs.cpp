@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/nurbs.cpp*
 #include "shapes/nurbs.h"
 #include "shapes/triangle.h"

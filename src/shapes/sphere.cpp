@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/sphere.cpp*
 #include "shapes/sphere.h"
 #include "sampling.h"
@@ -266,7 +265,7 @@ Interaction Sphere::Sample(const Interaction &ref, const Point2f &u,
     Float invSinThetaMax = 1 / sinThetaMax;
     Float cosThetaMax = std::sqrt(std::max((Float)0.f, 1 - sinThetaMax2));
 
-    Float cosTheta  = (cosThetaMax - 1) * u[0] + 1;
+    Float cosTheta = (cosThetaMax - 1) * u[0] + 1;
     Float sinTheta2 = 1 - cosTheta * cosTheta;
 
     if (sinThetaMax2 < 0.00068523f /* sin^2(1.5 deg) */) {
@@ -277,9 +276,12 @@ Interaction Sphere::Sample(const Interaction &ref, const Point2f &u,
     }
 
     // Compute angle $\alpha$ from center of sphere to sampled point on surface
-    Float cosAlpha = sinTheta2 * invSinThetaMax +
-        cosTheta * std::sqrt(std::max((Float)0.f, 1.f - sinTheta2 * invSinThetaMax * invSinThetaMax));
-    Float sinAlpha = std::sqrt(std::max((Float)0.f, 1.f - cosAlpha*cosAlpha));
+    Float cosAlpha =
+        sinTheta2 * invSinThetaMax +
+        cosTheta *
+            std::sqrt(std::max(
+                (Float)0.f, 1.f - sinTheta2 * invSinThetaMax * invSinThetaMax));
+    Float sinAlpha = std::sqrt(std::max((Float)0.f, 1.f - cosAlpha * cosAlpha));
     Float phi = u[1] * 2 * Pi;
 
     // Compute surface normal and sampled point on sphere
@@ -316,8 +318,7 @@ Float Sphere::Pdf(const Interaction &ref, const Vector3f &wi) const {
 
 Float Sphere::SolidAngle(const Point3f &p, int nSamples) const {
     Point3f pCenter = (*ObjectToWorld)(Point3f(0, 0, 0));
-    if (DistanceSquared(p, pCenter) <= radius * radius)
-        return 4 * Pi;
+    if (DistanceSquared(p, pCenter) <= radius * radius) return 4 * Pi;
     Float sinTheta2 = radius * radius / DistanceSquared(p, pCenter);
     Float cosTheta = std::sqrt(std::max((Float)0, 1 - sinTheta2));
     return (2 * Pi * (1 - cosTheta));

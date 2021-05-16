@@ -30,7 +30,6 @@
 
  */
 
-
 // lights/projection.cpp*
 #include "lights/projection.h"
 #include "sampling.h"

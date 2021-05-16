@@ -46,8 +46,7 @@ AOIntegrator::AOIntegrator(bool cosSample, int ns,
                            std::shared_ptr<const Camera> camera,
                            std::shared_ptr<Sampler> sampler,
                            const Bounds2i &pixelBounds)
-    : SamplerIntegrator(camera, sampler, pixelBounds),
-      cosSample(cosSample) {
+    : SamplerIntegrator(camera, sampler, pixelBounds), cosSample(cosSample) {
     nSamples = sampler->RoundCount(ns);
     if (ns != nSamples)
         Warning("Taking %d samples, not %d as specified", nSamples, ns);
@@ -63,7 +62,7 @@ Spectrum AOIntegrator::Li(const RayDifferential &r, const Scene &scene,
 
     // Intersect _ray_ with scene and store intersection in _isect_
     SurfaceInteraction isect;
- retry:
+retry:
     if (scene.Intersect(ray, &isect)) {
         isect.ComputeScatteringFunctions(ray, arena, true);
         if (!isect.bsdf) {

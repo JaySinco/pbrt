@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/glass.cpp*
 #include "materials/glass.h"
 #include "spectrum.h"

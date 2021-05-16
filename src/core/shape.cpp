@@ -30,7 +30,6 @@
 
  */
 
-
 // core/shape.cpp*
 #include "shape.h"
 #include "stats.h"

@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/translucent.cpp*
 #include "materials/translucent.h"
 #include "spectrum.h"

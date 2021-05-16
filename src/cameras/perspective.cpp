@@ -30,7 +30,6 @@
 
  */
 
-
 // cameras/perspective.cpp*
 #include "cameras/perspective.h"
 #include "paramset.h"

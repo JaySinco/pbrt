@@ -30,7 +30,6 @@
 
  */
 
-
 // textures/imagemap.cpp*
 #include "textures/imagemap.h"
 #include "imageio.h"

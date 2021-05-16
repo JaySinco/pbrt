@@ -60,8 +60,7 @@ class DisneyMaterial : public Material {
                    const std::shared_ptr<Texture<Float>> &clearcoatGloss,
                    const std::shared_ptr<Texture<Float>> &specTrans,
                    const std::shared_ptr<Texture<Spectrum>> &scatterDistance,
-                   bool thin,
-                   const std::shared_ptr<Texture<Float>> &flatness,
+                   bool thin, const std::shared_ptr<Texture<Float>> &flatness,
                    const std::shared_ptr<Texture<Float>> &diffTrans,
                    const std::shared_ptr<Texture<Float>> &bumpMap)
         : color(color),

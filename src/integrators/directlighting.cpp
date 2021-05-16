@@ -30,7 +30,6 @@
 
  */
 
-
 // integrators/directlighting.cpp*
 #include "integrators/directlighting.h"
 #include "interaction.h"

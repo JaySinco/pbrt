@@ -30,7 +30,6 @@
 
  */
 
-
 // textures/fbm.cpp*
 #include "textures/fbm.h"
 

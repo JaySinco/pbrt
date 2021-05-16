@@ -62,18 +62,18 @@
 
 // Platform-specific definitions
 #if defined(_WIN32) || defined(_WIN64)
-  #define PBRT_IS_WINDOWS
+#define PBRT_IS_WINDOWS
 #endif
 
 #if defined(_MSC_VER)
-  #define PBRT_IS_MSVC
-  #if _MSC_VER == 1800
-    #define snprintf _snprintf
-  #endif
+#define PBRT_IS_MSVC
+#if _MSC_VER == 1800
+#define snprintf _snprintf
+#endif
 #endif
 
 #ifndef PBRT_L1_CACHE_LINE_SIZE
-  #define PBRT_L1_CACHE_LINE_SIZE 64
+#define PBRT_L1_CACHE_LINE_SIZE 64
 #endif
 
 #include <stdint.h>
@@ -88,7 +88,7 @@
 #endif
 
 // Global Macros
-#define ALLOCA(TYPE, COUNT) (TYPE *) alloca((COUNT) * sizeof(TYPE))
+#define ALLOCA(TYPE, COUNT) (TYPE *)alloca((COUNT) * sizeof(TYPE))
 
 namespace pbrt {
 
@@ -124,9 +124,9 @@ class CoefficientSpectrum;
 class RGBSpectrum;
 class SampledSpectrum;
 #ifdef PBRT_SAMPLED_SPECTRUM
-  typedef SampledSpectrum Spectrum;
+typedef SampledSpectrum Spectrum;
 #else
-  typedef RGBSpectrum Spectrum;
+typedef RGBSpectrum Spectrum;
 #endif
 class Camera;
 struct CameraSample;
@@ -155,9 +155,9 @@ class AreaLight;
 struct Distribution1D;
 class Distribution2D;
 #ifdef PBRT_FLOAT_AS_DOUBLE
-  typedef double Float;
+typedef double Float;
 #else
-  typedef float Float;
+typedef float Float;
 #endif  // PBRT_FLOAT_AS_DOUBLE
 class RNG;
 class ProgressReporter;
@@ -348,11 +348,11 @@ inline int Log2Int(uint64_t v) {
 #if defined(_WIN64)
     _BitScanReverse64(&lz, v);
 #else
-    if  (_BitScanReverse(&lz, v >> 32))
+    if (_BitScanReverse(&lz, v >> 32))
         lz += 32;
     else
         _BitScanReverse(&lz, v & 0xffffffff);
-#endif // _WIN64
+#endif  // _WIN64
     return lz;
 #else  // PBRT_IS_MSVC
     return 63 - __builtin_clzll(v);
@@ -480,9 +480,8 @@ inline Float Erf(Float x) {
 
     // A&S formula 7.1.26
     Float t = 1 / (1 + p * x);
-    Float y =
-        1 -
-        (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * std::exp(-x * x);
+    Float y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t *
+                      std::exp(-x * x);
 
     return sign * y;
 }

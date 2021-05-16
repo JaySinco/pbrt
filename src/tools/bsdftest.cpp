@@ -62,46 +62,66 @@ int main(int argc, char* argv[]) {
         createLambertian,
         createOrenNayar0,
         createOrenNayar20,
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, true, 0.5, 0.5); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, true, 0.5, 0.5); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, true, 0.2, 0.1); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, true, 0.2, 0.1); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, true, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, true, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, true, 0.33, 0.033); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, true, 0.33, 0.033); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, false, 0.5, 0.5); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, false, 0.5, 0.5); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, false, 0.2, 0.1); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, false, 0.2, 0.1); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, false, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, false, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, true, false, 0.33, 0.033); },
-        [](BSDF* bsdf) -> void
-        { createMicrofacet(bsdf, false, false, 0.33, 0.033); },
-        [](BSDF* bsdf) -> void
-        { createFresnelBlend(bsdf, true, true, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createFresnelBlend(bsdf, false, true, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createFresnelBlend(bsdf, true, false, 0.15, 0.25); },
-        [](BSDF* bsdf) -> void
-        { createFresnelBlend(bsdf, false, false, 0.15, 0.25); },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, true, 0.5, 0.5);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, true, 0.5, 0.5);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, true, 0.2, 0.1);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, true, 0.2, 0.1);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, true, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, true, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, true, 0.33, 0.033);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, true, 0.33, 0.033);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, false, 0.5, 0.5);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, false, 0.5, 0.5);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, false, 0.2, 0.1);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, false, 0.2, 0.1);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, false, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, false, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, true, false, 0.33, 0.033);
+        },
+        [](BSDF* bsdf) -> void {
+            createMicrofacet(bsdf, false, false, 0.33, 0.033);
+        },
+        [](BSDF* bsdf) -> void {
+            createFresnelBlend(bsdf, true, true, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createFresnelBlend(bsdf, false, true, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createFresnelBlend(bsdf, true, false, 0.15, 0.25);
+        },
+        [](BSDF* bsdf) -> void {
+            createFresnelBlend(bsdf, false, false, 0.15, 0.25);
+        },
     };
 
     const char* BSDFFuncDescripArray[] = {
@@ -125,9 +145,11 @@ int main(int argc, char* argv[]) {
         "Beckmann (roughness 0.33/0.033, traditional sample wh)",
         "Trowbridge-Reitz (roughness 0.33/0.033, traditional sample wh)",
         "Fresnel Blend Beckmann (roughness 0.15/0.25, sample visible mf area)",
-        "Fresnel Blend Trowbridge-Reitz (roughness 0.15/0.25, sample visible mf area)",
+        "Fresnel Blend Trowbridge-Reitz (roughness 0.15/0.25, sample visible "
+        "mf area)",
         "Fresnel Blend Beckmann (roughness 0.15/0.25, traditional sample wh)",
-        "Fresnel Blend Trowbridge-Reitz (roughness 0.15/0.25, traditional sample wh)",
+        "Fresnel Blend Trowbridge-Reitz (roughness 0.15/0.25, traditional "
+        "sample wh)",
     };
 
     GenSampleFunc SampleFuncArray[] = {
@@ -230,11 +252,9 @@ int main(int argc, char* argv[]) {
                             wiL[0], wiL[1], wiL[2], wiPhi, wiCosTheta);
                 } else if (validSample) {
                     int histoPhi = (int)(wiPhi * numHistoBins);
-                    if (histoPhi == numHistoBins)
-                      --histoPhi;
+                    if (histoPhi == numHistoBins) --histoPhi;
                     int histoCosTheta = (int)(wiCosTheta * numHistoBins);
-                    if (histoCosTheta == numHistoBins)
-                      --histoCosTheta;
+                    if (histoCosTheta == numHistoBins) --histoCosTheta;
                     assert(histoPhi >= 0 && histoPhi < numHistoBins);
                     assert(histoCosTheta >= 0 && histoCosTheta < numHistoBins);
                     histogram[histoCosTheta][histoPhi] += 1.0 / pdf;
@@ -273,8 +293,9 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < numHistoBins; i++) {
                 fprintf(stderr, "  cos(theta) bin %02d:", i);
                 for (int j = 0; j < numHistoBins; j++) {
-                    fprintf(stderr, " %5.2f", histogram[i][j] * numHistoBins *
-                                                  numHistoBins / goodSamples);
+                    fprintf(stderr, " %5.2f",
+                            histogram[i][j] * numHistoBins * numHistoBins /
+                                goodSamples);
                     totalSum += histogram[i][j];
                 }
                 fprintf(stderr, "\n");
@@ -296,7 +317,7 @@ void Gen_Sample_f(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
     // only glossy or diffuse reflections (no specular reflections)
     BxDFType inflags = BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE | BSDF_GLOSSY);
     BxDFType outflags;
-    Point2f sample {rng.UniformFloat(), rng.UniformFloat()};
+    Point2f sample{rng.UniformFloat(), rng.UniformFloat()};
     *f = bsdf->Sample_f(wo, wi, sample, pdf, inflags, &outflags);
 
     // double check bsdf->Pdf() gives us the same answer
@@ -353,18 +374,17 @@ void createLambertian(BSDF* bsdf) {
 void createMicrofacet(BSDF* bsdf, bool beckmann, bool samplevisible,
                       float roughx, float roughy) {
     Spectrum Ks(1);
-    MicrofacetDistribution *distrib;
+    MicrofacetDistribution* distrib;
     if (beckmann) {
-      Float alphax = BeckmannDistribution::RoughnessToAlpha(roughx);
-      Float alphay = BeckmannDistribution::RoughnessToAlpha(roughy);
-      distrib = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay,
-                                                        samplevisible);
-    }
-    else {
-      Float alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(roughx);
-      Float alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(roughy);
-      distrib = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay,
-                                                               samplevisible);
+        Float alphax = BeckmannDistribution::RoughnessToAlpha(roughx);
+        Float alphay = BeckmannDistribution::RoughnessToAlpha(roughy);
+        distrib = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay,
+                                                           samplevisible);
+    } else {
+        Float alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(roughx);
+        Float alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(roughy);
+        distrib = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(
+            alphax, alphay, samplevisible);
     }
     Fresnel* fresnel = ARENA_ALLOC(arena, FresnelNoOp)();
     BxDF* bxdf = ARENA_ALLOC(arena, MicrofacetReflection)(Ks, distrib, fresnel);
@@ -372,22 +392,20 @@ void createMicrofacet(BSDF* bsdf, bool beckmann, bool samplevisible,
 }
 
 void createFresnelBlend(BSDF* bsdf, bool beckmann, bool samplevisible,
-                        float roughx, float roughy)
-{
+                        float roughx, float roughy) {
     Spectrum d(0.5);
     Spectrum s(0.5);
-    MicrofacetDistribution *distrib;
+    MicrofacetDistribution* distrib;
     if (beckmann) {
-      Float alphax = BeckmannDistribution::RoughnessToAlpha(roughx);
-      Float alphay = BeckmannDistribution::RoughnessToAlpha(roughy);
-      distrib = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay,
-                                                        samplevisible);
-    }
-    else {
-      Float alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(roughx);
-      Float alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(roughy);
-      distrib = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay,
-                                                               samplevisible);
+        Float alphax = BeckmannDistribution::RoughnessToAlpha(roughx);
+        Float alphay = BeckmannDistribution::RoughnessToAlpha(roughy);
+        distrib = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay,
+                                                           samplevisible);
+    } else {
+        Float alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(roughx);
+        Float alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(roughy);
+        distrib = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(
+            alphax, alphay, samplevisible);
     }
     BxDF* bxdf = ARENA_ALLOC(arena, FresnelBlend)(d, s, distrib);
     bsdf->Add(bxdf);
@@ -397,22 +415,23 @@ void createMicrofacet30and0(BSDF* bsdf, bool beckmann) {
     Spectrum Ks(0.5);
     MicrofacetDistribution *distrib1, *distrib2;
     if (beckmann) {
-      Float alphax = BeckmannDistribution::RoughnessToAlpha(0.8);
-      Float alphay = BeckmannDistribution::RoughnessToAlpha(0.8);
-      distrib1 = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay);
+        Float alphax = BeckmannDistribution::RoughnessToAlpha(0.8);
+        Float alphay = BeckmannDistribution::RoughnessToAlpha(0.8);
+        distrib1 = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay);
 
-      alphax = BeckmannDistribution::RoughnessToAlpha(0.01);
-      alphay = BeckmannDistribution::RoughnessToAlpha(0.01);
-      distrib2 = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay);
-    }
-    else {
-      Float alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(0.8);
-      Float alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(0.8);
-      distrib1 = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay);
+        alphax = BeckmannDistribution::RoughnessToAlpha(0.01);
+        alphay = BeckmannDistribution::RoughnessToAlpha(0.01);
+        distrib2 = ARENA_ALLOC(arena, BeckmannDistribution)(alphax, alphay);
+    } else {
+        Float alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(0.8);
+        Float alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(0.8);
+        distrib1 =
+            ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay);
 
-      alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(0.01);
-      alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(0.01);
-      distrib2 = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay);
+        alphax = TrowbridgeReitzDistribution::RoughnessToAlpha(0.01);
+        alphay = TrowbridgeReitzDistribution::RoughnessToAlpha(0.01);
+        distrib2 =
+            ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay);
     }
 
     Fresnel* fresnel = ARENA_ALLOC(arena, FresnelNoOp)();

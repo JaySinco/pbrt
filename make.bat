@@ -10,8 +10,11 @@ IF "%1" == "clean" (
     GOTO end
 )
 
-%TOOLDIR%\cloc.exe --quiet src
-@REM FOR /R %~dp0src %%f IN (*) DO (%TOOLDIR%\clang-format.exe -i %%f)
+IF "%1" == "fmt" (
+    %TOOLDIR%\cloc.exe --quiet src
+    FOR /R %~dp0src %%f IN (*) DO (%TOOLDIR%\clang-format.exe -i %%f)
+    GOTO end
+)
 
 PUSHD C:\Program Files (x86)\Microsoft Visual Studio\2019\Community
 CALL VC\Auxiliary\Build\vcvars64.bat

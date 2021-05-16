@@ -126,32 +126,35 @@ MIPMap<T>::MIPMap(const Point2i &res, const T *img, bool doTrilinear,
     if (!IsPowerOf2(resolution[0]) || !IsPowerOf2(resolution[1])) {
         // Resample image to power-of-two resolution
         Point2i resPow2(RoundUpPow2(resolution[0]), RoundUpPow2(resolution[1]));
-        LOG(INFO) << "Resampling MIPMap from " << resolution << " to " <<
-            resPow2 << ". Ratio= " << (Float(resPow2.x * resPow2.y) /
-                                       Float(resolution.x * resolution.y));
+        LOG(INFO) << "Resampling MIPMap from " << resolution << " to "
+                  << resPow2 << ". Ratio= "
+                  << (Float(resPow2.x * resPow2.y) /
+                      Float(resolution.x * resolution.y));
         // Resample image in $s$ direction
         std::unique_ptr<ResampleWeight[]> sWeights =
             resampleWeights(resolution[0], resPow2[0]);
         resampledImage.reset(new T[resPow2[0] * resPow2[1]]);
 
         // Apply _sWeights_ to zoom in $s$ direction
-        ParallelFor([&](int t) {
-            for (int s = 0; s < resPow2[0]; ++s) {
-                // Compute texel $(s,t)$ in $s$-zoomed image
-                resampledImage[t * resPow2[0] + s] = 0.f;
-                for (int j = 0; j < 4; ++j) {
-                    int origS = sWeights[s].firstTexel + j;
-                    if (wrapMode == ImageWrap::Repeat)
-                        origS = Mod(origS, resolution[0]);
-                    else if (wrapMode == ImageWrap::Clamp)
-                        origS = Clamp(origS, 0, resolution[0] - 1);
-                    if (origS >= 0 && origS < (int)resolution[0])
-                        resampledImage[t * resPow2[0] + s] +=
-                            sWeights[s].weight[j] *
-                            img[t * resolution[0] + origS];
+        ParallelFor(
+            [&](int t) {
+                for (int s = 0; s < resPow2[0]; ++s) {
+                    // Compute texel $(s,t)$ in $s$-zoomed image
+                    resampledImage[t * resPow2[0] + s] = 0.f;
+                    for (int j = 0; j < 4; ++j) {
+                        int origS = sWeights[s].firstTexel + j;
+                        if (wrapMode == ImageWrap::Repeat)
+                            origS = Mod(origS, resolution[0]);
+                        else if (wrapMode == ImageWrap::Clamp)
+                            origS = Clamp(origS, 0, resolution[0] - 1);
+                        if (origS >= 0 && origS < (int)resolution[0])
+                            resampledImage[t * resPow2[0] + s] +=
+                                sWeights[s].weight[j] *
+                                img[t * resolution[0] + origS];
+                    }
                 }
-            }
-        }, resolution[1], 16);
+            },
+            resolution[1], 16);
 
         // Resample image in $t$ direction
         std::unique_ptr<ResampleWeight[]> tWeights =
@@ -160,24 +163,27 @@ MIPMap<T>::MIPMap(const Point2i &res, const T *img, bool doTrilinear,
         int nThreads = MaxThreadIndex();
         for (int i = 0; i < nThreads; ++i)
             resampleBufs.push_back(new T[resPow2[1]]);
-        ParallelFor([&](int s) {
-            T *workData = resampleBufs[ThreadIndex];
-            for (int t = 0; t < resPow2[1]; ++t) {
-                workData[t] = 0.f;
-                for (int j = 0; j < 4; ++j) {
-                    int offset = tWeights[t].firstTexel + j;
-                    if (wrapMode == ImageWrap::Repeat)
-                        offset = Mod(offset, resolution[1]);
-                    else if (wrapMode == ImageWrap::Clamp)
-                        offset = Clamp(offset, 0, (int)resolution[1] - 1);
-                    if (offset >= 0 && offset < (int)resolution[1])
-                        workData[t] += tWeights[t].weight[j] *
-                                       resampledImage[offset * resPow2[0] + s];
+        ParallelFor(
+            [&](int s) {
+                T *workData = resampleBufs[ThreadIndex];
+                for (int t = 0; t < resPow2[1]; ++t) {
+                    workData[t] = 0.f;
+                    for (int j = 0; j < 4; ++j) {
+                        int offset = tWeights[t].firstTexel + j;
+                        if (wrapMode == ImageWrap::Repeat)
+                            offset = Mod(offset, resolution[1]);
+                        else if (wrapMode == ImageWrap::Clamp)
+                            offset = Clamp(offset, 0, (int)resolution[1] - 1);
+                        if (offset >= 0 && offset < (int)resolution[1])
+                            workData[t] +=
+                                tWeights[t].weight[j] *
+                                resampledImage[offset * resPow2[0] + s];
+                    }
                 }
-            }
-            for (int t = 0; t < resPow2[1]; ++t)
-                resampledImage[t * resPow2[0] + s] = clamp(workData[t]);
-        }, resPow2[0], 32);
+                for (int t = 0; t < resPow2[1]; ++t)
+                    resampledImage[t * resPow2[0] + s] = clamp(workData[t]);
+            },
+            resPow2[0], 32);
         for (auto ptr : resampleBufs) delete[] ptr;
         resolution = resPow2;
     }
@@ -196,14 +202,16 @@ MIPMap<T>::MIPMap(const Point2i &res, const T *img, bool doTrilinear,
         pyramid[i].reset(new BlockedArray<T>(sRes, tRes));
 
         // Filter four texels from finer level of pyramid
-        ParallelFor([&](int t) {
-            for (int s = 0; s < sRes; ++s)
-                (*pyramid[i])(s, t) =
-                    .25f * (Texel(i - 1, 2 * s, 2 * t) +
-                            Texel(i - 1, 2 * s + 1, 2 * t) +
-                            Texel(i - 1, 2 * s, 2 * t + 1) +
-                            Texel(i - 1, 2 * s + 1, 2 * t + 1));
-        }, tRes, 16);
+        ParallelFor(
+            [&](int t) {
+                for (int s = 0; s < sRes; ++s)
+                    (*pyramid[i])(s, t) =
+                        .25f * (Texel(i - 1, 2 * s, 2 * t) +
+                                Texel(i - 1, 2 * s + 1, 2 * t) +
+                                Texel(i - 1, 2 * s, 2 * t + 1) +
+                                Texel(i - 1, 2 * s + 1, 2 * t + 1));
+            },
+            tRes, 16);
     }
 
     // Initialize EWA filter weights if needed

@@ -30,7 +30,6 @@
 
  */
 
-
 // filters/sinc.cpp*
 #include "filters/sinc.h"
 #include "paramset.h"

@@ -229,7 +229,7 @@ struct Vertex {
         switch (type) {
         case VertexType::Surface:
             return si.bsdf->f(si.wo, wi) *
-                CorrectShadingNormal(si, si.wo, wi, mode);
+                   CorrectShadingNormal(si, si.wo, wi, mode);
         case VertexType::Medium:
             return mi.phase->p(mi.wo, wi);
         default:
@@ -303,9 +303,9 @@ struct Vertex {
             break;
         }
         s += std::string(" connectible: ") +
-            std::string(IsConnectible() ? "true" : "false");
-        s += StringPrintf("\n  p: [ %f, %f, %f ] ng: [ %f, %f, %f ]", p().x, p().y,
-                          p().z, ng().x, ng().y, ng().z);
+             std::string(IsConnectible() ? "true" : "false");
+        s += StringPrintf("\n  p: [ %f, %f, %f ] ng: [ %f, %f, %f ]", p().x,
+                          p().y, p().z, ng().x, ng().y, ng().z);
         s += StringPrintf("\n  pdfFwd: %f pdfRev: %f beta: ", pdfFwd, pdfRev) +
              beta.ToString();
         switch (type) {
@@ -385,7 +385,8 @@ struct Vertex {
 
             // Compute sampling density for non-infinite light sources
             Float pdfPos, pdfDir;
-            light->Pdf_Le(Ray(p(), w, Infinity, time()), ng(), &pdfPos, &pdfDir);
+            light->Pdf_Le(Ray(p(), w, Infinity, time()), ng(), &pdfPos,
+                          &pdfDir);
             pdf = pdfDir * invDist2;
         }
         if (v.IsOnSurface()) pdf *= AbsDot(v.ng(), w);
@@ -418,7 +419,8 @@ struct Vertex {
             size_t index = lightToDistrIndex.find(light)->second;
             pdfChoice = lightDistr.DiscretePDF(index);
 
-            light->Pdf_Le(Ray(p(), w, Infinity, time()), ng(), &pdfPos, &pdfDir);
+            light->Pdf_Le(Ray(p(), w, Infinity, time()), ng(), &pdfPos,
+                          &pdfDir);
             return pdfPos * pdfChoice;
         }
     }

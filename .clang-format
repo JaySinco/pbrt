@@ -4,4 +4,4 @@ IndentCaseLabels: false
 PointerBindsToType: false
 Standard: Cpp11
 IndentWidth: 4
-
+SortIncludes: false

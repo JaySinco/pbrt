@@ -15,7 +15,7 @@ TEST(HenyeyGreenstein, SamplingMatch) {
             Vector3f wo =
                 UniformSampleSphere({rng.UniformFloat(), rng.UniformFloat()});
             Vector3f wi;
-            Point2f u {rng.UniformFloat(), rng.UniformFloat()};
+            Point2f u{rng.UniformFloat(), rng.UniformFloat()};
             Float p0 = hg.Sample_p(wo, &wi, u);
             // Phase function is normalized, and the sampling method should be
             // exact.
@@ -31,7 +31,7 @@ TEST(HenyeyGreenstein, SamplingOrientationForward) {
     Vector3f wo(-1, 0, 0);
     int nForward = 0, nBackward = 0;
     for (int i = 0; i < 100; ++i) {
-        Point2f u {rng.UniformFloat(), rng.UniformFloat()};
+        Point2f u{rng.UniformFloat(), rng.UniformFloat()};
         Vector3f wi;
         hg.Sample_p(wo, &wi, u);
         if (wi.x > 0)
@@ -50,7 +50,7 @@ TEST(HenyeyGreenstein, SamplingOrientationBackward) {
     Vector3f wo(-1, 0, 0);
     int nForward = 0, nBackward = 0;
     for (int i = 0; i < 100; ++i) {
-        Point2f u {rng.UniformFloat(), rng.UniformFloat()};
+        Point2f u{rng.UniformFloat(), rng.UniformFloat()};
         Vector3f wi;
         hg.Sample_p(wo, &wi, u);
         if (wi.x > 0)

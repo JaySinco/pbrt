@@ -30,7 +30,6 @@
 
  */
 
-
 // samplers/halton.cpp*
 #include "samplers/halton.h"
 #include "paramset.h"

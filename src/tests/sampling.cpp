@@ -29,7 +29,7 @@ TEST(LowDiscrepancy, ScrambledRadicalInverse) {
         for (int i = 0; i < base; ++i) perm.push_back(base - 1 - i);
         Shuffle(&perm[0], perm.size(), 1, rng);
 
-        for (const uint32_t index : { 0, 1, 2, 1151, 32351, 4363211, 681122 }) {
+        for (const uint32_t index : {0, 1, 2, 1151, 32351, 4363211, 681122}) {
             // First, compare to the pbrt-v2 implementation.
             {
                 Float val = 0;
@@ -85,9 +85,8 @@ TEST(LowDiscrepancy, GeneratorMatrix) {
     for (int a = 0; a < 128; ++a) {
         // Make sure identity generator matrix matches van der Corput
         EXPECT_EQ(a, MultiplyGenerator(C, a));
-        EXPECT_EQ(RadicalInverse(0, a),
-                  ReverseBits32(MultiplyGenerator(C, a)) *
-                  2.3283064365386963e-10f);
+        EXPECT_EQ(RadicalInverse(0, a), ReverseBits32(MultiplyGenerator(C, a)) *
+                                            2.3283064365386963e-10f);
         EXPECT_EQ(RadicalInverse(0, a), SampleGeneratorMatrix(Crev, a));
     }
 
@@ -118,11 +117,11 @@ TEST(LowDiscrepancy, GrayCodeSample) {
 }
 
 TEST(LowDiscrepancy, Sobol) {
-  // Check that float and double variants match (as float values).
+    // Check that float and double variants match (as float values).
     for (int i = 0; i < 256; ++i) {
         for (int dim = 0; dim < 100; ++dim) {
-          EXPECT_EQ(SobolSampleFloat(i, dim, 0),
-                    (float)SobolSampleDouble(i, dim, 0));
+            EXPECT_EQ(SobolSampleFloat(i, dim, 0),
+                      (float)SobolSampleDouble(i, dim, 0));
         }
     }
 
@@ -180,10 +179,11 @@ TEST(LowDiscrepancy, ElementaryIntervals) {
                      std::unique_ptr<Sampler>(
                          new ZeroTwoSequenceSampler(1 << logSamples, 2)),
                      logSamples);
-        checkSampler("Sobol", std::unique_ptr<Sampler>(new SobolSampler(
-                                  1 << logSamples,
-                                  Bounds2i(Point2i(0, 0), Point2i(10, 10)))),
-                     logSamples);
+        checkSampler(
+            "Sobol",
+            std::unique_ptr<Sampler>(new SobolSampler(
+                1 << logSamples, Bounds2i(Point2i(0, 0), Point2i(10, 10)))),
+            logSamples);
     }
 }
 

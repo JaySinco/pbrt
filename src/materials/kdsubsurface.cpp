@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/kdsubsurface.cpp*
 #include "materials/kdsubsurface.h"
 #include "textures/constant.h"

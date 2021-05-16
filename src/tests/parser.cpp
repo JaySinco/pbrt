@@ -16,8 +16,7 @@ static std::vector<std::string> extract(Tokenizer *t) {
     std::vector<std::string> tokens;
     while (true) {
         string_view s = t->Next();
-        if (s.empty())
-            return tokens;
+        if (s.empty()) return tokens;
         tokens.push_back(std::string(s.data(), s.size()));
     }
 }
@@ -39,23 +38,29 @@ TEST(Parser, TokenizerBasics) {
     auto err = [&](const char *err) { errors.push_back(err); };
 
     {
-        auto t = Tokenizer::CreateFromString("Shape \"sphere\" \"float radius\" [1]", err);
+        auto t = Tokenizer::CreateFromString(
+            "Shape \"sphere\" \"float radius\" [1]", err);
         ASSERT_TRUE(t.get() != nullptr);
-        checkTokens(t.get(), {"Shape", "\"sphere\"", "\"float radius\"", "[", "1", "]"});
+        checkTokens(t.get(),
+                    {"Shape", "\"sphere\"", "\"float radius\"", "[", "1", "]"});
     }
 
     {
-        auto t = Tokenizer::CreateFromString("Shape \"sphere\"\n\"float radius\" [1]", err);
+        auto t = Tokenizer::CreateFromString(
+            "Shape \"sphere\"\n\"float radius\" [1]", err);
         ASSERT_TRUE(t.get() != nullptr);
-        checkTokens(t.get(), {"Shape", "\"sphere\"", "\"float radius\"", "[", "1", "]"});
+        checkTokens(t.get(),
+                    {"Shape", "\"sphere\"", "\"float radius\"", "[", "1", "]"});
     }
 
     {
         auto t = Tokenizer::CreateFromString(R"(
 Shape"sphere" # foo bar [
-"float radius\"" 1)", err);
+"float radius\"" 1)",
+                                             err);
         ASSERT_TRUE(t.get() != nullptr);
-        checkTokens(t.get(), {"Shape", "\"sphere\"", "# foo bar [", R"("float radius"")", "1"});
+        checkTokens(t.get(), {"Shape", "\"sphere\"", "# foo bar [",
+                              R"("float radius"")", "1"});
     }
 }
 
@@ -65,7 +70,8 @@ TEST(Parser, TokenizerErrors) {
         auto err = [&](const char *err) {
             gotError = !strcmp(err, "premature EOF");
         };
-        auto t = Tokenizer::CreateFromString("Shape\"sphere\"\t\t # foo bar\n\"float radius", err);
+        auto t = Tokenizer::CreateFromString(
+            "Shape\"sphere\"\t\t # foo bar\n\"float radius", err);
         ASSERT_TRUE(t.get() != nullptr);
         extract(t.get());
         EXPECT_TRUE(gotError);
@@ -76,7 +82,8 @@ TEST(Parser, TokenizerErrors) {
         auto err = [&](const char *err) {
             gotError = !strcmp(err, "premature EOF");
         };
-        auto t = Tokenizer::CreateFromString("Shape\"sphere\"\t\t # foo bar\n\"float radius", err);
+        auto t = Tokenizer::CreateFromString(
+            "Shape\"sphere\"\t\t # foo bar\n\"float radius", err);
         ASSERT_TRUE(t.get() != nullptr);
         extract(t.get());
         EXPECT_TRUE(gotError);
@@ -87,7 +94,8 @@ TEST(Parser, TokenizerErrors) {
         auto err = [&](const char *err) {
             gotError = !strcmp(err, "premature EOF");
         };
-        auto t = Tokenizer::CreateFromString("Shape\"sphere\"\t\t # foo bar\n\"float radius\\", err);
+        auto t = Tokenizer::CreateFromString(
+            "Shape\"sphere\"\t\t # foo bar\n\"float radius\\", err);
         ASSERT_TRUE(t.get() != nullptr);
         extract(t.get());
         EXPECT_TRUE(gotError);
@@ -98,7 +106,8 @@ TEST(Parser, TokenizerErrors) {
         auto err = [&](const char *err) {
             gotError = !strcmp(err, "unterminated string");
         };
-        auto t = Tokenizer::CreateFromString("Shape\"sphere\"\t\t # foo bar\n\"float radius\n\" 5", err);
+        auto t = Tokenizer::CreateFromString(
+            "Shape\"sphere\"\t\t # foo bar\n\"float radius\n\" 5", err);
         ASSERT_TRUE(t.get() != nullptr);
         extract(t.get());
         EXPECT_TRUE(gotError);
@@ -118,15 +127,16 @@ Integrator "deep" "float density" [ 2 2.66612 -5e-51]
     auto err = [](const char *err) {
         EXPECT_TRUE(false) << "Unexpected error: " << err;
     };
-	// Windows won't let us remove the file on disk if we hold on to a mapping view.
-	// So enclose the tokenizer in a scope so that it releases any file mapping view before the remove.
-	{
-		auto t = Tokenizer::CreateFromFile(filename, err);
-		ASSERT_TRUE(t.get() != nullptr);
-		checkTokens(t.get(), { "WorldBegin", "# hello", "Integrator", "\"deep\"", "\"float density\"",
-			"[", "2", "2.66612", "-5e-51", "]" });
-	}
+    // Windows won't let us remove the file on disk if we hold on to a mapping
+    // view. So enclose the tokenizer in a scope so that it releases any file
+    // mapping view before the remove.
+    {
+        auto t = Tokenizer::CreateFromFile(filename, err);
+        ASSERT_TRUE(t.get() != nullptr);
+        checkTokens(t.get(),
+                    {"WorldBegin", "# hello", "Integrator", "\"deep\"",
+                     "\"float density\"", "[", "2", "2.66612", "-5e-51", "]"});
+    }
 
     EXPECT_EQ(0, remove(filename.c_str()));
 }
-

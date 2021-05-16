@@ -76,25 +76,28 @@ RealisticCamera::RealisticCamera(const AnimatedTransform &CameraToWorld,
     LOG(INFO) << StringPrintf("Binary search focus: %f -> %f\n", fb,
                               FocusDistance(fb));
     elementInterfaces.back().thickness = FocusThickLens(focusDistance);
-    LOG(INFO) << StringPrintf("Thick lens focus: %f -> %f\n",
-                              elementInterfaces.back().thickness,
-                              FocusDistance(elementInterfaces.back().thickness));
+    LOG(INFO) << StringPrintf(
+        "Thick lens focus: %f -> %f\n", elementInterfaces.back().thickness,
+        FocusDistance(elementInterfaces.back().thickness));
 
     // Compute exit pupil bounds at sampled points on the film
     int nSamples = 64;
     exitPupilBounds.resize(nSamples);
-    ParallelFor([&](int i) {
-        Float r0 = (Float)i / nSamples * film->diagonal / 2;
-        Float r1 = (Float)(i + 1) / nSamples * film->diagonal / 2;
-        exitPupilBounds[i] = BoundExitPupil(r0, r1);
-    }, nSamples);
+    ParallelFor(
+        [&](int i) {
+            Float r0 = (Float)i / nSamples * film->diagonal / 2;
+            Float r1 = (Float)(i + 1) / nSamples * film->diagonal / 2;
+            exitPupilBounds[i] = BoundExitPupil(r0, r1);
+        },
+        nSamples);
 
     if (simpleWeighting)
-        Warning("\"simpleweighting\" option with RealisticCamera no longer "
-                "necessarily matches regular camera images. Further, pixel "
-                "values will vary a bit depending on the aperture size. See "
-                "this discussion for details: "
-                "https://github.com/mmp/pbrt-v3/issues/162#issuecomment-348625837");
+        Warning(
+            "\"simpleweighting\" option with RealisticCamera no longer "
+            "necessarily matches regular camera images. Further, pixel "
+            "values will vary a bit depending on the aperture size. See "
+            "this discussion for details: "
+            "https://github.com/mmp/pbrt-v3/issues/162#issuecomment-348625837");
 }
 
 bool RealisticCamera::TraceLensesFromFilm(const Ray &rCamera, Ray *rOut) const {
@@ -458,16 +461,18 @@ void RealisticCamera::ComputeThickLensApproximation(Float pz[2],
 Float RealisticCamera::FocusThickLens(Float focusDistance) {
     Float pz[2], fz[2];
     ComputeThickLensApproximation(pz, fz);
-    LOG(INFO) << StringPrintf("Cardinal points: p' = %f f' = %f, p = %f f = %f.\n",
-                              pz[0], fz[0], pz[1], fz[1]);
+    LOG(INFO) << StringPrintf(
+        "Cardinal points: p' = %f f' = %f, p = %f f = %f.\n", pz[0], fz[0],
+        pz[1], fz[1]);
     LOG(INFO) << StringPrintf("Effective focal length %f\n", fz[0] - pz[0]);
     // Compute translation of lens, _delta_, to focus at _focusDistance_
     Float f = fz[0] - pz[0];
     Float z = -focusDistance;
     Float c = (pz[1] - z - pz[0]) * (pz[1] - z - 4 * f - pz[0]);
-    CHECK_GT(c, 0) << "Coefficient must be positive. It looks focusDistance: " << focusDistance << " is too short for a given lenses configuration";
-    Float delta =
-        0.5f * (pz[1] - z + pz[0] - std::sqrt(c));
+    CHECK_GT(c, 0) << "Coefficient must be positive. It looks focusDistance: "
+                   << focusDistance
+                   << " is too short for a given lenses configuration";
+    Float delta = 0.5f * (pz[1] - z + pz[0] - std::sqrt(c));
     return elementInterfaces.back().thickness + delta;
 }
 
@@ -530,7 +535,6 @@ Float RealisticCamera::FocusDistance(Float filmDistance) {
     return zFocus;
 }
 
-
 Bounds2f RealisticCamera::BoundExitPupil(Float pFilmX0, Float pFilmX1) const {
     Bounds2f pupilBounds;
     // Sample a collection of points on the rear lens to find exit pupil
@@ -559,8 +563,9 @@ Bounds2f RealisticCamera::BoundExitPupil(Float pFilmX0, Float pFilmX1) const {
 
     // Return entire element bounds if no rays made it through the lens system
     if (nExitingRays == 0) {
-        LOG(INFO) << StringPrintf("Unable to find exit pupil in x = [%f,%f] on film.",
-                                  pFilmX0, pFilmX1);
+        LOG(INFO) << StringPrintf(
+            "Unable to find exit pupil in x = [%f,%f] on film.", pFilmX0,
+            pFilmX1);
         return projRearBounds;
     }
 

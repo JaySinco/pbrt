@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/metal.cpp*
 #include "materials/metal.h"
 #include "reflection.h"

@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/substrate.cpp*
 #include "materials/substrate.h"
 #include "spectrum.h"

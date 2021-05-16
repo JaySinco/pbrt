@@ -30,7 +30,6 @@
 
  */
 
-
 // filters/mitchell.cpp*
 #include "filters/mitchell.h"
 #include "paramset.h"

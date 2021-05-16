@@ -60,9 +60,8 @@ class MarbleTexture : public Texture<Spectrum> {
         Vector3f dpdx, dpdy;
         Point3f p = mapping->Map(si, &dpdx, &dpdy);
         p *= scale;
-        Float marble =
-            p.y +
-            variation * FBm(p, scale * dpdx, scale * dpdy, omega, octaves);
+        Float marble = p.y + variation * FBm(p, scale * dpdx, scale * dpdy,
+                                             omega, octaves);
         Float t = .5f + .5f * std::sin(marble);
         // Evaluate marble spline at _t_
         static Float c[][3] = {

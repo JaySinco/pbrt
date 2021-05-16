@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/hyperboloid.cpp*
 #include "shapes/hyperboloid.h"
 #include "paramset.h"
@@ -233,10 +232,12 @@ Float Hyperboloid::Area() const {
            (2 * QUAD(p1.x) - 2 * p1.x * p1.x * p1.x * p2.x + 2 * QUAD(p2.x) +
             2 * (p1.y * p1.y + p1.y * p2.y + p2.y * p2.y) *
                 (SQR(p1.y - p2.y) + SQR(p1.z - p2.z)) +
-            p2.x * p2.x * (5 * p1.y * p1.y + 2 * p1.y * p2.y - 4 * p2.y * p2.y +
-                           2 * SQR(p1.z - p2.z)) +
-            p1.x * p1.x * (-4 * p1.y * p1.y + 2 * p1.y * p2.y +
-                           5 * p2.y * p2.y + 2 * SQR(p1.z - p2.z)) -
+            p2.x * p2.x *
+                (5 * p1.y * p1.y + 2 * p1.y * p2.y - 4 * p2.y * p2.y +
+                 2 * SQR(p1.z - p2.z)) +
+            p1.x * p1.x *
+                (-4 * p1.y * p1.y + 2 * p1.y * p2.y + 5 * p2.y * p2.y +
+                 2 * SQR(p1.z - p2.z)) -
             2 * p1.x * p2.x *
                 (p2.x * p2.x - p1.y * p1.y + 5 * p1.y * p2.y - p2.y * p2.y -
                  p1.z * p1.z + 2 * p1.z * p2.z - p2.z * p2.z));

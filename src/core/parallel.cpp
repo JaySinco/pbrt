@@ -30,7 +30,6 @@
 
  */
 
-
 // core/parallel.cpp*
 #include "parallel.h"
 #include "memory.h"

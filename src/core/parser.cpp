@@ -838,16 +838,16 @@ static void parse(std::unique_ptr<Tokenizer> t) {
 
     // Helper function for pbrt API entrypoints that take a single string
     // parameter and a ParamSet (e.g. pbrtShape()).
-    auto basicParamListEntrypoint = [&](
-        SpectrumType spectrumType,
-        std::function<void(const std::string &n, ParamSet p)> apiFunc) {
-        string_view token = nextToken(TokenRequired);
-        string_view dequoted = dequoteString(token);
-        std::string n = toString(dequoted);
-        ParamSet params =
-            parseParams(nextToken, ungetToken, arena, spectrumType);
-        apiFunc(n, std::move(params));
-    };
+    auto basicParamListEntrypoint =
+        [&](SpectrumType spectrumType,
+            std::function<void(const std::string &n, ParamSet p)> apiFunc) {
+            string_view token = nextToken(TokenRequired);
+            string_view dequoted = dequoteString(token);
+            std::string n = toString(dequoted);
+            ParamSet params =
+                parseParams(nextToken, ungetToken, arena, spectrumType);
+            apiFunc(n, std::move(params));
+        };
 
     auto syntaxError = [&](string_view tok) {
         Error("Unexpected token: %s", toString(tok).c_str());
@@ -920,7 +920,8 @@ static void parse(std::unique_ptr<Tokenizer> t) {
                 std::string filename =
                     toString(dequoteString(nextToken(TokenRequired)));
                 if (PbrtOptions.cat || PbrtOptions.toPly)
-                    printf("%*sInclude \"%s\"\n", catIndentCount, "", filename.c_str());
+                    printf("%*sInclude \"%s\"\n", catIndentCount, "",
+                           filename.c_str());
                 else {
                     filename = AbsolutePath(ResolveFilename(filename));
                     auto tokError = [](const char *msg) { Error("%s", msg); };
@@ -1094,7 +1095,10 @@ static void parse(std::unique_ptr<Tokenizer> t) {
 void pbrtParseFile(std::string filename) {
     if (filename != "-") SetSearchDirectory(DirectoryContaining(filename));
 
-    auto tokError = [](const char *msg) { Error("%s", msg); exit(1); };
+    auto tokError = [](const char *msg) {
+        Error("%s", msg);
+        exit(1);
+    };
     std::unique_ptr<Tokenizer> t =
         Tokenizer::CreateFromFile(filename, tokError);
     if (!t) return;
@@ -1102,7 +1106,10 @@ void pbrtParseFile(std::string filename) {
 }
 
 void pbrtParseString(std::string str) {
-    auto tokError = [](const char *msg) { Error("%s", msg); exit(1); };
+    auto tokError = [](const char *msg) {
+        Error("%s", msg);
+        exit(1);
+    };
     std::unique_ptr<Tokenizer> t =
         Tokenizer::CreateFromString(std::move(str), tokError);
     if (!t) return;

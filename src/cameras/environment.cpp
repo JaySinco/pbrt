@@ -30,7 +30,6 @@
 
  */
 
-
 // cameras/environment.cpp*
 #include "cameras/environment.h"
 #include "paramset.h"

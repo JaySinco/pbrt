@@ -30,7 +30,6 @@
 
  */
 
-
 // lights/goniometric.cpp*
 #include "lights/goniometric.h"
 #include "paramset.h"
@@ -53,9 +52,10 @@ Spectrum GonioPhotometricLight::Sample_Li(const Interaction &ref,
 }
 
 Spectrum GonioPhotometricLight::Power() const {
-    return 4 * Pi * I * Spectrum(mipmap ? mipmap->Lookup(Point2f(.5f, .5f), .5f)
-                                        : RGBSpectrum(1.f),
-                                 SpectrumType::Illuminant);
+    return 4 * Pi * I *
+           Spectrum(mipmap ? mipmap->Lookup(Point2f(.5f, .5f), .5f)
+                           : RGBSpectrum(1.f),
+                    SpectrumType::Illuminant);
 }
 
 Float GonioPhotometricLight::Pdf_Li(const Interaction &,

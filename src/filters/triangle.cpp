@@ -30,7 +30,6 @@
 
  */
 
-
 // filters/triangle.cpp*
 #include "filters/triangle.h"
 #include "paramset.h"

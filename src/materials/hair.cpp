@@ -372,8 +372,7 @@ Spectrum HairBSDF::Sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u2,
     if (p == 0) {
         sinThetaOp = sinThetaO * cos2kAlpha[1] - cosThetaO * sin2kAlpha[1];
         cosThetaOp = cosThetaO * cos2kAlpha[1] + sinThetaO * sin2kAlpha[1];
-    }
-    else if (p == 1) {
+    } else if (p == 1) {
         sinThetaOp = sinThetaO * cos2kAlpha[0] + cosThetaO * sin2kAlpha[0];
         cosThetaOp = cosThetaO * cos2kAlpha[0] - sinThetaO * sin2kAlpha[0];
     } else if (p == 2) {
@@ -498,11 +497,10 @@ Float HairBSDF::Pdf(const Vector3f &wo, const Vector3f &wi) const {
 
 std::string HairBSDF::ToString() const {
     return StringPrintf(
-        "[ Hair h: %f gammaO: %f eta: %f beta_m: %f beta_n: %f "
-        "v[0]: %f s: %f sigma_a: ", h, gammaO, eta, beta_m, beta_n,
-        v[0], s) +
-        sigma_a.ToString() +
-        std::string("  ]");
+               "[ Hair h: %f gammaO: %f eta: %f beta_m: %f beta_n: %f "
+               "v[0]: %f s: %f sigma_a: ",
+               h, gammaO, eta, beta_m, beta_n, v[0], s) +
+           sigma_a.ToString() + std::string("  ]");
 }
 
 Spectrum HairBSDF::SigmaAFromConcentration(Float ce, Float cp) {

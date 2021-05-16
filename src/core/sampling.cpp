@@ -30,7 +30,6 @@
 
  */
 
-
 // core/sampling.cpp*
 #include "sampling.h"
 #include "geometry.h"

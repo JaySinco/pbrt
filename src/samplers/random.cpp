@@ -30,7 +30,6 @@
 
  */
 
-
 // samplers/random.cpp*
 #include "samplers/random.h"
 #include "paramset.h"

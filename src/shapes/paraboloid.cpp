@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/paraboloid.cpp*
 #include "shapes/paraboloid.h"
 #include "paramset.h"

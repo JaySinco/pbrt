@@ -19,7 +19,7 @@ TEST(Parallel, Basics) {
 
     counter = 0;
     ParallelFor2D([&](Point2i p) { ++counter; }, Point2i(15, 14));
-    EXPECT_EQ(15*14, counter);
+    EXPECT_EQ(15 * 14, counter);
 
     ParallelCleanup();
 }

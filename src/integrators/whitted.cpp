@@ -30,7 +30,6 @@
 
  */
 
-
 // integrators/whitted.cpp*
 #include "integrators/whitted.h"
 #include "interaction.h"

@@ -30,7 +30,6 @@
 
  */
 
-
 // core/filter.cpp*
 #include "filter.h"
 

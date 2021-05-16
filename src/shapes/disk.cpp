@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/disk.cpp*
 #include "shapes/disk.h"
 #include "paramset.h"

@@ -30,7 +30,6 @@
 
  */
 
-
 // core/quaternion.cpp*
 #include "quaternion.h"
 #include "transform.h"

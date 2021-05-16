@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/uber.cpp*
 #include "materials/uber.h"
 #include "spectrum.h"

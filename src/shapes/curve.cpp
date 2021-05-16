@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/curve.cpp*
 #include "shapes/curve.h"
 #include "paramset.h"
@@ -72,11 +71,11 @@ static Point3f EvalBezier(const Point3f cp[4], Float u,
             *deriv = 3 * (cp2[1] - cp2[0]);
         else {
             // For a cubic Bezier, if the first three control points (say) are
-            // coincident, then the derivative of the curve is legitimately (0,0,0)
-            // at u=0.  This is problematic for us, though, since we'd like to be
-            // able to compute a surface normal there.  In that case, just punt and
-            // take the difference between the first and last control points, which
-            // ain't great, but will hopefully do.
+            // coincident, then the derivative of the curve is legitimately
+            // (0,0,0) at u=0.  This is problematic for us, though, since we'd
+            // like to be able to compute a surface normal there.  In that case,
+            // just punt and take the difference between the first and last
+            // control points, which ain't great, but will hopefully do.
             *deriv = cp[3] - cp[0];
         }
     }
@@ -89,8 +88,7 @@ CurveCommon::CurveCommon(const Point3f c[4], Float width0, Float width1,
     : type(type) {
     width[0] = width0;
     width[1] = width1;
-    for (int i = 0; i < 4; ++i)
-        cpObj[i] = c[i];
+    for (int i = 0; i < 4; ++i) cpObj[i] = c[i];
     if (norm) {
         n[0] = Normalize(norm[0]);
         n[1] = Normalize(norm[1]);
@@ -102,8 +100,8 @@ CurveCommon::CurveCommon(const Point3f c[4], Float width0, Float width1,
 
 std::vector<std::shared_ptr<Shape>> CreateCurve(
     const Transform *o2w, const Transform *w2o, bool reverseOrientation,
-    const Point3f *c, Float w0, Float w1, CurveType type,
-    const Normal3f *norm, int splitDepth) {
+    const Point3f *c, Float w0, Float w1, CurveType type, const Normal3f *norm,
+    int splitDepth) {
     std::vector<std::shared_ptr<Shape>> segments;
     std::shared_ptr<CurveCommon> common =
         std::make_shared<CurveCommon>(c, w0, w1, type, norm);
@@ -180,25 +178,31 @@ bool Curve::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
     Float maxWidth = std::max(Lerp(uMin, common->width[0], common->width[1]),
                               Lerp(uMax, common->width[0], common->width[1]));
     if (std::max(std::max(cp[0].y, cp[1].y), std::max(cp[2].y, cp[3].y)) +
-            0.5f * maxWidth < 0 ||
+                0.5f * maxWidth <
+            0 ||
         std::min(std::min(cp[0].y, cp[1].y), std::min(cp[2].y, cp[3].y)) -
-            0.5f * maxWidth > 0)
+                0.5f * maxWidth >
+            0)
         return false;
 
     // Check for non-overlap in x.
     if (std::max(std::max(cp[0].x, cp[1].x), std::max(cp[2].x, cp[3].x)) +
-            0.5f * maxWidth < 0 ||
+                0.5f * maxWidth <
+            0 ||
         std::min(std::min(cp[0].x, cp[1].x), std::min(cp[2].x, cp[3].x)) -
-            0.5f * maxWidth > 0)
+                0.5f * maxWidth >
+            0)
         return false;
 
     // Check for non-overlap in z.
     Float rayLength = ray.d.Length();
     Float zMax = rayLength * ray.tMax;
     if (std::max(std::max(cp[0].z, cp[1].z), std::max(cp[2].z, cp[3].z)) +
-            0.5f * maxWidth < 0 ||
+                0.5f * maxWidth <
+            0 ||
         std::min(std::min(cp[0].z, cp[1].z), std::min(cp[2].z, cp[3].z)) -
-            0.5f * maxWidth > zMax)
+                0.5f * maxWidth >
+            zMax)
         return false;
 
     // Compute refinement depth for curve, _maxDepth_
@@ -256,27 +260,33 @@ bool Curve::recursiveIntersect(const Ray &ray, Float *tHit,
             // out early.
             if (std::max(std::max(cps[0].y, cps[1].y),
                          std::max(cps[2].y, cps[3].y)) +
-                        0.5 * maxWidth < 0 ||
+                        0.5 * maxWidth <
+                    0 ||
                 std::min(std::min(cps[0].y, cps[1].y),
                          std::min(cps[2].y, cps[3].y)) -
-                        0.5 * maxWidth > 0)
+                        0.5 * maxWidth >
+                    0)
                 continue;
 
             if (std::max(std::max(cps[0].x, cps[1].x),
                          std::max(cps[2].x, cps[3].x)) +
-                        0.5 * maxWidth < 0 ||
+                        0.5 * maxWidth <
+                    0 ||
                 std::min(std::min(cps[0].x, cps[1].x),
                          std::min(cps[2].x, cps[3].x)) -
-                        0.5 * maxWidth > 0)
+                        0.5 * maxWidth >
+                    0)
                 continue;
 
             Float zMax = rayLength * ray.tMax;
             if (std::max(std::max(cps[0].z, cps[1].z),
                          std::max(cps[2].z, cps[3].z)) +
-                        0.5 * maxWidth < 0 ||
+                        0.5 * maxWidth <
+                    0 ||
                 std::min(std::min(cps[0].z, cps[1].z),
                          std::min(cps[2].z, cps[3].z)) -
-                        0.5 * maxWidth > zMax)
+                        0.5 * maxWidth >
+                    zMax)
                 continue;
 
             hit |= recursiveIntersect(ray, tHit, isect, cps, rayToObject,
@@ -344,9 +354,10 @@ bool Curve::recursiveIntersect(const Ray &ray, Float *tHit,
             // Compute $\dpdu$ and $\dpdv$ for curve intersection
             Vector3f dpdu, dpdv;
             EvalBezier(common->cpObj, u, &dpdu);
-            CHECK_NE(Vector3f(0, 0, 0), dpdu) << "u = " << u << ", cp = " <<
-                common->cpObj[0] << ", " << common->cpObj[1] << ", " <<
-                common->cpObj[2] << ", " << common->cpObj[3];
+            CHECK_NE(Vector3f(0, 0, 0), dpdu)
+                << "u = " << u << ", cp = " << common->cpObj[0] << ", "
+                << common->cpObj[1] << ", " << common->cpObj[2] << ", "
+                << common->cpObj[3];
 
             if (common->type == CurveType::Ribbon)
                 dpdv = Normalize(Cross(nHit, dpdu)) * hitWidth;
@@ -411,8 +422,10 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
 
     std::string basis = params.FindOneString("basis", "bezier");
     if (basis != "bezier" && basis != "bspline") {
-        Error("Invalid basis \"%s\": only \"bezier\" and \"bspline\" are "
-              "supported.", basis.c_str());
+        Error(
+            "Invalid basis \"%s\": only \"bezier\" and \"bspline\" are "
+            "supported.",
+            basis.c_str());
         return {};
     }
 
@@ -424,21 +437,23 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
         // subsequent segments reuse the last control point of the previous
         // one and then use degree more control points.
         if (((ncp - 1 - degree) % degree) != 0) {
-            Error("Invalid number of control points %d: for the degree %d "
-                  "Bezier basis %d + n * %d are required, for n >= 0.", ncp,
-                  degree, degree + 1, degree);
+            Error(
+                "Invalid number of control points %d: for the degree %d "
+                "Bezier basis %d + n * %d are required, for n >= 0.",
+                ncp, degree, degree + 1, degree);
             return {};
         }
         nSegments = (ncp - 1) / degree;
     } else {
         if (ncp < degree + 1) {
-            Error("Invalid number of control points %d: for the degree %d "
-                  "b-spline basis, must have >= %d.", ncp, degree, degree + 1);
+            Error(
+                "Invalid number of control points %d: for the degree %d "
+                "b-spline basis, must have >= %d.",
+                ncp, degree, degree + 1);
             return {};
         }
         nSegments = ncp - degree;
     }
-
 
     CurveType type;
     std::string curveType = params.FindOneString("type", "flat");
@@ -449,7 +464,8 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
     else if (curveType == "cylinder")
         type = CurveType::Cylinder;
     else {
-        Error("Unknown curve type \"%s\".  Using \"cylinder\".", curveType.c_str());
+        Error("Unknown curve type \"%s\".  Using \"cylinder\".",
+              curveType.c_str());
         type = CurveType::Cylinder;
     }
 
@@ -461,8 +477,10 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
             n = nullptr;
         } else if (nnorm != nSegments + 1) {
             Error(
-                "Invalid number of normals %d: must provide %d normals for ribbon "
-                "curves with %d segments.", nnorm, nSegments + 1, nSegments);
+                "Invalid number of normals %d: must provide %d normals for "
+                "ribbon "
+                "curves with %d segments.",
+                nnorm, nSegments + 1, nSegments);
             return {};
         }
     } else if (type == CurveType::Ribbon) {
@@ -491,13 +509,12 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
             if (degree == 2) {
                 // Elevate to degree 3.
                 segCpBezier[0] = cpBase[0];
-                segCpBezier[1] = Lerp(2.f/3.f, cpBase[0], cpBase[1]);
-                segCpBezier[2] = Lerp(1.f/3.f, cpBase[1], cpBase[2]);
+                segCpBezier[1] = Lerp(2.f / 3.f, cpBase[0], cpBase[1]);
+                segCpBezier[2] = Lerp(1.f / 3.f, cpBase[1], cpBase[2]);
                 segCpBezier[3] = cpBase[2];
             } else {
                 // Allset.
-                for (int i = 0; i < 4; ++i)
-                    segCpBezier[i] = cpBase[i];
+                for (int i = 0; i < 4; ++i) segCpBezier[i] = cpBase[i];
             }
             cpBase += degree;
         } else {
@@ -518,8 +535,8 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
 
                 // Now elevate to degree 3.
                 segCpBezier[0] = p11;
-                segCpBezier[1] = Lerp(2.f/3.f, p11, p12);
-                segCpBezier[2] = Lerp(1.f/3.f, p12, p22);
+                segCpBezier[1] = Lerp(2.f / 3.f, p11, p12);
+                segCpBezier[2] = Lerp(1.f / 3.f, p12, p22);
                 segCpBezier[3] = p22;
             } else {
                 // Otherwise we will blossom from p012, p123, p234, and p345
@@ -530,10 +547,10 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
                 Point3f p234 = cpBase[2];
                 Point3f p345 = cpBase[3];
 
-                Point3f p122 = Lerp(2.f/3.f, p012, p123);
-                Point3f p223 = Lerp(1.f/3.f, p123, p234);
-                Point3f p233 = Lerp(2.f/3.f, p123, p234);
-                Point3f p334 = Lerp(1.f/3.f, p234, p345);
+                Point3f p122 = Lerp(2.f / 3.f, p012, p123);
+                Point3f p223 = Lerp(1.f / 3.f, p123, p234);
+                Point3f p233 = Lerp(2.f / 3.f, p123, p234);
+                Point3f p334 = Lerp(1.f / 3.f, p234, p345);
 
                 Point3f p222 = Lerp(0.5f, p122, p223);
                 Point3f p333 = Lerp(0.5f, p233, p334);
@@ -546,10 +563,11 @@ std::vector<std::shared_ptr<Shape>> CreateCurveShape(const Transform *o2w,
             ++cpBase;
         }
 
-        auto c = CreateCurve(o2w, w2o, reverseOrientation, segCpBezier,
-                             Lerp(Float(seg) / Float(nSegments), width0, width1),
-                             Lerp(Float(seg + 1) / Float(nSegments), width0, width1),
-                             type, n ? &n[seg] : nullptr, sd);
+        auto c =
+            CreateCurve(o2w, w2o, reverseOrientation, segCpBezier,
+                        Lerp(Float(seg) / Float(nSegments), width0, width1),
+                        Lerp(Float(seg + 1) / Float(nSegments), width0, width1),
+                        type, n ? &n[seg] : nullptr, sd);
         curves.insert(curves.end(), c.begin(), c.end());
     }
     return curves;

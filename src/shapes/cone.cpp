@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/cone.cpp*
 #include "shapes/cone.h"
 #include "paramset.h"

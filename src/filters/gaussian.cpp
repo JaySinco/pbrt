@@ -30,7 +30,6 @@
 
  */
 
-
 // filters/gaussian.cpp*
 #include "filters/gaussian.h"
 #include "paramset.h"

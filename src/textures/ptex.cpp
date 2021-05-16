@@ -128,7 +128,7 @@ inline Spectrum fromResult<Spectrum>(int nc, float *result) {
     if (nc == 1)
         return Spectrum(result[0]);
     else {
-        Float rgb[3] = { result[0], result[1], result[2] };
+        Float rgb[3] = {result[0], result[1], result[2]};
         return Spectrum::FromRGB(rgb);
     }
 }
@@ -150,8 +150,8 @@ T PtexTexture<T>::Evaluate(const SurfaceInteraction &si) const {
 
     float result[3];
     int firstChan = 0;
-    filter->eval(result, firstChan, nc, si.faceIndex, si.uv[0],
-                 si.uv[1], si.dudx, si.dvdx, si.dudy, si.dvdy);
+    filter->eval(result, firstChan, nc, si.faceIndex, si.uv[0], si.uv[1],
+                 si.dudx, si.dvdx, si.dudy, si.dvdy);
     filter->release();
     texture->release();
 

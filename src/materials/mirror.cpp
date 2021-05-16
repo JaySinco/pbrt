@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/mirror.cpp*
 #include "materials/mirror.h"
 #include "spectrum.h"

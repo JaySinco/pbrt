@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/mixmat.cpp*
 #include "materials/mixmat.h"
 #include "materials/matte.h"

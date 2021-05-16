@@ -88,8 +88,9 @@ class EFloat {
     }
     explicit operator float() const { return v; }
     explicit operator double() const { return v; }
-    float GetAbsoluteError() const { return NextFloatUp(std::max(std::abs(high - v),
-                                                                 std::abs(v - low))); }
+    float GetAbsoluteError() const {
+        return NextFloatUp(std::max(std::abs(high - v), std::abs(v - low)));
+    }
     float UpperBound() const { return high; }
     float LowerBound() const { return low; }
 #ifndef NDEBUG
@@ -194,11 +195,10 @@ class EFloat {
     }
 
     friend std::ostream &operator<<(std::ostream &os, const EFloat &ef) {
-        os << StringPrintf("v=%f (%a) - [%f, %f]",
-                           ef.v, ef.v, ef.low, ef.high);
+        os << StringPrintf("v=%f (%a) - [%f, %f]", ef.v, ef.v, ef.low, ef.high);
 #ifndef NDEBUG
         os << StringPrintf(", precise=%.30Lf", ef.vPrecise);
-#endif // !NDEBUG
+#endif  // !NDEBUG
         return os;
     }
 

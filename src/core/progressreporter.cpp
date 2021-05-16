@@ -30,7 +30,6 @@
 
  */
 
-
 // core/progressreporter.cpp*
 #include "progressreporter.h"
 #include "parallel.h"
@@ -146,9 +145,7 @@ void ProgressReporter::PrintBar() {
     }
 }
 
-void ProgressReporter::Done() {
-    workDone = totalWork;
-}
+void ProgressReporter::Done() { workDone = totalWork; }
 
 static int TerminalWidth() {
 #ifdef PBRT_IS_WINDOWS

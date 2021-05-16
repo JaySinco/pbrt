@@ -30,7 +30,6 @@
 
  */
 
-
 // core/primitive.cpp*
 #include "primitive.h"
 #include "light.h"
@@ -44,16 +43,14 @@ STAT_MEMORY_COUNTER("Memory/Primitives", primitiveMemory);
 // Primitive Method Definitions
 Primitive::~Primitive() {}
 const AreaLight *Aggregate::GetAreaLight() const {
-    LOG(FATAL) <<
-        "Aggregate::GetAreaLight() method"
-        "called; should have gone to GeometricPrimitive";
+    LOG(FATAL) << "Aggregate::GetAreaLight() method"
+                  "called; should have gone to GeometricPrimitive";
     return nullptr;
 }
 
 const Material *Aggregate::GetMaterial() const {
-    LOG(FATAL) <<
-        "Aggregate::GetMaterial() method"
-        "called; should have gone to GeometricPrimitive";
+    LOG(FATAL) << "Aggregate::GetMaterial() method"
+                  "called; should have gone to GeometricPrimitive";
     return nullptr;
 }
 
@@ -61,14 +58,14 @@ void Aggregate::ComputeScatteringFunctions(SurfaceInteraction *isect,
                                            MemoryArena &arena,
                                            TransportMode mode,
                                            bool allowMultipleLobes) const {
-    LOG(FATAL) <<
-        "Aggregate::ComputeScatteringFunctions() method"
-        "called; should have gone to GeometricPrimitive";
+    LOG(FATAL) << "Aggregate::ComputeScatteringFunctions() method"
+                  "called; should have gone to GeometricPrimitive";
 }
 
 // TransformedPrimitive Method Definitions
-TransformedPrimitive::TransformedPrimitive(std::shared_ptr<Primitive> &primitive,
-                                           const AnimatedTransform &PrimitiveToWorld)
+TransformedPrimitive::TransformedPrimitive(
+    std::shared_ptr<Primitive> &primitive,
+    const AnimatedTransform &PrimitiveToWorld)
     : primitive(primitive), PrimitiveToWorld(PrimitiveToWorld) {
     primitiveMemory += sizeof(*this);
 }
@@ -96,14 +93,15 @@ bool TransformedPrimitive::IntersectP(const Ray &r) const {
 }
 
 // GeometricPrimitive Method Definitions
-GeometricPrimitive::GeometricPrimitive(const std::shared_ptr<Shape> &shape,
-                                       const std::shared_ptr<Material> &material,
-                                       const std::shared_ptr<AreaLight> &areaLight,
-                                       const MediumInterface &mediumInterface)
+GeometricPrimitive::GeometricPrimitive(
+    const std::shared_ptr<Shape> &shape,
+    const std::shared_ptr<Material> &material,
+    const std::shared_ptr<AreaLight> &areaLight,
+    const MediumInterface &mediumInterface)
     : shape(shape),
-    material(material),
-    areaLight(areaLight),
-    mediumInterface(mediumInterface) {
+      material(material),
+      areaLight(areaLight),
+      mediumInterface(mediumInterface) {
     primitiveMemory += sizeof(*this);
 }
 

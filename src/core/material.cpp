@@ -30,7 +30,6 @@
 
  */
 
-
 // core/material.cpp*
 #include "material.h"
 #include "primitive.h"

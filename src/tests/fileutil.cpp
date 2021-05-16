@@ -13,13 +13,12 @@ TEST(FileUtil, HasExtension) {
     EXPECT_FALSE(HasExtension("/foo/png", "ppm"));
 }
 
-
 TEST(FileUtil, AbsolutePath) {
 #ifdef PBRT_IS_WINDOWS
     EXPECT_TRUE(IsAbsolutePath("\\\\foo\\bar.exe"));
     EXPECT_TRUE(IsAbsolutePath("c:\\foo\\bar.exe"));
     EXPECT_FALSE(IsAbsolutePath("foo\\bar"));
-#endif // PBRT_IS_WINDOWS
+#endif  // PBRT_IS_WINDOWS
     EXPECT_TRUE(IsAbsolutePath("/foo/bar"));
     EXPECT_FALSE(IsAbsolutePath("foo/bar"));
 }

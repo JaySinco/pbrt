@@ -345,7 +345,7 @@ class DisneyFresnel : public Fresnel {
 // DisneyMicrofacetDistribution
 
 class DisneyMicrofacetDistribution : public TrowbridgeReitzDistribution {
-public:
+  public:
     DisneyMicrofacetDistribution(Float alphax, Float alphay)
         : TrowbridgeReitzDistribution(alphax, alphay) {}
 
@@ -453,7 +453,8 @@ Float DisneyBSSRDF::Sample_Sr(int ch, Float u) const {
         return d[ch] * std::log(1 / (1 - u));
     } else {
         // Second exponenital
-        u = std::min<Float>((u - .25f) / .75f, OneMinusEpsilon);  // normalize to [0,1)
+        u = std::min<Float>((u - .25f) / .75f,
+                            OneMinusEpsilon);  // normalize to [0,1)
         return 3 * d[ch] * std::log(1 / (1 - u));
     }
 }
@@ -532,8 +533,8 @@ void DisneyMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
 
         // Sheen (if enabled)
         if (sheenWeight > 0)
-            si->bsdf->Add(ARENA_ALLOC(arena, DisneySheen)(
-                diffuseWeight * sheenWeight * Csheen));
+            si->bsdf->Add(ARENA_ALLOC(
+                arena, DisneySheen)(diffuseWeight * sheenWeight * Csheen));
     }
 
     // Create the microfacet distribution for metallic and/or specular
@@ -551,8 +552,8 @@ void DisneyMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
              SchlickR0FromEta(e) * Lerp(specTint, Spectrum(1.), Ctint), c);
     Fresnel *fresnel =
         ARENA_ALLOC(arena, DisneyFresnel)(Cspec0, metallicWeight, e);
-    si->bsdf->Add(
-        ARENA_ALLOC(arena, MicrofacetReflection)(Spectrum(1.), distrib, fresnel));
+    si->bsdf->Add(ARENA_ALLOC(arena, MicrofacetReflection)(Spectrum(1.),
+                                                           distrib, fresnel));
 
     // Clearcoat
     Float cc = clearcoat->Evaluate(*si);

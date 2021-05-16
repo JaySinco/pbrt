@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/plymesh.cpp*
 #include "shapes/triangle.h"
 #include "textures/constant.h"
@@ -110,24 +109,26 @@ int rply_face_callback(p_ply_argument argument) {
         ply_get_argument_property(argument, nullptr, &length, &value_index);
 
         if (length != 3 && length != 4) {
-            Warning("plymesh: Ignoring face with %i vertices (only triangles and quads "
-                    "are supported!)",
-                    (int)length);
+            Warning(
+                "plymesh: Ignoring face with %i vertices (only triangles and "
+                "quads "
+                "are supported!)",
+                (int)length);
             return 1;
         } else if (value_index < 0) {
             return 1;
         }
         if (length == 4)
-            CHECK(context->faceIndices == nullptr) <<
-                "face_indices not yet supported for quads";
+            CHECK(context->faceIndices == nullptr)
+                << "face_indices not yet supported for quads";
 
         if (value_index >= 0) {
             int value = (int)ply_get_argument_value(argument);
             if (value < 0 || value >= context->vertexCount) {
                 Error(
-                      "plymesh: Vertex reference %i is out of bounds! "
-                      "Valid range is [0..%i)",
-                      value, context->vertexCount);
+                    "plymesh: Vertex reference %i is out of bounds! "
+                    "Valid range is [0..%i)",
+                    value, context->vertexCount);
                 context->error = true;
             }
             context->face[value_index] = value;
@@ -201,8 +202,7 @@ std::vector<std::shared_ptr<Shape>> CreatePLYMesh(
                         0x032)) {
         context.p = new Point3f[vertexCount];
     } else {
-        Error("%s: Vertex coordinate property not found!",
-              filename.c_str());
+        Error("%s: Vertex coordinate property not found!", filename.c_str());
         return std::vector<std::shared_ptr<Shape>>();
     }
 
@@ -240,14 +240,13 @@ std::vector<std::shared_ptr<Shape>> CreatePLYMesh(
 
     ply_set_read_cb(ply, "face", "vertex_indices", rply_face_callback, &context,
                     0);
-    if (ply_set_read_cb(ply, "face", "face_indices", rply_face_callback, &context,
-                        1))
+    if (ply_set_read_cb(ply, "face", "face_indices", rply_face_callback,
+                        &context, 1))
         // Extra space in case they're quads
         context.faceIndices = new int[faceCount];
 
     if (!ply_read(ply)) {
-        Error("%s: unable to read the contents of PLY file",
-              filename.c_str());
+        Error("%s: unable to read the contents of PLY file", filename.c_str());
         ply_close(ply);
         return std::vector<std::shared_ptr<Shape>>();
     }
@@ -282,11 +281,10 @@ std::vector<std::shared_ptr<Shape>> CreatePLYMesh(
     } else if (params.FindOneFloat("shadowalpha", 1.f) == 0.f)
         shadowAlphaTex.reset(new ConstantTexture<Float>(0.f));
 
-    return CreateTriangleMesh(o2w, w2o, reverseOrientation,
-                              context.indexCtr / 3, context.indices,
-                              vertexCount, context.p, nullptr, context.n,
-                              context.uv, alphaTex, shadowAlphaTex,
-                              context.faceIndices);
+    return CreateTriangleMesh(
+        o2w, w2o, reverseOrientation, context.indexCtr / 3, context.indices,
+        vertexCount, context.p, nullptr, context.n, context.uv, alphaTex,
+        shadowAlphaTex, context.faceIndices);
 }
 
 }  // namespace pbrt

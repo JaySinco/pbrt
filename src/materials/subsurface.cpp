@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/subsurface.cpp*
 #include "materials/subsurface.h"
 #include "textures/constant.h"

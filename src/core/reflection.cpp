@@ -232,7 +232,7 @@ Spectrum MicrofacetReflection::f(const Vector3f &wo, const Vector3f &wi) const {
     wh = Normalize(wh);
     // For the Fresnel call, make sure that wh is in the same hemisphere
     // as the surface normal, so that TIR is handled correctly.
-    Spectrum F = fresnel->Evaluate(Dot(wi, Faceforward(wh, Vector3f(0,0,1))));
+    Spectrum F = fresnel->Evaluate(Dot(wi, Faceforward(wh, Vector3f(0, 0, 1))));
     return R * distribution->D(wh) * distribution->G(wo, wi) * F /
            (4 * cosThetaI * cosThetaO);
 }
@@ -413,7 +413,7 @@ Spectrum MicrofacetReflection::Sample_f(const Vector3f &wo, Vector3f *wi,
     // Sample microfacet orientation $\wh$ and reflected direction $\wi$
     if (wo.z == 0) return 0.;
     Vector3f wh = distribution->Sample_wh(wo, u);
-    if (Dot(wo, wh) < 0) return 0.;   // Should be rare
+    if (Dot(wo, wh) < 0) return 0.;  // Should be rare
     *wi = Reflect(wo, wh);
     if (!SameHemisphere(wo, *wi)) return Spectrum(0.f);
 
@@ -701,8 +701,8 @@ Spectrum BSDF::rho(int nSamples, const Point2f *samples1,
     return ret;
 }
 
-Spectrum BSDF::rho(const Vector3f &woWorld, int nSamples, const Point2f *samples,
-                   BxDFType flags) const {
+Spectrum BSDF::rho(const Vector3f &woWorld, int nSamples,
+                   const Point2f *samples, BxDFType flags) const {
     Vector3f wo = WorldToLocal(woWorld);
     Spectrum ret(0.f);
     for (int i = 0; i < nBxDFs; ++i)
@@ -734,8 +734,9 @@ Spectrum BSDF::Sample_f(const Vector3f &woWorld, Vector3f *wiWorld,
             break;
         }
     CHECK(bxdf != nullptr);
-    VLOG(2) << "BSDF::Sample_f chose comp = " << comp << " / matching = " <<
-        matchingComps << ", bxdf: " << bxdf->ToString();
+    VLOG(2) << "BSDF::Sample_f chose comp = " << comp
+            << " / matching = " << matchingComps
+            << ", bxdf: " << bxdf->ToString();
 
     // Remap _BxDF_ sample _u_ to $[0,1)^2$
     Point2f uRemapped(std::min(u[0] * matchingComps - comp, OneMinusEpsilon),
@@ -747,8 +748,8 @@ Spectrum BSDF::Sample_f(const Vector3f &woWorld, Vector3f *wiWorld,
     *pdf = 0;
     if (sampledType) *sampledType = bxdf->type;
     Spectrum f = bxdf->Sample_f(wo, &wi, uRemapped, pdf, sampledType);
-    VLOG(2) << "For wo = " << wo << ", sampled f = " << f << ", pdf = "
-            << *pdf << ", ratio = " << ((*pdf > 0) ? (f / *pdf) : Spectrum(0.))
+    VLOG(2) << "For wo = " << wo << ", sampled f = " << f << ", pdf = " << *pdf
+            << ", ratio = " << ((*pdf > 0) ? (f / *pdf) : Spectrum(0.))
             << ", wi = " << wi;
     if (*pdf == 0) {
         if (sampledType) *sampledType = BxDFType(0);
@@ -773,8 +774,8 @@ Spectrum BSDF::Sample_f(const Vector3f &woWorld, Vector3f *wiWorld,
                  (!reflect && (bxdfs[i]->type & BSDF_TRANSMISSION))))
                 f += bxdfs[i]->f(wo, wi);
     }
-    VLOG(2) << "Overall f = " << f << ", pdf = " << *pdf << ", ratio = "
-            << ((*pdf > 0) ? (f / *pdf) : Spectrum(0.));
+    VLOG(2) << "Overall f = " << f << ", pdf = " << *pdf
+            << ", ratio = " << ((*pdf > 0) ? (f / *pdf) : Spectrum(0.));
     return f;
 }
 

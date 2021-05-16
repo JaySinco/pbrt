@@ -298,10 +298,12 @@ static void ReportProfileSample(int, siginfo_t *, void *) {
 }
 #endif  // PBRT_HAVE_ITIMER
 
-static std::string timeString(float pct, std::chrono::system_clock::time_point now) {
+static std::string timeString(float pct,
+                              std::chrono::system_clock::time_point now) {
     pct /= 100.;  // remap passed value to to [0,1]
-    int64_t ns =
-        std::chrono::duration_cast<std::chrono::nanoseconds>(now - profileStartTime).count();
+    int64_t ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                     now - profileStartTime)
+                     .count();
     // milliseconds for this category
     int64_t ms = int64_t(ns * pct / 1000000.);
     // Peel off hours, minutes, seconds, and remaining milliseconds.
@@ -317,7 +319,8 @@ static std::string timeString(float pct, std::chrono::system_clock::time_point n
 
 void ReportProfilerResults(FILE *dest) {
 #ifdef PBRT_HAVE_ITIMER
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point now =
+        std::chrono::system_clock::now();
 
     PBRT_CONSTEXPR int NumProfCategories = (int)Prof::NumProfCategories;
     uint64_t overallCount = 0;

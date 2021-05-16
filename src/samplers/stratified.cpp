@@ -30,7 +30,6 @@
 
  */
 
-
 // samplers/stratified.cpp*
 #include "samplers/stratified.h"
 #include "paramset.h"

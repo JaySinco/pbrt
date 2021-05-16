@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/heightfield.cpp*
 #include "shapes/heightfield.h"
 #include "shapes/triangle.h"

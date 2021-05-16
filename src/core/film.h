@@ -118,11 +118,9 @@ class FilmTile {
           maxSampleLuminance(maxSampleLuminance) {
         pixels = std::vector<FilmTilePixel>(std::max(0, pixelBounds.Area()));
     }
-    void AddSample(const Point2f &pFilm, Spectrum L,
-                   Float sampleWeight = 1.) {
+    void AddSample(const Point2f &pFilm, Spectrum L, Float sampleWeight = 1.) {
         ProfilePhase _(Prof::AddFilmSample);
-        if (L.y() > maxSampleLuminance)
-            L *= maxSampleLuminance / L.y();
+        if (L.y() > maxSampleLuminance) L *= maxSampleLuminance / L.y();
         // Compute sample's raster bounds
         Point2f pFilmDiscrete = pFilm - Vector2f(0.5f, 0.5f);
         Point2i p0 = (Point2i)Ceil(pFilmDiscrete - filterRadius);

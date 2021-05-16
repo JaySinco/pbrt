@@ -30,7 +30,6 @@
 
  */
 
-
 // samplers/maxmin.cpp*
 #include "samplers/maxmin.h"
 #include "paramset.h"

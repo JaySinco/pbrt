@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/plastic.cpp*
 #include "materials/plastic.h"
 #include "spectrum.h"

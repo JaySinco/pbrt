@@ -56,9 +56,9 @@ T *AllocAligned(size_t count) {
 void FreeAligned(void *);
 class
 #ifdef PBRT_HAVE_ALIGNAS
-alignas(PBRT_L1_CACHE_LINE_SIZE)
-#endif // PBRT_HAVE_ALIGNAS
-    MemoryArena {
+    alignas(PBRT_L1_CACHE_LINE_SIZE)
+#endif  // PBRT_HAVE_ALIGNAS
+        MemoryArena {
   public:
     // MemoryArena Public Methods
     MemoryArena(size_t blockSize = 262144) : blockSize(blockSize) {}
@@ -78,7 +78,8 @@ alignas(PBRT_L1_CACHE_LINE_SIZE)
         const int align = alignof(std::max_align_t);
 #endif
 #ifdef PBRT_HAVE_CONSTEXPR
-        static_assert(IsPowerOf2(align), "Minimum alignment not a power of two");
+        static_assert(IsPowerOf2(align),
+                      "Minimum alignment not a power of two");
 #endif
         nBytes = (nBytes + align - 1) & ~(align - 1);
         if (currentBlockPos + nBytes > currentAllocSize) {

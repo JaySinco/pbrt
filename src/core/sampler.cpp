@@ -30,7 +30,6 @@
 
  */
 
-
 // core/sampler.cpp*
 #include "sampler.h"
 #include "sampling.h"

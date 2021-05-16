@@ -30,7 +30,6 @@
 
  */
 
-
 // textures/windy.cpp*
 #include "textures/windy.h"
 

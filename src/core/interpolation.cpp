@@ -141,14 +141,11 @@ Float SampleCatmullRom(int n, const Float *x, const Float *f, const Float *F,
         if (!(t > a && t < b)) t = 0.5f * (a + b);
 
         // Evaluate target function and its derivative in Horner form
-        Fhat = t * (f0 +
-                    t * (.5f * d0 +
-                         t * ((1.f / 3.f) * (-2 * d0 - d1) + f1 - f0 +
-                              t * (.25f * (d0 + d1) + .5f * (f0 - f1)))));
-        fhat = f0 +
-               t * (d0 +
-                    t * (-2 * d0 - d1 + 3 * (f1 - f0) +
-                         t * (d0 + d1 + 2 * (f0 - f1))));
+        Fhat = t * (f0 + t * (.5f * d0 +
+                              t * ((1.f / 3.f) * (-2 * d0 - d1) + f1 - f0 +
+                                   t * (.25f * (d0 + d1) + .5f * (f0 - f1)))));
+        fhat = f0 + t * (d0 + t * (-2 * d0 - d1 + 3 * (f1 - f0) +
+                                   t * (d0 + d1 + 2 * (f0 - f1))));
 
         // Stop the iteration if converged
         if (std::abs(Fhat - u) < 1e-6f || b - a < 1e-6f) break;
@@ -229,14 +226,11 @@ Float SampleCatmullRom2D(int size1, int size2, const Float *nodes1,
         if (!(t >= a && t <= b)) t = 0.5f * (a + b);
 
         // Evaluate target function and its derivative in Horner form
-        Fhat = t * (f0 +
-                    t * (.5f * d0 +
-                         t * ((1.f / 3.f) * (-2 * d0 - d1) + f1 - f0 +
-                              t * (.25f * (d0 + d1) + .5f * (f0 - f1)))));
-        fhat = f0 +
-               t * (d0 +
-                    t * (-2 * d0 - d1 + 3 * (f1 - f0) +
-                         t * (d0 + d1 + 2 * (f0 - f1))));
+        Fhat = t * (f0 + t * (.5f * d0 +
+                              t * ((1.f / 3.f) * (-2 * d0 - d1) + f1 - f0 +
+                                   t * (.25f * (d0 + d1) + .5f * (f0 - f1)))));
+        fhat = f0 + t * (d0 + t * (-2 * d0 - d1 + 3 * (f1 - f0) +
+                                   t * (d0 + d1 + 2 * (f0 - f1))));
 
         // Stop the iteration if converged
         if (std::abs(Fhat - u) < 1e-6f || b - a < 1e-6f) break;

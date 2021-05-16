@@ -30,7 +30,6 @@
 
  */
 
-
 // filters/box.cpp*
 #include "filters/box.h"
 #include "paramset.h"

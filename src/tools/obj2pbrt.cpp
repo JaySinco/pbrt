@@ -1299,7 +1299,8 @@ bool LoadObj(std::vector<shape_t> &shapes,       // [output]
 using namespace tinyobj;
 
 static void usage() {
-    fprintf(stderr, "usage: obj2pbrt [--ptexquads] <OBJ filename> <pbrt filename>\n");
+    fprintf(stderr,
+            "usage: obj2pbrt [--ptexquads] <OBJ filename> <pbrt filename>\n");
     exit(1);
 }
 
@@ -1318,19 +1319,21 @@ int main(int argc, char *argv[]) {
         else
             usage();
     }
-    if (!pbrtFilename)
-        usage();
+    if (!pbrtFilename) usage();
 
     std::vector<shape_t> shapes;
     std::vector<material_t> materials;
     std::string err;
-    if (!LoadObj(shapes, materials, err, objFilename, /* mtl_basepath */ nullptr,
+    if (!LoadObj(shapes, materials, err, objFilename,
+                 /* mtl_basepath */ nullptr,
                  ptexQuads ? 0 : load_flags_t(triangulation))) {
-        fprintf(stderr, "%s: errors loading OBJ file: %s\n", objFilename, err.c_str());
+        fprintf(stderr, "%s: errors loading OBJ file: %s\n", objFilename,
+                err.c_str());
         return 1;
     }
 
-    FILE *f = (strcmp(pbrtFilename, "-") == 0) ? stdout : fopen(pbrtFilename, "w");
+    FILE *f =
+        (strcmp(pbrtFilename, "-") == 0) ? stdout : fopen(pbrtFilename, "w");
     if (!f) {
         perror(pbrtFilename);
         return 1;
@@ -1454,23 +1457,30 @@ int main(int argc, char *argv[]) {
                 std::map<std::string, std::string>::const_iterator iter;
                 for (iter = mtl.unknown_parameter.begin();
                      iter != mtl.unknown_parameter.end(); ++iter)
-                  fprintf(stderr, "Unknown parameter: %s = %s\n",
-                          iter->first.c_str(), iter->second.c_str());
+                    fprintf(stderr, "Unknown parameter: %s = %s\n",
+                            iter->first.c_str(), iter->second.c_str());
 
                 if (mtl.emission[0] > 0 || mtl.emission[1] > 0 ||
                     mtl.emission[2] > 0) {
-                  fprintf(f, "AreaLightSource \"area\" \"rgb L\" [ %f %f %f ]\n",
-                          mtl.emission[0], mtl.emission[1], mtl.emission[2]);
-                  ++numAreaLights;
+                    fprintf(f,
+                            "AreaLightSource \"area\" \"rgb L\" [ %f %f %f ]\n",
+                            mtl.emission[0], mtl.emission[1], mtl.emission[2]);
+                    ++numAreaLights;
                 }
 
                 fprintf(f, "NamedMaterial \"%s\"\n", mtl.name.c_str());
             }
 
             // Now emit all the faces that have the matching material id.
-            struct Point3f { float x, y, z; };
-            struct Point2f { float x, y; };
-            struct Normal3f { float x, y, z; };
+            struct Point3f {
+                float x, y, z;
+            };
+            struct Point2f {
+                float x, y;
+            };
+            struct Normal3f {
+                float x, y, z;
+            };
             std::vector<Point3f> P;
             std::vector<Normal3f> N;
             std::vector<Point2f> st;
@@ -1486,8 +1496,11 @@ int main(int argc, char *argv[]) {
 
                 if (ptexQuads) {
                     if (mesh.num_vertices[i] != 4) {
-                        // We assume all quads when indexing into the indices array
-                        fprintf(stderr, "%d: Mesh has a non quad face.. Sorry.\n", mesh.num_vertices[i]);
+                        // We assume all quads when indexing into the indices
+                        // array
+                        fprintf(stderr,
+                                "%d: Mesh has a non quad face.. Sorry.\n",
+                                mesh.num_vertices[i]);
                         exit(1);
                     }
 
@@ -1497,22 +1510,22 @@ int main(int argc, char *argv[]) {
                     int index = P.size();
                     // Triangulate
                     indices.push_back(index);
-                    indices.push_back(index+1);
-                    indices.push_back(index+2);
+                    indices.push_back(index + 1);
+                    indices.push_back(index + 2);
 
                     indices.push_back(index);
-                    indices.push_back(index+2);
-                    indices.push_back(index+3);
+                    indices.push_back(index + 2);
+                    indices.push_back(index + 3);
 
                     for (int v = 0; v < 4; ++v) {
                         int vi = mesh.indices[4 * i + v];
                         P.push_back({mesh.positions[3 * vi],
-                                    mesh.positions[3 * vi + 1],
-                                    mesh.positions[3 * vi + 2]});
+                                     mesh.positions[3 * vi + 1],
+                                     mesh.positions[3 * vi + 2]});
                         if (!mesh.normals.empty())
                             N.push_back({mesh.normals[3 * vi],
-                                        mesh.normals[3 * vi + 1],
-                                        mesh.normals[3 * vi + 2]});
+                                         mesh.normals[3 * vi + 1],
+                                         mesh.normals[3 * vi + 2]});
                     }
 
                     // fixed texture coords over [0,1]
@@ -1525,7 +1538,8 @@ int main(int argc, char *argv[]) {
                 } else {
                     if (mesh.num_vertices[i] != 3) {
                         // These should have been triangulated by tinyobj.
-                        fprintf(stderr, "Mesh has a non-triangular face. Sorry.\n");
+                        fprintf(stderr,
+                                "Mesh has a non-triangular face. Sorry.\n");
                         exit(1);
                     }
 
@@ -1534,18 +1548,20 @@ int main(int argc, char *argv[]) {
                         int objIndex = mesh.indices[3 * i + v];
                         if (indexRemap.find(objIndex) == indexRemap.end()) {
                             // First time we've seen this index.
-                            indexRemap.insert(std::make_pair(objIndex, (int)indexRemap.size()));
+                            indexRemap.insert(std::make_pair(
+                                objIndex, (int)indexRemap.size()));
 
                             P.push_back({mesh.positions[3 * objIndex],
-                                        mesh.positions[3 * objIndex + 1],
-                                        mesh.positions[3 * objIndex + 2]});
+                                         mesh.positions[3 * objIndex + 1],
+                                         mesh.positions[3 * objIndex + 2]});
                             if (mesh.normals.size())
                                 N.push_back({mesh.normals[3 * objIndex],
-                                            mesh.normals[3 * objIndex + 1],
-                                            mesh.normals[3 * objIndex + 2]});
+                                             mesh.normals[3 * objIndex + 1],
+                                             mesh.normals[3 * objIndex + 2]});
                             if (mesh.texcoords.size())
-                                st.push_back({mesh.texcoords[2 * objIndex],
-                                            mesh.texcoords[2 * objIndex + 1]});
+                                st.push_back(
+                                    {mesh.texcoords[2 * objIndex],
+                                     mesh.texcoords[2 * objIndex + 1]});
                         }
 
                         // In any case emit the index (but remapped
@@ -1560,26 +1576,25 @@ int main(int argc, char *argv[]) {
             fprintf(f, "  \"point3 P\" [ \n");
             for (Point3f p : P)
                 fprintf(f, "\t%.10g %.10g %.10g\n", p.x, p.y, p.z);
-            fprintf(f,"]\n");
+            fprintf(f, "]\n");
             if (!N.empty()) {
                 fprintf(f, "  \"normal N\" [ \n");
                 for (Normal3f n : N)
                     fprintf(f, "\t%.10g %.10g %.10g\n", n.x, n.y, n.z);
-                fprintf(f,"]\n");
+                fprintf(f, "]\n");
             }
             if (!st.empty()) {
                 fprintf(f, "  \"point2 st\" [ \n");
                 for (Point2f tex : st)
                     fprintf(f, "\t%.10g %.10g\n", tex.x, tex.y);
-                fprintf(f,"]\n");
+                fprintf(f, "]\n");
             }
             fprintf(f, "  \"integer indices\" [ \n\t");
             for (size_t i = 0; i < indices.size(); ++i)
                 fprintf(f, "%d%s", indices[i], (i % 3) == 2 ? "\n\t" : " ");
             if (!faceIndices.empty()) {
                 fprintf(f, "]\n  \"integer faceIndices\" [\n");
-                for (int i : faceIndices)
-                    fprintf(f, "\t%d\n", i);
+                for (int i : faceIndices) fprintf(f, "\t%d\n", i);
             }
             fprintf(f, "]\n\n");
         }

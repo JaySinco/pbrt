@@ -30,7 +30,6 @@
 
  */
 
-
 // core/bssrdf.cpp*
 #include "bssrdf.h"
 #include "interpolation.h"
@@ -101,8 +100,9 @@ Float BeamDiffusionMS(Float sigma_s, Float sigma_a, Float g, Float eta,
         Float dr = std::sqrt(r * r + zr * zr), dv = std::sqrt(r * r + zv * zv);
 
         // Compute dipole fluence rate $\dipole(r)$ using Equation (15.27)
-        Float phiD = Inv4Pi / D_g * (std::exp(-sigma_tr * dr) / dr -
-                                     std::exp(-sigma_tr * dv) / dv);
+        Float phiD =
+            Inv4Pi / D_g *
+            (std::exp(-sigma_tr * dr) / dr - std::exp(-sigma_tr * dv) / dv);
 
         // Compute dipole vector irradiance $-\N{}\cdot\dipoleE(r)$ using
         // Equation (15.27)
@@ -154,24 +154,27 @@ void ComputeBeamDiffusionBSSRDF(Float g, Float eta, BSSRDFTable *t) {
         t->rhoSamples[i] =
             (1 - std::exp(-8 * i / (Float)(t->nRhoSamples - 1))) /
             (1 - std::exp(-8));
-    ParallelFor([&](int i) {
-        // Compute the diffusion profile for the _i_th albedo sample
+    ParallelFor(
+        [&](int i) {
+            // Compute the diffusion profile for the _i_th albedo sample
 
-        // Compute scattering profile for chosen albedo $\rho$
-        for (int j = 0; j < t->nRadiusSamples; ++j) {
-            Float rho = t->rhoSamples[i], r = t->radiusSamples[j];
-            t->profile[i * t->nRadiusSamples + j] =
-                2 * Pi * r * (BeamDiffusionSS(rho, 1 - rho, g, eta, r) +
-                              BeamDiffusionMS(rho, 1 - rho, g, eta, r));
-        }
+            // Compute scattering profile for chosen albedo $\rho$
+            for (int j = 0; j < t->nRadiusSamples; ++j) {
+                Float rho = t->rhoSamples[i], r = t->radiusSamples[j];
+                t->profile[i * t->nRadiusSamples + j] =
+                    2 * Pi * r *
+                    (BeamDiffusionSS(rho, 1 - rho, g, eta, r) +
+                     BeamDiffusionMS(rho, 1 - rho, g, eta, r));
+            }
 
-        // Compute effective albedo $\rho_{\roman{eff}}$ and CDF for importance
-        // sampling
-        t->rhoEff[i] =
-            IntegrateCatmullRom(t->nRadiusSamples, t->radiusSamples.get(),
-                                &t->profile[i * t->nRadiusSamples],
-                                &t->profileCDF[i * t->nRadiusSamples]);
-    }, t->nRhoSamples);
+            // Compute effective albedo $\rho_{\roman{eff}}$ and CDF for
+            // importance sampling
+            t->rhoEff[i] =
+                IntegrateCatmullRom(t->nRadiusSamples, t->radiusSamples.get(),
+                                    &t->profile[i * t->nRadiusSamples],
+                                    &t->profileCDF[i * t->nRadiusSamples]);
+        },
+        t->nRhoSamples);
 }
 
 void SubsurfaceFromDiffuse(const BSSRDFTable &t, const Spectrum &rhoEff,
@@ -304,8 +307,7 @@ Spectrum SeparableBSSRDF::Sample_Sp(const Scene &scene, Float u1,
     int nFound = 0;
     while (true) {
         Ray r = base.SpawnRayTo(pTarget);
-        if (r.d == Vector3f(0, 0, 0) || !scene.Intersect(r, &ptr->si))
-            break;
+        if (r.d == Vector3f(0, 0, 0) || !scene.Intersect(r, &ptr->si)) break;
 
         base = ptr->si;
         // Append admissible intersection to _IntersectionChain_

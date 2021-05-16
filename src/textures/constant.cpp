@@ -30,7 +30,6 @@
 
  */
 
-
 // textures/constant.cpp*
 #include "textures/constant.h"
 

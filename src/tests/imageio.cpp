@@ -34,44 +34,43 @@ static void TestRoundTrip(const char *fn, bool gamma) {
             readPixels[y * res[0] + x].ToRGB(rgb);
 
             for (int c = 0; c < 3; ++c) {
-                if (gamma)
-                    rgb[c] = InverseGammaCorrect(rgb[c]);
+                if (gamma) rgb[c] = InverseGammaCorrect(rgb[c]);
 
                 float wrote = pixels[3 * (y * res[0] + x) + c];
                 float delta = wrote - rgb[c];
                 if (HasExtension(filename, "pfm")) {
                     // Everything should come out exact.
-                    EXPECT_EQ(0, delta) << filename << ":(" << x << ", " << y
-                                        << ") c = " << c << " wrote " << wrote
-                                        << ", read " << rgb[c]
-                                        << ", delta = " << delta;
+                    EXPECT_EQ(0, delta)
+                        << filename << ":(" << x << ", " << y << ") c = " << c
+                        << " wrote " << wrote << ", read " << rgb[c]
+                        << ", delta = " << delta;
                 } else if (HasExtension(filename, "exr")) {
                     if (c == 2)
                         // -1.5 is exactly representable as a float.
-                        EXPECT_EQ(0, delta) << "(" << x << ", " << y
-                                            << ") c = " << c << " wrote "
-                                            << wrote << ", read " << rgb[c]
-                                            << ", delta = " << delta;
-                    else
-                        EXPECT_LT(std::abs(delta), .001)
-                            << filename << ":(" << x << ", " << y << ") c = " << c
+                        EXPECT_EQ(0, delta)
+                            << "(" << x << ", " << y << ") c = " << c
                             << " wrote " << wrote << ", read " << rgb[c]
                             << ", delta = " << delta;
+                    else
+                        EXPECT_LT(std::abs(delta), .001)
+                            << filename << ":(" << x << ", " << y
+                            << ") c = " << c << " wrote " << wrote << ", read "
+                            << rgb[c] << ", delta = " << delta;
                 } else {
                     // 8 bit format...
                     if (c == 2)
                         // -1.5 should be clamped to zero.
-                        EXPECT_EQ(0, rgb[c]) << "(" << x << ", " << y
-                                             << ") c = " << c << " wrote "
-                                             << wrote << ", read " << rgb[c]
-                                             << " (expected 0 back)";
+                        EXPECT_EQ(0, rgb[c])
+                            << "(" << x << ", " << y << ") c = " << c
+                            << " wrote " << wrote << ", read " << rgb[c]
+                            << " (expected 0 back)";
                     else
                         // Allow a fair amount of slop, since there's an sRGB
                         // conversion before quantization to 8-bits...
                         EXPECT_LT(std::abs(delta), .02)
-                            << filename << ":(" << x << ", " << y << ") c = " << c
-                            << " wrote " << wrote << ", read " << rgb[c]
-                            << ", delta = " << delta;
+                            << filename << ":(" << x << ", " << y
+                            << ") c = " << c << " wrote " << wrote << ", read "
+                            << rgb[c] << ", delta = " << delta;
                 }
             }
         }

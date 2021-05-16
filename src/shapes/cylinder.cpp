@@ -30,7 +30,6 @@
 
  */
 
-
 // shapes/cylinder.cpp*
 #include "shapes/cylinder.h"
 #include "paramset.h"

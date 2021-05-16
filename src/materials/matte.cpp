@@ -30,7 +30,6 @@
 
  */
 
-
 // materials/matte.cpp*
 #include "materials/matte.h"
 #include "paramset.h"

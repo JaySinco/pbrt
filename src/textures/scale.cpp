@@ -30,7 +30,6 @@
 
  */
 
-
 // textures/scale.cpp*
 #include "textures/scale.h"
 

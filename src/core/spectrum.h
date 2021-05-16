@@ -146,8 +146,8 @@ class CoefficientSpectrum {
         DCHECK(!s2.HasNaNs());
         CoefficientSpectrum ret = *this;
         for (int i = 0; i < nSpectrumSamples; ++i) {
-          CHECK_NE(s2.c[i], 0);
-          ret.c[i] /= s2.c[i];
+            CHECK_NE(s2.c[i], 0);
+            ret.c[i] /= s2.c[i];
         }
         return ret;
     }
@@ -247,8 +247,7 @@ class CoefficientSpectrum {
     }
     Float MaxComponentValue() const {
         Float m = c[0];
-        for (int i = 1; i < nSpectrumSamples; ++i)
-            m = std::max(m, c[i]);
+        for (int i = 1; i < nSpectrumSamples; ++i) m = std::max(m, c[i]);
         return m;
     }
     bool HasNaNs() const {

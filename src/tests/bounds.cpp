@@ -83,7 +83,7 @@ TEST(Bounds3, PointDistance) {
 
 TEST(Bounds2, Union) {
     Bounds2f a(Point2f(-10, -10), Point2f(0, 20));
-    Bounds2f b; // degenerate
+    Bounds2f b;  // degenerate
     Bounds2f c = Union(a, b);
     EXPECT_EQ(a, c);
 
@@ -96,7 +96,7 @@ TEST(Bounds2, Union) {
 
 TEST(Bounds3, Union) {
     Bounds3f a(Point3f(-10, -10, 5), Point3f(0, 20, 10));
-    Bounds3f b; // degenerate
+    Bounds3f b;  // degenerate
     Bounds3f c = Union(a, b);
     EXPECT_EQ(a, c);
 

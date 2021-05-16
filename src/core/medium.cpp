@@ -30,7 +30,6 @@
 
  */
 
-
 // core/medium.cpp*
 #include "medium.h"
 #include "memory.h"
@@ -51,40 +50,64 @@ static MeasuredSS SubsurfaceParameterTable[] = {
     // Jensen, Marschner, Levoy, Hanrahan
     // Proc SIGGRAPH 2001
     {
-        "Apple", {2.29, 2.39, 1.97}, {0.0030, 0.0034, 0.046},
+        "Apple",
+        {2.29, 2.39, 1.97},
+        {0.0030, 0.0034, 0.046},
     },
     {
-        "Chicken1", {0.15, 0.21, 0.38}, {0.015, 0.077, 0.19},
+        "Chicken1",
+        {0.15, 0.21, 0.38},
+        {0.015, 0.077, 0.19},
     },
     {
-        "Chicken2", {0.19, 0.25, 0.32}, {0.018, 0.088, 0.20},
+        "Chicken2",
+        {0.19, 0.25, 0.32},
+        {0.018, 0.088, 0.20},
     },
     {
-        "Cream", {7.38, 5.47, 3.15}, {0.0002, 0.0028, 0.0163},
+        "Cream",
+        {7.38, 5.47, 3.15},
+        {0.0002, 0.0028, 0.0163},
     },
     {
-        "Ketchup", {0.18, 0.07, 0.03}, {0.061, 0.97, 1.45},
+        "Ketchup",
+        {0.18, 0.07, 0.03},
+        {0.061, 0.97, 1.45},
     },
     {
-        "Marble", {2.19, 2.62, 3.00}, {0.0021, 0.0041, 0.0071},
+        "Marble",
+        {2.19, 2.62, 3.00},
+        {0.0021, 0.0041, 0.0071},
     },
     {
-        "Potato", {0.68, 0.70, 0.55}, {0.0024, 0.0090, 0.12},
+        "Potato",
+        {0.68, 0.70, 0.55},
+        {0.0024, 0.0090, 0.12},
     },
     {
-        "Skimmilk", {0.70, 1.22, 1.90}, {0.0014, 0.0025, 0.0142},
+        "Skimmilk",
+        {0.70, 1.22, 1.90},
+        {0.0014, 0.0025, 0.0142},
     },
     {
-        "Skin1", {0.74, 0.88, 1.01}, {0.032, 0.17, 0.48},
+        "Skin1",
+        {0.74, 0.88, 1.01},
+        {0.032, 0.17, 0.48},
     },
     {
-        "Skin2", {1.09, 1.59, 1.79}, {0.013, 0.070, 0.145},
+        "Skin2",
+        {1.09, 1.59, 1.79},
+        {0.013, 0.070, 0.145},
     },
     {
-        "Spectralon", {11.6, 20.4, 14.9}, {0.00, 0.00, 0.00},
+        "Spectralon",
+        {11.6, 20.4, 14.9},
+        {0.00, 0.00, 0.00},
     },
     {
-        "Wholemilk", {2.55, 3.21, 3.77}, {0.0011, 0.0024, 0.014},
+        "Wholemilk",
+        {2.55, 3.21, 3.77},
+        {0.0011, 0.0024, 0.014},
     },
 
     // From "Acquiring Scattering Properties of Participating Media by
@@ -176,7 +199,7 @@ static MeasuredSS SubsurfaceParameterTable[] = {
      {0.031845, 0.031324, 0.030147}}};
 
 // Media Definitions
-PhaseFunction::~PhaseFunction() { }
+PhaseFunction::~PhaseFunction() {}
 
 bool GetMediumScatteringProperties(const std::string &name, Spectrum *sigma_a,
                                    Spectrum *sigma_prime_s) {

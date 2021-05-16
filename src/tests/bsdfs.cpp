@@ -129,27 +129,28 @@ Float AdaptiveSimpson(const std::function<Float(Float)>& f, Float x0, Float x1,
     int count = 0;
     /* Define an recursive lambda function for integration over subintervals */
     std::function<Float(Float, Float, Float, Float, Float, Float, Float, Float,
-                        int)> integrate = [&](Float a, Float b, Float c,
-                                              Float fa, Float fb, Float fc,
-                                              Float I, Float eps, int depth) {
-        /* Evaluate the function at two intermediate points */
-        Float d = 0.5f * (a + b), e = 0.5f * (b + c), fd = f(d), fe = f(e);
+                        int)>
+        integrate = [&](Float a, Float b, Float c, Float fa, Float fb, Float fc,
+                        Float I, Float eps, int depth) {
+            /* Evaluate the function at two intermediate points */
+            Float d = 0.5f * (a + b), e = 0.5f * (b + c), fd = f(d), fe = f(e);
 
-        /* Simpson integration over each subinterval */
-        Float h = c - a, I0 = (Float)(1.0 / 12.0) * h * (fa + 4 * fd + fb),
-              I1 = (Float)(1.0 / 12.0) * h * (fb + 4 * fe + fc), Ip = I0 + I1;
-        ++count;
+            /* Simpson integration over each subinterval */
+            Float h = c - a, I0 = (Float)(1.0 / 12.0) * h * (fa + 4 * fd + fb),
+                  I1 = (Float)(1.0 / 12.0) * h * (fb + 4 * fe + fc),
+                  Ip = I0 + I1;
+            ++count;
 
-        /* Stopping criterion from J.N. Lyness (1969)
-          "Notes on the adaptive Simpson quadrature routine" */
-        if (depth <= 0 || std::abs(Ip - I) < 15 * eps) {
-            // Richardson extrapolation
-            return Ip + (Float)(1.0 / 15.0) * (Ip - I);
-        }
+            /* Stopping criterion from J.N. Lyness (1969)
+              "Notes on the adaptive Simpson quadrature routine" */
+            if (depth <= 0 || std::abs(Ip - I) < 15 * eps) {
+                // Richardson extrapolation
+                return Ip + (Float)(1.0 / 15.0) * (Ip - I);
+            }
 
-        return integrate(a, d, b, fa, fd, fb, I0, .5f * eps, depth - 1) +
-               integrate(b, e, c, fb, fe, fc, I1, .5f * eps, depth - 1);
-    };
+            return integrate(a, d, b, fa, fd, fb, I0, .5f * eps, depth - 1) +
+                   integrate(b, e, c, fb, fe, fc, I1, .5f * eps, depth - 1);
+        };
     Float a = x0, b = 0.5f * (x0 + x1), c = x1;
     Float fa = f(a), fb = f(b), fc = f(c);
     Float I = (c - a) * (Float)(1.0 / 6.0) * (fa + 4 * fb + fc);
@@ -181,7 +182,7 @@ void FrequencyTable(const BSDF* bsdf, const Vector3f& wo, RNG& rng,
     Float pdf;
 
     for (int i = 0; i < sampleCount; ++i) {
-        Point2f sample {rng.UniformFloat(), rng.UniformFloat()};
+        Point2f sample{rng.UniformFloat(), rng.UniformFloat()};
         Spectrum f = bsdf->Sample_f(wo, &wi, sample, &pdf, BSDF_ALL, &flags);
 
         if (f == Spectrum() || (flags & BSDF_SPECULAR)) continue;
@@ -305,9 +306,9 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
                    lenient. */
 
                 std::string result = StringPrintf(
-                        "Encountered %f samples in a c with expected "
-                        "frequency 0. Rejecting the null hypothesis!",
-                        frequencies[c.index]);
+                    "Encountered %f samples in a c with expected "
+                    "frequency 0. Rejecting the null hypothesis!",
+                    frequencies[c.index]);
                 return std::make_pair(false, result);
             }
         } else if (expFrequencies[c.index] < minExpFrequency) {
@@ -341,7 +342,7 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
 
     if (dof <= 0) {
         std::string result = StringPrintf(
-              "The number of degrees of freedom %d is too low!", dof);
+            "The number of degrees of freedom %d is too low!", dof);
         return std::make_pair(false, result);
     }
 
@@ -358,10 +359,10 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
     Float alpha = 1.0f - std::pow(1.0f - significanceLevel, 1.0f / numTests);
 
     if (pval < alpha || !std::isfinite(pval)) {
-      std::string result = StringPrintf(
-                "Rejected the null hypothesis (p-value = %f, "
-                "significance level = %f",
-                pval, alpha);
+        std::string result = StringPrintf(
+            "Rejected the null hypothesis (p-value = %f, "
+            "significance level = %f",
+            pval, alpha);
         return std::make_pair(false, result);
     } else {
         return std::make_pair(true, std::string(""));
@@ -409,7 +410,7 @@ void TestBSDF(void (*createBSDF)(BSDF*, MemoryArena&),
 
     for (int k = 0; k < CHI2_RUNS; ++k) {
         /* Randomly pick an outgoing direction on the hemisphere */
-        Point2f sample {rng.UniformFloat(), rng.UniformFloat()};
+        Point2f sample{rng.UniformFloat(), rng.UniformFloat()};
         Vector3f woL = CosineSampleHemisphere(sample);
         Vector3f wo = bsdf->LocalToWorld(woL);
 
@@ -419,8 +420,8 @@ void TestBSDF(void (*createBSDF)(BSDF*, MemoryArena&),
         IntegrateFrequencyTable(bsdf, wo, sampleCount, thetaRes, phiRes,
                                 expFrequencies);
 
-        std::string filename = StringPrintf("/tmp/chi2test_%s_%03i.m",
-                                            description, ++index);
+        std::string filename =
+            StringPrintf("/tmp/chi2test_%s_%03i.m", description, ++index);
         DumpTables(frequencies, expFrequencies, thetaRes, phiRes,
                    filename.c_str());
 
@@ -484,73 +485,97 @@ void createFresnelBlend(BSDF* bsdf, MemoryArena& arena, bool beckmann,
 TEST(BSDFSampling, Lambertian) { TestBSDF(createLambertian, "Lambertian"); }
 
 TEST(BSDFSampling, Beckmann_VA_0p5) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, true, true, 0.5, 0.5);
-    }, "Beckmann, visible area sample, alpha = 0.5");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, true, true, 0.5, 0.5);
+        },
+        "Beckmann, visible area sample, alpha = 0.5");
 }
 
 TEST(BSDFSampling, TR_VA_0p5) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, false, true, 0.5, 0.5);
-    }, "Trowbridge-Reitz, visible area sample, alpha = 0.5");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, false, true, 0.5, 0.5);
+        },
+        "Trowbridge-Reitz, visible area sample, alpha = 0.5");
 }
 
 TEST(BSDFSampling, Beckmann_std_0p5) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, true, false, 0.5, 0.5);
-    }, "Beckmann, std sample, alpha = 0.5");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, true, false, 0.5, 0.5);
+        },
+        "Beckmann, std sample, alpha = 0.5");
 }
 
 TEST(BSDFSampling, TR_std_0p5) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, false, false, 0.5, 0.5);
-    }, "Trowbridge-Reitz, std sample, alpha = 0.5");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, false, false, 0.5, 0.5);
+        },
+        "Trowbridge-Reitz, std sample, alpha = 0.5");
 }
 
 TEST(BSDFSampling, Beckmann_VA_0p2_0p1) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, true, true, 0.2, 0.1);
-    }, "Beckmann, visible area sample, alpha = 0.2/0.1");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, true, true, 0.2, 0.1);
+        },
+        "Beckmann, visible area sample, alpha = 0.2/0.1");
 }
 
 TEST(BSDFSampling, TR_VA_0p3_0p15) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, false, true, 0.3, 0.15);
-    }, "Trowbridge-Reitz, visible area sample, alpha = 0.3/0.15");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, false, true, 0.3, 0.15);
+        },
+        "Trowbridge-Reitz, visible area sample, alpha = 0.3/0.15");
 }
 
 TEST(BSDFSampling, Beckmann_std_0p2_0p1) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, true, false, 0.2, 0.1);
-    }, "Beckmann, std sample, alpha = 0.2/0.1");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, true, false, 0.2, 0.1);
+        },
+        "Beckmann, std sample, alpha = 0.2/0.1");
 }
 
 TEST(BSDFSampling, TR_std_0p2_0p1) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createMicrofacet(bsdf, arena, false, false, 0.2, 0.1);
-    }, "Trowbridge-Reitz, std sample, alpha = 0.2/0.1");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createMicrofacet(bsdf, arena, false, false, 0.2, 0.1);
+        },
+        "Trowbridge-Reitz, std sample, alpha = 0.2/0.1");
 }
 
 TEST(BSDFSampling, Beckmann_VA_0p4_0p3) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createFresnelBlend(bsdf, arena, true, true, 0.4, 0.3);
-    }, "Fresnel blend Beckmann, visible area sample, alpha = 0.4/0.3");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createFresnelBlend(bsdf, arena, true, true, 0.4, 0.3);
+        },
+        "Fresnel blend Beckmann, visible area sample, alpha = 0.4/0.3");
 }
 
 TEST(BSDFSampling, TR_VA_0p3) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createFresnelBlend(bsdf, arena, false, true, 0.3, 0.3);
-    }, "Fresnel blend Trowbridge-Reitz, visible area sample, alpha = 0.3");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createFresnelBlend(bsdf, arena, false, true, 0.3, 0.3);
+        },
+        "Fresnel blend Trowbridge-Reitz, visible area sample, alpha = 0.3");
 }
 
 TEST(BSDFSampling, Beckmann_std_0p2) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createFresnelBlend(bsdf, arena, true, false, 0.2, 0.2);
-    }, "Fresnel blend Beckmann, std sample, alpha = 0.2");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createFresnelBlend(bsdf, arena, true, false, 0.2, 0.2);
+        },
+        "Fresnel blend Beckmann, std sample, alpha = 0.2");
 }
 
 TEST(BSDFSampling, TR_std_0p05_0p1) {
-    TestBSDF([](BSDF* bsdf, MemoryArena& arena) -> void {
-        createFresnelBlend(bsdf, arena, false, false, 0.05, 0.1);
-    }, "Fresnel blend Trowbridge-Reitz, std sample, alpha = 0.05/0.1");
+    TestBSDF(
+        [](BSDF* bsdf, MemoryArena& arena) -> void {
+            createFresnelBlend(bsdf, arena, false, false, 0.05, 0.1);
+        },
+        "Fresnel blend Trowbridge-Reitz, std sample, alpha = 0.05/0.1");
 }

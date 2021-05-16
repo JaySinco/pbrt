@@ -30,7 +30,6 @@
 
  */
 
-
 // core/texture.cpp*
 #include "texture.h"
 #include "shape.h"
@@ -85,8 +84,8 @@ static int NoisePerm[2 * NoisePermSize] = {
     243, 141, 128, 195, 78, 66, 215, 61, 156, 180};
 
 // Texture Method Definitions
-TextureMapping2D::~TextureMapping2D() { }
-TextureMapping3D::~TextureMapping3D() { }
+TextureMapping2D::~TextureMapping2D() {}
+TextureMapping3D::~TextureMapping3D() {}
 
 UVMapping2D::UVMapping2D(Float su, Float sv, Float du, Float dv)
     : su(su), sv(sv), du(du), dv(dv) {}

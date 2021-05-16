@@ -30,7 +30,6 @@
 
  */
 
-
 // cameras/orthographic.cpp*
 #include "cameras/orthographic.h"
 #include "paramset.h"

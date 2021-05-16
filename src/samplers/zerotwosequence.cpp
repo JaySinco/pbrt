@@ -30,7 +30,6 @@
 
  */
 
-
 // samplers/zerotwosequence.cpp*
 #include "samplers/zerotwosequence.h"
 #include "lowdiscrepancy.h"
