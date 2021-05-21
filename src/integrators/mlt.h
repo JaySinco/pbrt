@@ -47,11 +47,12 @@
 #include "rng.h"
 #include <unordered_map>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MLTSampler Declarations
-class MLTSampler : public Sampler {
-  public:
+class MLTSampler: public Sampler
+{
+public:
     // MLTSampler Public Methods
     MLTSampler(int mutationsPerPixel, int rngSequenceIndex, Float sigma,
                Float largeStepProbability, int streamCount)
@@ -59,7 +60,9 @@ class MLTSampler : public Sampler {
           rng(rngSequenceIndex),
           sigma(sigma),
           largeStepProbability(largeStepProbability),
-          streamCount(streamCount) {}
+          streamCount(streamCount)
+    {
+    }
     Float Get1D();
     Point2f Get2D();
     std::unique_ptr<Sampler> Clone(int seed);
@@ -69,16 +72,19 @@ class MLTSampler : public Sampler {
     void StartStream(int index);
     int GetNextIndex() { return streamIndex + streamCount * sampleIndex++; }
 
-  protected:
+protected:
     // MLTSampler Private Declarations
-    struct PrimarySample {
+    struct PrimarySample
+    {
         Float value = 0;
         // PrimarySample Public Methods
-        void Backup() {
+        void Backup()
+        {
             valueBackup = value;
             modifyBackup = lastModificationIteration;
         }
-        void Restore() {
+        void Restore()
+        {
             value = valueBackup;
             lastModificationIteration = modifyBackup;
         }
@@ -104,8 +110,9 @@ class MLTSampler : public Sampler {
 };
 
 // MLT Declarations
-class MLTIntegrator : public Integrator {
-  public:
+class MLTIntegrator: public Integrator
+{
+public:
     // MLTIntegrator Public Methods
     MLTIntegrator(std::shared_ptr<const Camera> camera, int maxDepth,
                   int nBootstrap, int nChains, int mutationsPerPixel,
@@ -116,14 +123,16 @@ class MLTIntegrator : public Integrator {
           nChains(nChains),
           mutationsPerPixel(mutationsPerPixel),
           sigma(sigma),
-          largeStepProbability(largeStepProbability) {}
+          largeStepProbability(largeStepProbability)
+    {
+    }
     void Render(const Scene &scene);
     Spectrum L(const Scene &scene, MemoryArena &arena,
                const std::unique_ptr<Distribution1D> &lightDistr,
                const std::unordered_map<const Light *, size_t> &lightToIndex,
                MLTSampler &sampler, int k, Point2f *pRaster);
 
-  private:
+private:
     // MLTIntegrator Private Data
     std::shared_ptr<const Camera> camera;
     const int maxDepth;

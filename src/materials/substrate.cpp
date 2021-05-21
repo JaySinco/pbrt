@@ -38,12 +38,13 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SubstrateMaterial Method Definitions
 void SubstrateMaterial::ComputeScatteringFunctions(
     SurfaceInteraction *si, MemoryArena &arena, TransportMode mode,
-    bool allowMultipleLobes) const {
+    bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
@@ -63,7 +64,8 @@ void SubstrateMaterial::ComputeScatteringFunctions(
     }
 }
 
-SubstrateMaterial *CreateSubstrateMaterial(const TextureParams &mp) {
+SubstrateMaterial *CreateSubstrateMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> Kd =
         mp.GetSpectrumTexture("Kd", Spectrum(.5f));
     std::shared_ptr<Texture<Spectrum>> Ks =

@@ -51,11 +51,12 @@ http://pbrt.org/hair.pdf for a description of the implementation here.
 #include "reflection.h"
 #include <array>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // HairMaterial Declarations
-class HairMaterial : public Material {
-  public:
+class HairMaterial: public Material
+{
+public:
     // HairMaterial Public Methods
     HairMaterial(const std::shared_ptr<Texture<Spectrum>> &sigma_a,
                  const std::shared_ptr<Texture<Spectrum>> &color,
@@ -72,12 +73,14 @@ class HairMaterial : public Material {
           eta(eta),
           beta_m(beta_m),
           beta_n(beta_n),
-          alpha(alpha) {}
+          alpha(alpha)
+    {
+    }
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // HairMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> sigma_a, color;
     std::shared_ptr<Texture<Float>> eumelanin, pheomelanin, eta;
@@ -91,8 +94,9 @@ static const int pMax = 3;
 static const Float SqrtPiOver8 = 0.626657069f;
 
 // HairBSDF Declarations
-class HairBSDF : public BxDF {
-  public:
+class HairBSDF: public BxDF
+{
+public:
     // HairBSDF Public Methods
     HairBSDF(Float h, Float eta, const Spectrum &sigma_a, Float beta_m,
              Float beta_n, Float alpha);
@@ -104,7 +108,7 @@ class HairBSDF : public BxDF {
     static Spectrum SigmaAFromConcentration(Float ce, Float cp);
     static Spectrum SigmaAFromReflectance(const Spectrum &c, Float beta_n);
 
-  private:
+private:
     // HairBSDF Private Methods
     std::array<Float, pMax + 1> ComputeApPdf(Float cosThetaO) const;
 
@@ -120,33 +124,39 @@ class HairBSDF : public BxDF {
 // General Utility Functions
 inline Float Sqr(Float v) { return v * v; }
 template <int n>
-static Float Pow(Float v) {
+static Float Pow(Float v)
+{
     static_assert(n > 0, "Power can't be negative");
     Float n2 = Pow<n / 2>(v);
     return n2 * n2 * Pow<n & 1>(v);
 }
 
 template <>
-inline Float Pow<1>(Float v) {
+inline Float Pow<1>(Float v)
+{
     return v;
 }
 template <>
-inline Float Pow<0>(Float v) {
+inline Float Pow<0>(Float v)
+{
     return 1;
 }
 
-inline Float SafeASin(Float x) {
+inline Float SafeASin(Float x)
+{
     CHECK(x >= -1.0001 && x <= 1.0001);
     return std::asin(Clamp(x, -1, 1));
 }
 
-inline Float SafeSqrt(Float x) {
+inline Float SafeSqrt(Float x)
+{
     CHECK_GE(x, -1e-4);
     return std::sqrt(std::max(Float(0), x));
 }
 
 // https://fgiesen.wordpress.com/2009/12/13/decoding-morton-codes/
-static uint32_t Compact1By1(uint32_t x) {
+static uint32_t Compact1By1(uint32_t x)
+{
     // TODO: as of Haswell, the PEXT instruction could do all this in a
     // single instruction.
     // x = -f-e -d-c -b-a -9-8 -7-6 -5-4 -3-2 -1-0
@@ -162,7 +172,8 @@ static uint32_t Compact1By1(uint32_t x) {
     return x;
 }
 
-static Point2f DemuxFloat(Float f) {
+static Point2f DemuxFloat(Float f)
+{
     CHECK(f >= 0 && f < 1);
     uint64_t v = f * (1ull << 32);
     CHECK_LT(v, 0x100000000);

@@ -17294,7 +17294,8 @@ static std::string inTestDir(const std::string &path) { return path; }
 
 // Small smoke test to make sure we get back reasonable values for a few known
 // inputs.
-TEST(BSDFs, Fourier) {
+TEST(BSDFs, Fourier)
+{
     // Write the serialized data to a temporary file
     // TODO: improve FourierBSDFTable to also be able to deserialize from a
     // given array.

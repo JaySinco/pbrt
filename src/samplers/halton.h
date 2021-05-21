@@ -42,11 +42,12 @@
 #include "sampler.h"
 #include "lowdiscrepancy.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // HaltonSampler Declarations
-class HaltonSampler : public GlobalSampler {
-  public:
+class HaltonSampler: public GlobalSampler
+{
+public:
     // HaltonSampler Public Methods
     HaltonSampler(int nsamp, const Bounds2i &sampleBounds,
                   bool sampleAtCenter = false);
@@ -54,7 +55,7 @@ class HaltonSampler : public GlobalSampler {
     Float SampleDimension(int64_t index, int dimension) const;
     std::unique_ptr<Sampler> Clone(int seed);
 
-  private:
+private:
     // HaltonSampler Private Data
     static std::vector<uint16_t> radicalInversePermutations;
     Point2i baseScales, baseExponents;
@@ -68,7 +69,8 @@ class HaltonSampler : public GlobalSampler {
     bool sampleAtPixelCenter;
 
     // HaltonSampler Private Methods
-    const uint16_t *PermutationForDimension(int dim) const {
+    const uint16_t *PermutationForDimension(int dim) const
+    {
         if (dim >= PrimeTableSize)
             LOG(FATAL) << StringPrintf(
                 "HaltonSampler can only sample %d "

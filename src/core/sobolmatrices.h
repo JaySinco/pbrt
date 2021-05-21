@@ -41,8 +41,8 @@
 // core/sobolmatrices.h*
 #include "pbrt.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Sobol Matrix Declarations
 static PBRT_CONSTEXPR int NumSobolDimensions = 1024;
 static PBRT_CONSTEXPR int SobolMatrixSize = 52;

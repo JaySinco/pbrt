@@ -40,8 +40,8 @@
 #include "scene.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_PERCENT("Integrator/Zero-radiance paths", zeroRadiancePaths, totalPaths);
 STAT_INT_DISTRIBUTION("Integrator/Path length", pathLength);
 
@@ -54,16 +54,20 @@ PathIntegrator::PathIntegrator(int maxDepth,
     : SamplerIntegrator(camera, sampler, pixelBounds),
       maxDepth(maxDepth),
       rrThreshold(rrThreshold),
-      lightSampleStrategy(lightSampleStrategy) {}
+      lightSampleStrategy(lightSampleStrategy)
+{
+}
 
-void PathIntegrator::Preprocess(const Scene &scene, Sampler &sampler) {
+void PathIntegrator::Preprocess(const Scene &scene, Sampler &sampler)
+{
     lightDistribution =
         CreateLightSampleDistribution(lightSampleStrategy, scene);
 }
 
 Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
                             Sampler &sampler, MemoryArena &arena,
-                            int depth) const {
+                            int depth) const
+{
     ProfilePhase p(Prof::SamplerIntegratorLi);
     Spectrum L(0.f), beta(1.f);
     RayDifferential ray(r);
@@ -94,7 +98,7 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
                 L += beta * isect.Le(-ray.d);
                 VLOG(2) << "Added Le -> L = " << L;
             } else {
-                for (const auto &light : scene.infiniteLights)
+                for (const auto &light: scene.infiniteLights)
                     L += beta * light->Le(ray);
                 VLOG(2) << "Added infinite area lights -> L = " << L;
             }
@@ -189,7 +193,8 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
 
 PathIntegrator *CreatePathIntegrator(const ParamSet &params,
                                      std::shared_ptr<Sampler> sampler,
-                                     std::shared_ptr<const Camera> camera) {
+                                     std::shared_ptr<const Camera> camera)
+{
     int maxDepth = params.FindOneInt("maxdepth", 5);
     int np;
     const int *pb = params.FindInt("pixelbounds", &np);

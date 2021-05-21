@@ -38,14 +38,14 @@
 #include "film.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // DirectLightingIntegrator Method Definitions
-void DirectLightingIntegrator::Preprocess(const Scene &scene,
-                                          Sampler &sampler) {
+void DirectLightingIntegrator::Preprocess(const Scene &scene, Sampler &sampler)
+{
     if (strategy == LightStrategy::UniformSampleAll) {
         // Compute number of samples to use for each light
-        for (const auto &light : scene.lights)
+        for (const auto &light: scene.lights)
             nLightSamples.push_back(sampler.RoundCount(light->nSamples));
 
         // Request samples for sampling all lights
@@ -60,13 +60,14 @@ void DirectLightingIntegrator::Preprocess(const Scene &scene,
 
 Spectrum DirectLightingIntegrator::Li(const RayDifferential &ray,
                                       const Scene &scene, Sampler &sampler,
-                                      MemoryArena &arena, int depth) const {
+                                      MemoryArena &arena, int depth) const
+{
     ProfilePhase p(Prof::SamplerIntegratorLi);
     Spectrum L(0.f);
     // Find closest ray intersection or return background radiance
     SurfaceInteraction isect;
     if (!scene.Intersect(ray, &isect)) {
-        for (const auto &light : scene.lights) L += light->Le(ray);
+        for (const auto &light: scene.lights) L += light->Le(ray);
         return L;
     }
 
@@ -95,7 +96,8 @@ Spectrum DirectLightingIntegrator::Li(const RayDifferential &ray,
 
 DirectLightingIntegrator *CreateDirectLightingIntegrator(
     const ParamSet &params, std::shared_ptr<Sampler> sampler,
-    std::shared_ptr<const Camera> camera) {
+    std::shared_ptr<const Camera> camera)
+{
     int maxDepth = params.FindOneInt("maxdepth", 5);
     LightStrategy strategy;
     std::string st = params.FindOneString("strategy", "all");

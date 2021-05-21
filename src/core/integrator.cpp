@@ -43,8 +43,8 @@
 #include "camera.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_COUNTER("Integrator/Camera rays traced", nCameraRays);
 
 // Integrator Method Definitions
@@ -54,7 +54,8 @@ Integrator::~Integrator() {}
 Spectrum UniformSampleAllLights(const Interaction &it, const Scene &scene,
                                 MemoryArena &arena, Sampler &sampler,
                                 const std::vector<int> &nLightSamples,
-                                bool handleMedia) {
+                                bool handleMedia)
+{
     ProfilePhase p(Prof::DirectLighting);
     Spectrum L(0.f);
     for (size_t j = 0; j < scene.lights.size(); ++j) {
@@ -85,7 +86,8 @@ Spectrum UniformSampleAllLights(const Interaction &it, const Scene &scene,
 Spectrum UniformSampleOneLight(const Interaction &it, const Scene &scene,
                                MemoryArena &arena, Sampler &sampler,
                                bool handleMedia,
-                               const Distribution1D *lightDistrib) {
+                               const Distribution1D *lightDistrib)
+{
     ProfilePhase p(Prof::DirectLighting);
     // Randomly choose a single light to sample, _light_
     int nLights = int(scene.lights.size());
@@ -110,7 +112,8 @@ Spectrum UniformSampleOneLight(const Interaction &it, const Scene &scene,
 Spectrum EstimateDirect(const Interaction &it, const Point2f &uScattering,
                         const Light &light, const Point2f &uLight,
                         const Scene &scene, Sampler &sampler,
-                        MemoryArena &arena, bool handleMedia, bool specular) {
+                        MemoryArena &arena, bool handleMedia, bool specular)
+{
     BxDFType bsdfFlags =
         specular ? BSDF_ALL : BxDFType(BSDF_ALL & ~BSDF_SPECULAR);
     Spectrum Ld(0.f);
@@ -218,17 +221,19 @@ Spectrum EstimateDirect(const Interaction &it, const Point2f &uScattering,
 }
 
 std::unique_ptr<Distribution1D> ComputeLightPowerDistribution(
-    const Scene &scene) {
+    const Scene &scene)
+{
     if (scene.lights.empty()) return nullptr;
     std::vector<Float> lightPower;
-    for (const auto &light : scene.lights)
+    for (const auto &light: scene.lights)
         lightPower.push_back(light->Power().y());
     return std::unique_ptr<Distribution1D>(
         new Distribution1D(&lightPower[0], lightPower.size()));
 }
 
 // SamplerIntegrator Method Definitions
-void SamplerIntegrator::Render(const Scene &scene) {
+void SamplerIntegrator::Render(const Scene &scene)
+{
     Preprocess(scene, *sampler);
     // Render image tiles in parallel
 
@@ -264,7 +269,7 @@ void SamplerIntegrator::Render(const Scene &scene) {
                     camera->film->GetFilmTile(tileBounds);
 
                 // Loop over pixels in tile to render them
-                for (Point2i pixel : tileBounds) {
+                for (Point2i pixel: tileBounds) {
                     {
                         ProfilePhase pp(Prof::StartPixel);
                         tileSampler->StartPixel(pixel);
@@ -346,9 +351,12 @@ void SamplerIntegrator::Render(const Scene &scene) {
     camera->film->WriteImage();
 }
 
-Spectrum SamplerIntegrator::SpecularReflect(
-    const RayDifferential &ray, const SurfaceInteraction &isect,
-    const Scene &scene, Sampler &sampler, MemoryArena &arena, int depth) const {
+Spectrum SamplerIntegrator::SpecularReflect(const RayDifferential &ray,
+                                            const SurfaceInteraction &isect,
+                                            const Scene &scene,
+                                            Sampler &sampler,
+                                            MemoryArena &arena, int depth) const
+{
     // Compute specular reflection direction _wi_ and BSDF value
     Vector3f wo = isect.wo, wi;
     Float pdf;
@@ -386,7 +394,8 @@ Spectrum SamplerIntegrator::SpecularReflect(
 
 Spectrum SamplerIntegrator::SpecularTransmit(
     const RayDifferential &ray, const SurfaceInteraction &isect,
-    const Scene &scene, Sampler &sampler, MemoryArena &arena, int depth) const {
+    const Scene &scene, Sampler &sampler, MemoryArena &arena, int depth) const
+{
     Vector3f wo = isect.wo, wi;
     Float pdf;
     const Point3f &p = isect.p;

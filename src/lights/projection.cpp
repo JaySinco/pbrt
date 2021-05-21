@@ -38,8 +38,8 @@
 #include "reflection.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ProjectionLight Method Definitions
 ProjectionLight::ProjectionLight(const Transform &LightToWorld,
                                  const MediumInterface &mediumInterface,
@@ -47,7 +47,8 @@ ProjectionLight::ProjectionLight(const Transform &LightToWorld,
                                  Float fov)
     : Light((int)LightFlags::DeltaPosition, LightToWorld, mediumInterface),
       pLight(LightToWorld(Point3f(0, 0, 0))),
-      I(I) {
+      I(I)
+{
     // Create _ProjectionLight_ MIP map
     Point2i resolution;
     std::unique_ptr<RGBSpectrum[]> texels = ReadImage(texname, &resolution);
@@ -74,7 +75,8 @@ ProjectionLight::ProjectionLight(const Transform &LightToWorld,
 
 Spectrum ProjectionLight::Sample_Li(const Interaction &ref, const Point2f &u,
                                     Vector3f *wi, Float *pdf,
-                                    VisibilityTester *vis) const {
+                                    VisibilityTester *vis) const
+{
     ProfilePhase _(Prof::LightSample);
     *wi = Normalize(pLight - ref.p);
     *pdf = 1;
@@ -83,7 +85,8 @@ Spectrum ProjectionLight::Sample_Li(const Interaction &ref, const Point2f &u,
     return I * Projection(-*wi) / DistanceSquared(pLight, ref.p);
 }
 
-Spectrum ProjectionLight::Projection(const Vector3f &w) const {
+Spectrum ProjectionLight::Projection(const Vector3f &w) const
+{
     Vector3f wl = WorldToLight(w);
     // Discard directions behind projection light
     if (wl.z < hither) return 0;
@@ -96,7 +99,8 @@ Spectrum ProjectionLight::Projection(const Vector3f &w) const {
     return Spectrum(projectionMap->Lookup(st), SpectrumType::Illuminant);
 }
 
-Spectrum ProjectionLight::Power() const {
+Spectrum ProjectionLight::Power() const
+{
     return (projectionMap
                 ? Spectrum(projectionMap->Lookup(Point2f(.5f, .5f), .5f),
                            SpectrumType::Illuminant)
@@ -104,13 +108,15 @@ Spectrum ProjectionLight::Power() const {
            I * 2 * Pi * (1.f - cosTotalWidth);
 }
 
-Float ProjectionLight::Pdf_Li(const Interaction &, const Vector3f &) const {
+Float ProjectionLight::Pdf_Li(const Interaction &, const Vector3f &) const
+{
     return 0.f;
 }
 
 Spectrum ProjectionLight::Sample_Le(const Point2f &u1, const Point2f &u2,
                                     Float time, Ray *ray, Normal3f *nLight,
-                                    Float *pdfPos, Float *pdfDir) const {
+                                    Float *pdfPos, Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightSample);
     Vector3f v = UniformSampleCone(u1, cosTotalWidth);
     *ray = Ray(pLight, LightToWorld(v), Infinity, time, mediumInterface.inside);
@@ -121,7 +127,8 @@ Spectrum ProjectionLight::Sample_Le(const Point2f &u1, const Point2f &u2,
 }
 
 void ProjectionLight::Pdf_Le(const Ray &ray, const Normal3f &, Float *pdfPos,
-                             Float *pdfDir) const {
+                             Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightPdf);
     *pdfPos = 0.f;
     *pdfDir = (CosTheta(WorldToLight(ray.d)) >= cosTotalWidth)
@@ -131,7 +138,8 @@ void ProjectionLight::Pdf_Le(const Ray &ray, const Normal3f &, Float *pdfPos,
 
 std::shared_ptr<ProjectionLight> CreateProjectionLight(
     const Transform &light2world, const Medium *medium,
-    const ParamSet &paramSet) {
+    const ParamSet &paramSet)
+{
     Spectrum I = paramSet.FindOneSpectrum("I", Spectrum(1.0));
     Spectrum sc = paramSet.FindOneSpectrum("scale", Spectrum(1.0));
     Float fov = paramSet.FindOneFloat("fov", 45.);

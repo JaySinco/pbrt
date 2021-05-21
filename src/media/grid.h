@@ -43,13 +43,14 @@
 #include "transform.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_MEMORY_COUNTER("Memory/Volume density grid", densityBytes);
 
 // GridDensityMedium Declarations
-class GridDensityMedium : public Medium {
-  public:
+class GridDensityMedium: public Medium
+{
+public:
     // GridDensityMedium Public Methods
     GridDensityMedium(const Spectrum &sigma_a, const Spectrum &sigma_s, Float g,
                       int nx, int ny, int nz, const Transform &mediumToWorld,
@@ -61,7 +62,8 @@ class GridDensityMedium : public Medium {
           ny(ny),
           nz(nz),
           WorldToMedium(Inverse(mediumToWorld)),
-          density(new Float[nx * ny * nz]) {
+          density(new Float[nx * ny * nz])
+    {
         densityBytes += nx * ny * nz * sizeof(Float);
         memcpy((Float *)density.get(), d, sizeof(Float) * nx * ny * nz);
         // Precompute values for Monte Carlo sampling of _GridDensityMedium_
@@ -77,7 +79,8 @@ class GridDensityMedium : public Medium {
     }
 
     Float Density(const Point3f &p) const;
-    Float D(const Point3i &p) const {
+    Float D(const Point3i &p) const
+    {
         Bounds3i sampleBounds(Point3i(0, 0, 0), Point3i(nx, ny, nz));
         if (!InsideExclusive(p, sampleBounds)) return 0;
         return density[(p.z * ny + p.y) * nx + p.x];
@@ -86,7 +89,7 @@ class GridDensityMedium : public Medium {
                     MediumInteraction *mi) const;
     Spectrum Tr(const Ray &ray, Sampler &sampler) const;
 
-  private:
+private:
     // GridDensityMedium Private Data
     const Spectrum sigma_a, sigma_s;
     const Float g;

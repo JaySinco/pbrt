@@ -38,12 +38,14 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PlasticMaterial Method Definitions
-void PlasticMaterial::ComputeScatteringFunctions(
-    SurfaceInteraction *si, MemoryArena &arena, TransportMode mode,
-    bool allowMultipleLobes) const {
+void PlasticMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
+                                                 MemoryArena &arena,
+                                                 TransportMode mode,
+                                                 bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
@@ -68,7 +70,8 @@ void PlasticMaterial::ComputeScatteringFunctions(
     }
 }
 
-PlasticMaterial *CreatePlasticMaterial(const TextureParams &mp) {
+PlasticMaterial *CreatePlasticMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> Kd =
         mp.GetSpectrumTexture("Kd", Spectrum(0.25f));
     std::shared_ptr<Texture<Spectrum>> Ks =

@@ -42,14 +42,19 @@
 #include "pbrt.h"
 #include "memory.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // TransportMode Declarations
-enum class TransportMode { Radiance, Importance };
+enum class TransportMode
+{
+    Radiance,
+    Importance
+};
 
 // Material Declarations
-class Material {
-  public:
+class Material
+{
+public:
     // Material Interface
     virtual void ComputeScatteringFunctions(SurfaceInteraction *si,
                                             MemoryArena &arena,

@@ -42,15 +42,16 @@
 #include <errno.h>
 #endif  // !PBRT_IS_WINDOWS
 
-namespace pbrt {
-
+namespace pbrt
+{
 static int TerminalWidth();
 
 // ProgressReporter Method Definitions
 ProgressReporter::ProgressReporter(int64_t totalWork, const std::string &title)
     : totalWork(std::max((int64_t)1, totalWork)),
       title(title),
-      startTime(std::chrono::system_clock::now()) {
+      startTime(std::chrono::system_clock::now())
+{
     workDone = 0;
     exitThread = false;
     // Launch thread to periodically update progress bar
@@ -78,7 +79,8 @@ ProgressReporter::ProgressReporter(int64_t totalWork, const std::string &title)
     }
 }
 
-ProgressReporter::~ProgressReporter() {
+ProgressReporter::~ProgressReporter()
+{
     if (!PbrtOptions.quiet) {
         workDone = totalWork;
         exitThread = true;
@@ -87,7 +89,8 @@ ProgressReporter::~ProgressReporter() {
     }
 }
 
-void ProgressReporter::PrintBar() {
+void ProgressReporter::PrintBar()
+{
     int barLength = TerminalWidth() - 28;
     int totalPlusses = std::max(2, barLength - (int)title.size());
     int plussesPrinted = 0;
@@ -147,7 +150,8 @@ void ProgressReporter::PrintBar() {
 
 void ProgressReporter::Done() { workDone = totalWork; }
 
-static int TerminalWidth() {
+static int TerminalWidth()
+{
 #ifdef PBRT_IS_WINDOWS
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     if (h == INVALID_HANDLE_VALUE || !h) {

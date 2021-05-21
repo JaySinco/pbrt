@@ -42,11 +42,12 @@
 #include "pbrt.h"
 #include "material.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SubstrateMaterial Declarations
-class SubstrateMaterial : public Material {
-  public:
+class SubstrateMaterial: public Material
+{
+public:
     // SubstrateMaterial Public Methods
     SubstrateMaterial(const std::shared_ptr<Texture<Spectrum>> &Kd,
                       const std::shared_ptr<Texture<Spectrum>> &Ks,
@@ -59,12 +60,14 @@ class SubstrateMaterial : public Material {
           nu(nu),
           nv(nv),
           bumpMap(bumpMap),
-          remapRoughness(remapRoughness) {}
+          remapRoughness(remapRoughness)
+    {
+    }
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // SubstrateMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> Kd, Ks;
     std::shared_ptr<Texture<Float>> nu, nv;

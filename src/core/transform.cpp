@@ -34,11 +34,12 @@
 #include "transform.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Matrix4x4 Method Definitions
 bool SolveLinearSystem2x2(const Float A[2][2], const Float B[2], Float *x0,
-                          Float *x1) {
+                          Float *x1)
+{
     Float det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
     if (std::abs(det) < 1e-10f) return false;
     *x0 = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
@@ -52,7 +53,8 @@ Matrix4x4::Matrix4x4(Float mat[4][4]) { memcpy(m, mat, 16 * sizeof(Float)); }
 Matrix4x4::Matrix4x4(Float t00, Float t01, Float t02, Float t03, Float t10,
                      Float t11, Float t12, Float t13, Float t20, Float t21,
                      Float t22, Float t23, Float t30, Float t31, Float t32,
-                     Float t33) {
+                     Float t33)
+{
     m[0][0] = t00;
     m[0][1] = t01;
     m[0][2] = t02;
@@ -71,14 +73,16 @@ Matrix4x4::Matrix4x4(Float t00, Float t01, Float t02, Float t03, Float t10,
     m[3][3] = t33;
 }
 
-Matrix4x4 Transpose(const Matrix4x4 &m) {
+Matrix4x4 Transpose(const Matrix4x4 &m)
+{
     return Matrix4x4(m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0], m.m[0][1],
                      m.m[1][1], m.m[2][1], m.m[3][1], m.m[0][2], m.m[1][2],
                      m.m[2][2], m.m[3][2], m.m[0][3], m.m[1][3], m.m[2][3],
                      m.m[3][3]);
 }
 
-Matrix4x4 Inverse(const Matrix4x4 &m) {
+Matrix4x4 Inverse(const Matrix4x4 &m)
+{
     int indxc[4], indxr[4];
     int ipiv[4] = {0, 0, 0, 0};
     Float minv[4][4];
@@ -137,7 +141,8 @@ Matrix4x4 Inverse(const Matrix4x4 &m) {
 // Transform Method Definitions
 void Transform::Print(FILE *f) const { m.Print(f); }
 
-Transform Translate(const Vector3f &delta) {
+Transform Translate(const Vector3f &delta)
+{
     Matrix4x4 m(1, 0, 0, delta.x, 0, 1, 0, delta.y, 0, 0, 1, delta.z, 0, 0, 0,
                 1);
     Matrix4x4 minv(1, 0, 0, -delta.x, 0, 1, 0, -delta.y, 0, 0, 1, -delta.z, 0,
@@ -145,13 +150,15 @@ Transform Translate(const Vector3f &delta) {
     return Transform(m, minv);
 }
 
-Transform Scale(Float x, Float y, Float z) {
+Transform Scale(Float x, Float y, Float z)
+{
     Matrix4x4 m(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
     Matrix4x4 minv(1 / x, 0, 0, 0, 0, 1 / y, 0, 0, 0, 0, 1 / z, 0, 0, 0, 0, 1);
     return Transform(m, minv);
 }
 
-Transform RotateX(Float theta) {
+Transform RotateX(Float theta)
+{
     Float sinTheta = std::sin(Radians(theta));
     Float cosTheta = std::cos(Radians(theta));
     Matrix4x4 m(1, 0, 0, 0, 0, cosTheta, -sinTheta, 0, 0, sinTheta, cosTheta, 0,
@@ -159,7 +166,8 @@ Transform RotateX(Float theta) {
     return Transform(m, Transpose(m));
 }
 
-Transform RotateY(Float theta) {
+Transform RotateY(Float theta)
+{
     Float sinTheta = std::sin(Radians(theta));
     Float cosTheta = std::cos(Radians(theta));
     Matrix4x4 m(cosTheta, 0, sinTheta, 0, 0, 1, 0, 0, -sinTheta, 0, cosTheta, 0,
@@ -167,7 +175,8 @@ Transform RotateY(Float theta) {
     return Transform(m, Transpose(m));
 }
 
-Transform RotateZ(Float theta) {
+Transform RotateZ(Float theta)
+{
     Float sinTheta = std::sin(Radians(theta));
     Float cosTheta = std::cos(Radians(theta));
     Matrix4x4 m(cosTheta, -sinTheta, 0, 0, sinTheta, cosTheta, 0, 0, 0, 0, 1, 0,
@@ -175,7 +184,8 @@ Transform RotateZ(Float theta) {
     return Transform(m, Transpose(m));
 }
 
-Transform Rotate(Float theta, const Vector3f &axis) {
+Transform Rotate(Float theta, const Vector3f &axis)
+{
     Vector3f a = Normalize(axis);
     Float sinTheta = std::sin(Radians(theta));
     Float cosTheta = std::cos(Radians(theta));
@@ -199,7 +209,8 @@ Transform Rotate(Float theta, const Vector3f &axis) {
     return Transform(m, Transpose(m));
 }
 
-Transform LookAt(const Point3f &pos, const Point3f &look, const Vector3f &up) {
+Transform LookAt(const Point3f &pos, const Point3f &look, const Vector3f &up)
+{
     Matrix4x4 cameraToWorld;
     // Initialize fourth column of viewing matrix
     cameraToWorld.m[0][3] = pos.x;
@@ -234,7 +245,8 @@ Transform LookAt(const Point3f &pos, const Point3f &look, const Vector3f &up) {
     return Transform(Inverse(cameraToWorld), cameraToWorld);
 }
 
-Bounds3f Transform::operator()(const Bounds3f &b) const {
+Bounds3f Transform::operator()(const Bounds3f &b) const
+{
     const Transform &M = *this;
     Bounds3f ret(M(Point3f(b.pMin.x, b.pMin.y, b.pMin.z)));
     ret = Union(ret, M(Point3f(b.pMax.x, b.pMin.y, b.pMin.z)));
@@ -247,18 +259,21 @@ Bounds3f Transform::operator()(const Bounds3f &b) const {
     return ret;
 }
 
-Transform Transform::operator*(const Transform &t2) const {
+Transform Transform::operator*(const Transform &t2) const
+{
     return Transform(Matrix4x4::Mul(m, t2.m), Matrix4x4::Mul(t2.mInv, mInv));
 }
 
-bool Transform::SwapsHandedness() const {
+bool Transform::SwapsHandedness() const
+{
     Float det = m.m[0][0] * (m.m[1][1] * m.m[2][2] - m.m[1][2] * m.m[2][1]) -
                 m.m[0][1] * (m.m[1][0] * m.m[2][2] - m.m[1][2] * m.m[2][0]) +
                 m.m[0][2] * (m.m[1][0] * m.m[2][1] - m.m[1][1] * m.m[2][0]);
     return det < 0;
 }
 
-SurfaceInteraction Transform::operator()(const SurfaceInteraction &si) const {
+SurfaceInteraction Transform::operator()(const SurfaceInteraction &si) const
+{
     SurfaceInteraction ret;
     // Transform _p_ and _pError_ in _SurfaceInteraction_
     ret.p = (*this)(si.p, si.pError, &ret.pError);
@@ -295,11 +310,13 @@ SurfaceInteraction Transform::operator()(const SurfaceInteraction &si) const {
     return ret;
 }
 
-Transform Orthographic(Float zNear, Float zFar) {
+Transform Orthographic(Float zNear, Float zFar)
+{
     return Scale(1, 1, 1 / (zFar - zNear)) * Translate(Vector3f(0, 0, -zNear));
 }
 
-Transform Perspective(Float fov, Float n, Float f) {
+Transform Perspective(Float fov, Float n, Float f)
+{
     // Perform projective divide for perspective projection
     Matrix4x4 persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, f / (f - n), -f * n / (f - n),
                     0, 0, 1, 0);
@@ -310,19 +327,24 @@ Transform Perspective(Float fov, Float n, Float f) {
 }
 
 // Interval Definitions
-class Interval {
-  public:
+class Interval
+{
+public:
     // Interval Public Methods
-    Interval(Float v) : low(v), high(v) {}
-    Interval(Float v0, Float v1)
-        : low(std::min(v0, v1)), high(std::max(v0, v1)) {}
-    Interval operator+(const Interval &i) const {
+    Interval(Float v): low(v), high(v) {}
+    Interval(Float v0, Float v1): low(std::min(v0, v1)), high(std::max(v0, v1))
+    {
+    }
+    Interval operator+(const Interval &i) const
+    {
         return Interval(low + i.low, high + i.high);
     }
-    Interval operator-(const Interval &i) const {
+    Interval operator-(const Interval &i) const
+    {
         return Interval(low - i.high, high - i.low);
     }
-    Interval operator*(const Interval &i) const {
+    Interval operator*(const Interval &i) const
+    {
         return Interval(std::min(std::min(low * i.low, high * i.low),
                                  std::min(low * i.high, high * i.high)),
                         std::max(std::max(low * i.low, high * i.low),
@@ -331,7 +353,8 @@ class Interval {
     Float low, high;
 };
 
-inline Interval Sin(const Interval &i) {
+inline Interval Sin(const Interval &i)
+{
     CHECK_GE(i.low, 0);
     CHECK_LE(i.high, 2.0001 * Pi);
     Float sinLow = std::sin(i.low), sinHigh = std::sin(i.high);
@@ -341,7 +364,8 @@ inline Interval Sin(const Interval &i) {
     return Interval(sinLow, sinHigh);
 }
 
-inline Interval Cos(const Interval &i) {
+inline Interval Cos(const Interval &i)
+{
     CHECK_GE(i.low, 0);
     CHECK_LE(i.high, 2.0001 * Pi);
     Float cosLow = std::cos(i.low), cosHigh = std::cos(i.high);
@@ -352,7 +376,8 @@ inline Interval Cos(const Interval &i) {
 
 void IntervalFindZeros(Float c1, Float c2, Float c3, Float c4, Float c5,
                        Float theta, Interval tInterval, Float *zeros,
-                       int *zeroCount, int depth = 8) {
+                       int *zeroCount, int depth = 8)
+{
     // Evaluate motion derivative in interval form, return if no zeros
     Interval range = Interval(c1) +
                      (Interval(c2) + Interval(c3) * tInterval) *
@@ -400,7 +425,8 @@ AnimatedTransform::AnimatedTransform(const Transform *startTransform,
       endTransform(endTransform),
       startTime(startTime),
       endTime(endTime),
-      actuallyAnimated(*startTransform != *endTransform) {
+      actuallyAnimated(*startTransform != *endTransform)
+{
     if (!actuallyAnimated) return;
     Decompose(startTransform->m, &T[0], &R[0], &S[0]);
     Decompose(endTransform->m, &T[1], &R[1], &S[1]);
@@ -1122,7 +1148,8 @@ AnimatedTransform::AnimatedTransform(const Transform *startTransform,
 }
 
 void AnimatedTransform::Decompose(const Matrix4x4 &m, Vector3f *T,
-                                  Quaternion *Rquat, Matrix4x4 *S) {
+                                  Quaternion *Rquat, Matrix4x4 *S)
+{
     // Extract translation _T_ from transformation matrix
     T->x = m.m[0][3];
     T->y = m.m[1][3];
@@ -1162,7 +1189,8 @@ void AnimatedTransform::Decompose(const Matrix4x4 &m, Vector3f *T,
     *S = Matrix4x4::Mul(Inverse(R), M);
 }
 
-void AnimatedTransform::Interpolate(Float time, Transform *t) const {
+void AnimatedTransform::Interpolate(Float time, Transform *t) const
+{
     // Handle boundary conditions for matrix interpolation
     if (!actuallyAnimated || time <= startTime) {
         *t = *startTransform;
@@ -1189,7 +1217,8 @@ void AnimatedTransform::Interpolate(Float time, Transform *t) const {
     *t = Translate(trans) * rotate.ToTransform() * Transform(scale);
 }
 
-Ray AnimatedTransform::operator()(const Ray &r) const {
+Ray AnimatedTransform::operator()(const Ray &r) const
+{
     if (!actuallyAnimated || r.time <= startTime)
         return (*startTransform)(r);
     else if (r.time >= endTime)
@@ -1201,7 +1230,8 @@ Ray AnimatedTransform::operator()(const Ray &r) const {
     }
 }
 
-RayDifferential AnimatedTransform::operator()(const RayDifferential &r) const {
+RayDifferential AnimatedTransform::operator()(const RayDifferential &r) const
+{
     if (!actuallyAnimated || r.time <= startTime)
         return (*startTransform)(r);
     else if (r.time >= endTime)
@@ -1213,7 +1243,8 @@ RayDifferential AnimatedTransform::operator()(const RayDifferential &r) const {
     }
 }
 
-Point3f AnimatedTransform::operator()(Float time, const Point3f &p) const {
+Point3f AnimatedTransform::operator()(Float time, const Point3f &p) const
+{
     if (!actuallyAnimated || time <= startTime)
         return (*startTransform)(p);
     else if (time >= endTime)
@@ -1223,7 +1254,8 @@ Point3f AnimatedTransform::operator()(Float time, const Point3f &p) const {
     return t(p);
 }
 
-Vector3f AnimatedTransform::operator()(Float time, const Vector3f &v) const {
+Vector3f AnimatedTransform::operator()(Float time, const Vector3f &v) const
+{
     if (!actuallyAnimated || time <= startTime)
         return (*startTransform)(v);
     else if (time >= endTime)
@@ -1233,7 +1265,8 @@ Vector3f AnimatedTransform::operator()(Float time, const Vector3f &v) const {
     return t(v);
 }
 
-Bounds3f AnimatedTransform::MotionBounds(const Bounds3f &b) const {
+Bounds3f AnimatedTransform::MotionBounds(const Bounds3f &b) const
+{
     if (!actuallyAnimated) return (*startTransform)(b);
     if (hasRotation == false)
         return Union((*startTransform)(b), (*endTransform)(b));
@@ -1244,7 +1277,8 @@ Bounds3f AnimatedTransform::MotionBounds(const Bounds3f &b) const {
     return bounds;
 }
 
-Bounds3f AnimatedTransform::BoundPointMotion(const Point3f &p) const {
+Bounds3f AnimatedTransform::BoundPointMotion(const Point3f &p) const
+{
     if (!actuallyAnimated) return Bounds3f((*startTransform)(p));
     Bounds3f bounds((*startTransform)(p), (*endTransform)(p));
     Float cosTheta = Dot(R[0], R[1]);

@@ -7,28 +7,30 @@
 
 using namespace pbrt;
 
-static Transform RandomTransform(RNG &rng) {
+static Transform RandomTransform(RNG &rng)
+{
     Transform t;
     auto r = [&rng]() { return -10. + 20. * rng.UniformFloat(); };
     for (int i = 0; i < 10; ++i) {
         switch (rng.UniformUInt32(3)) {
-        case 0:
-            t = t * Scale(std::abs(r()), std::abs(r()), std::abs(r()));
-            break;
-        case 1:
-            t = t * Translate(Vector3f(r(), r(), r()));
-            break;
-        case 2:
-            t = t *
-                Rotate(r() * 20., UniformSampleSphere(Point2f(
-                                      rng.UniformFloat(), rng.UniformFloat())));
-            break;
+            case 0:
+                t = t * Scale(std::abs(r()), std::abs(r()), std::abs(r()));
+                break;
+            case 1:
+                t = t * Translate(Vector3f(r(), r(), r()));
+                break;
+            case 2:
+                t = t * Rotate(r() * 20.,
+                               UniformSampleSphere(Point2f(
+                                   rng.UniformFloat(), rng.UniformFloat())));
+                break;
         }
     }
     return t;
 }
 
-TEST(AnimatedTransform, Randoms) {
+TEST(AnimatedTransform, Randoms)
+{
     RNG rng;
     auto r = [&rng]() { return -10. + 20. * rng.UniformFloat(); };
 

@@ -35,10 +35,11 @@
 #include "paramset.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MaxMinDistSampler Method Definitions
-void MaxMinDistSampler::StartPixel(const Point2i &p) {
+void MaxMinDistSampler::StartPixel(const Point2i &p)
+{
     ProfilePhase _(Prof::StartPixel);
     Float invSPP = (Float)1 / samplesPerPixel;
     for (int i = 0; i < samplesPerPixel; ++i)
@@ -63,13 +64,15 @@ void MaxMinDistSampler::StartPixel(const Point2i &p) {
     PixelSampler::StartPixel(p);
 }
 
-std::unique_ptr<Sampler> MaxMinDistSampler::Clone(int seed) {
+std::unique_ptr<Sampler> MaxMinDistSampler::Clone(int seed)
+{
     MaxMinDistSampler *mmds = new MaxMinDistSampler(*this);
     mmds->rng.SetSequence(seed);
     return std::unique_ptr<Sampler>(mmds);
 }
 
-MaxMinDistSampler *CreateMaxMinDistSampler(const ParamSet &params) {
+MaxMinDistSampler *CreateMaxMinDistSampler(const ParamSet &params)
+{
     int nsamp = params.FindOneInt("pixelsamples", 16);
     int sd = params.FindOneInt("dimensions", 4);
     if (PbrtOptions.quickRender) nsamp = 1;

@@ -38,10 +38,12 @@
 
 #include <iostream>
 
-namespace pbrt {
+namespace pbrt
+{
 using namespace std;
 
-struct CallbackContext {
+struct CallbackContext
+{
     Point3f *p;
     Normal3f *n;
     Point2f *uv;
@@ -61,9 +63,12 @@ struct CallbackContext {
           indexCtr(0),
           faceIndexCtr(0),
           error(false),
-          vertexCount(0) {}
+          vertexCount(0)
+    {
+    }
 
-    ~CallbackContext() {
+    ~CallbackContext()
+    {
         delete[] p;
         delete[] n;
         delete[] uv;
@@ -72,12 +77,14 @@ struct CallbackContext {
     }
 };
 
-void rply_message_callback(p_ply ply, const char *message) {
+void rply_message_callback(p_ply ply, const char *message)
+{
     Warning("rply: %s", message);
 }
 
 /* Callback to handle vertex data from RPly */
-int rply_vertex_callback(p_ply_argument argument) {
+int rply_vertex_callback(p_ply_argument argument)
+{
     Float **buffers;
     long index, flags;
 
@@ -97,7 +104,8 @@ int rply_vertex_callback(p_ply_argument argument) {
 }
 
 /* Callback to handle face data from RPly */
-int rply_face_callback(p_ply_argument argument) {
+int rply_face_callback(p_ply_argument argument)
+{
     CallbackContext *context;
     long flags;
     ply_get_argument_user_data(argument, (void **)&context, &flags);
@@ -158,7 +166,8 @@ int rply_face_callback(p_ply_argument argument) {
 std::vector<std::shared_ptr<Shape>> CreatePLYMesh(
     const Transform *o2w, const Transform *w2o, bool reverseOrientation,
     const ParamSet &params,
-    std::map<std::string, std::shared_ptr<Texture<Float>>> *floatTextures) {
+    std::map<std::string, std::shared_ptr<Texture<Float>>> *floatTextures)
+{
     const std::string filename = params.FindOneFilename("filename", "");
     p_ply ply = ply_open(filename.c_str(), rply_message_callback, 0, nullptr);
     if (!ply) {

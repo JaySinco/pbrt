@@ -37,8 +37,8 @@
 #include "shape.h"
 #include "light.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SurfaceInteraction Method Definitions
 SurfaceInteraction::SurfaceInteraction(const Point3f &p, const Vector3f &pError,
                                        const Point2f &uv, const Vector3f &wo,
@@ -55,7 +55,8 @@ SurfaceInteraction::SurfaceInteraction(const Point3f &p, const Vector3f &pError,
       dndu(dndu),
       dndv(dndv),
       shape(shape),
-      faceIndex(faceIndex) {
+      faceIndex(faceIndex)
+{
     // Initialize shading geometry from true geometry
     shading.n = n;
     shading.dpdu = dpdu;
@@ -75,7 +76,8 @@ void SurfaceInteraction::SetShadingGeometry(const Vector3f &dpdus,
                                             const Vector3f &dpdvs,
                                             const Normal3f &dndus,
                                             const Normal3f &dndvs,
-                                            bool orientationIsAuthoritative) {
+                                            bool orientationIsAuthoritative)
+{
     // Compute _shading.n_ for _SurfaceInteraction_
     shading.n = Normalize((Normal3f)Cross(dpdus, dpdvs));
     if (orientationIsAuthoritative)
@@ -93,14 +95,15 @@ void SurfaceInteraction::SetShadingGeometry(const Vector3f &dpdus,
 void SurfaceInteraction::ComputeScatteringFunctions(const RayDifferential &ray,
                                                     MemoryArena &arena,
                                                     bool allowMultipleLobes,
-                                                    TransportMode mode) {
+                                                    TransportMode mode)
+{
     ComputeDifferentials(ray);
     primitive->ComputeScatteringFunctions(this, arena, mode,
                                           allowMultipleLobes);
 }
 
-void SurfaceInteraction::ComputeDifferentials(
-    const RayDifferential &ray) const {
+void SurfaceInteraction::ComputeDifferentials(const RayDifferential &ray) const
+{
     if (ray.hasDifferentials) {
         // Estimate screen space change in $\pt{}$ and $(u,v)$
 
@@ -147,7 +150,8 @@ void SurfaceInteraction::ComputeDifferentials(
     }
 }
 
-Spectrum SurfaceInteraction::Le(const Vector3f &w) const {
+Spectrum SurfaceInteraction::Le(const Vector3f &w) const
+{
     const AreaLight *area = primitive->GetAreaLight();
     return area ? area->L(*this, w) : Spectrum(0.f);
 }

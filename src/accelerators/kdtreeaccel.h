@@ -42,13 +42,14 @@
 #include "pbrt.h"
 #include "primitive.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // KdTreeAccel Declarations
 struct KdAccelNode;
 struct BoundEdge;
-class KdTreeAccel : public Aggregate {
-  public:
+class KdTreeAccel: public Aggregate
+{
+public:
     // KdTreeAccel Public Methods
     KdTreeAccel(std::vector<std::shared_ptr<Primitive>> p, int isectCost = 80,
                 int traversalCost = 1, Float emptyBonus = 0.5, int maxPrims = 1,
@@ -58,7 +59,7 @@ class KdTreeAccel : public Aggregate {
     bool Intersect(const Ray &ray, SurfaceInteraction *isect) const;
     bool IntersectP(const Ray &ray) const;
 
-  private:
+private:
     // KdTreeAccel Private Methods
     void buildTree(int nodeNum, const Bounds3f &bounds,
                    const std::vector<Bounds3f> &primBounds, int *primNums,
@@ -76,7 +77,8 @@ class KdTreeAccel : public Aggregate {
     Bounds3f bounds;
 };
 
-struct KdToDo {
+struct KdToDo
+{
     const KdAccelNode *node;
     Float tMin, tMax;
 };

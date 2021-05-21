@@ -43,11 +43,12 @@
 #include "camera.h"
 #include "film.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // RealisticCamera Declarations
-class RealisticCamera : public Camera {
-  public:
+class RealisticCamera: public Camera
+{
+public:
     // RealisticCamera Public Methods
     RealisticCamera(const AnimatedTransform &CameraToWorld, Float shutterOpen,
                     Float shutterClose, Float apertureDiameter,
@@ -56,9 +57,10 @@ class RealisticCamera : public Camera {
                     const Medium *medium);
     Float GenerateRay(const CameraSample &sample, Ray *) const;
 
-  private:
+private:
     // RealisticCamera Private Declarations
-    struct LensElementInterface {
+    struct LensElementInterface
+    {
         Float curvatureRadius;
         Float thickness;
         Float eta;
@@ -72,13 +74,15 @@ class RealisticCamera : public Camera {
 
     // RealisticCamera Private Methods
     Float LensRearZ() const { return elementInterfaces.back().thickness; }
-    Float LensFrontZ() const {
+    Float LensFrontZ() const
+    {
         Float zSum = 0;
-        for (const LensElementInterface &element : elementInterfaces)
+        for (const LensElementInterface &element: elementInterfaces)
             zSum += element.thickness;
         return zSum;
     }
-    Float RearElementRadius() const {
+    Float RearElementRadius() const
+    {
         return elementInterfaces.back().apertureRadius;
     }
     bool TraceLensesFromFilm(const Ray &ray, Ray *rOut) const;

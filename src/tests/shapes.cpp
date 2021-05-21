@@ -16,16 +16,19 @@
 
 using namespace pbrt;
 
-static Float pExp(RNG &rng, Float exp = 8.) {
+static Float pExp(RNG &rng, Float exp = 8.)
+{
     Float logu = Lerp(rng.UniformFloat(), -exp, exp);
     return std::pow(10, logu);
 }
 
-static Float pUnif(RNG &rng, Float range = 10.) {
+static Float pUnif(RNG &rng, Float range = 10.)
+{
     return Lerp(rng.UniformFloat(), -range, range);
 }
 
-TEST(Triangle, Watertight) {
+TEST(Triangle, Watertight)
+{
     RNG rng(12111);
     int nTheta = 16, nPhi = 16;
     ASSERT_GE(nTheta, 3);
@@ -108,7 +111,7 @@ TEST(Triangle, Watertight) {
         u[1] = rng.UniformFloat();
         Ray r(p, UniformSampleSphere(u));
         int nHits = 0;
-        for (const auto &tri : tris) {
+        for (const auto &tri: tris) {
             Float tHit;
             SurfaceInteraction isect;
             if (tri->Intersect(r, &tHit, &isect, false)) ++nHits;
@@ -119,7 +122,7 @@ TEST(Triangle, Watertight) {
         Point3f pVertex = vertices[rng.UniformUInt32(vertices.size())];
         r.d = pVertex - r.o;
         nHits = 0;
-        for (const auto &tri : tris) {
+        for (const auto &tri: tris) {
             Float tHit;
             SurfaceInteraction isect;
             if (tri->Intersect(r, &tHit, &isect, false)) ++nHits;
@@ -128,7 +131,8 @@ TEST(Triangle, Watertight) {
     }
 }
 
-std::shared_ptr<Triangle> GetRandomTriangle(std::function<Float()> value) {
+std::shared_ptr<Triangle> GetRandomTriangle(std::function<Float()> value)
+{
     // Triangle vertices
     Point3f v[3];
     for (int j = 0; j < 3; ++j)
@@ -151,7 +155,8 @@ std::shared_ptr<Triangle> GetRandomTriangle(std::function<Float()> value) {
     return tri;
 }
 
-TEST(Triangle, Reintersect) {
+TEST(Triangle, Reintersect)
+{
     for (int i = 0; i < 1000; ++i) {
         RNG rng(i);
         std::shared_ptr<Triangle> tri =
@@ -207,7 +212,8 @@ TEST(Triangle, Reintersect) {
 // Computes the projected solid angle subtended by a series of random
 // triangles both using uniform spherical sampling as well as
 // Triangle::Sample(), in order to verify Triangle::Sample().
-TEST(Triangle, Sampling) {
+TEST(Triangle, Sampling)
+{
     for (int i = 0; i < 30; ++i) {
         const Float range = 10;
         RNG rng(i);
@@ -270,7 +276,8 @@ TEST(Triangle, Sampling) {
 
 // Checks the closed-form solid angle computation for triangles against a
 // Monte Carlo estimate of it.
-TEST(Triangle, SolidAngle) {
+TEST(Triangle, SolidAngle)
+{
     for (int i = 0; i < 50; ++i) {
         const Float range = 10;
         RNG rng(100 +
@@ -318,7 +325,8 @@ TEST(Triangle, SolidAngle) {
 
 // Use Quasi Monte Carlo with uniform sphere sampling to esimate the solid
 // angle subtended by the given shape from the given point.
-static Float mcSolidAngle(const Point3f &p, const Shape &shape, int nSamples) {
+static Float mcSolidAngle(const Point3f &p, const Shape &shape, int nSamples)
+{
     int nHits = 0;
     for (int i = 0; i < nSamples; ++i) {
         Point2f u{RadicalInverse(0, i), RadicalInverse(1, i)};
@@ -328,7 +336,8 @@ static Float mcSolidAngle(const Point3f &p, const Shape &shape, int nSamples) {
     return nHits / (UniformSpherePdf() * nSamples);
 }
 
-TEST(Sphere, SolidAngle) {
+TEST(Sphere, SolidAngle)
+{
     Transform tr = Translate(Vector3f(1, .5, -.8)) * RotateX(30);
     Transform trInv = Inverse(tr);
     Sphere sphere(&tr, &trInv, false, 1, -1, 1, 360);
@@ -347,7 +356,8 @@ TEST(Sphere, SolidAngle) {
     EXPECT_LT(std::abs(mcSA - sphereSA), .001);
 }
 
-TEST(Cylinder, SolidAngle) {
+TEST(Cylinder, SolidAngle)
+{
     Transform tr = Translate(Vector3f(1, .5, -.8)) * RotateX(30);
     Transform trInv = Inverse(tr);
     Cylinder cyl(&tr, &trInv, false, .25, -1, 1, 360.);
@@ -358,7 +368,8 @@ TEST(Cylinder, SolidAngle) {
     EXPECT_LT(std::abs(solidAngle - cyl.SolidAngle(p, nSamples)), .001);
 }
 
-TEST(Disk, SolidAngle) {
+TEST(Disk, SolidAngle)
+{
     Transform tr = Translate(Vector3f(1, .5, -.8)) * RotateX(30);
     Transform trInv = Inverse(tr);
     Disk disk(&tr, &trInv, false, 0, 1.25, 0, 360);
@@ -373,7 +384,8 @@ TEST(Disk, SolidAngle) {
 // such that if the dot product of an outgoing ray and the surface normal
 // at a point is positive, then a ray leaving that point in that direction
 // should never intersect the shape.
-static void TestReintersectConvex(Shape &shape, RNG &rng) {
+static void TestReintersectConvex(Shape &shape, RNG &rng)
+{
     // Ray origin
     Point3f o;
     for (int c = 0; c < 3; ++c) o[c] = pExp(rng);
@@ -424,7 +436,8 @@ static void TestReintersectConvex(Shape &shape, RNG &rng) {
     }
 }
 
-TEST(FullSphere, Reintersect) {
+TEST(FullSphere, Reintersect)
+{
     for (int i = 0; i < 100; ++i) {
         RNG rng(i);
         Transform identity;
@@ -438,7 +451,8 @@ TEST(FullSphere, Reintersect) {
     }
 }
 
-TEST(ParialSphere, Normal) {
+TEST(ParialSphere, Normal)
+{
     for (int i = 0; i < 100; ++i) {
         RNG rng(i);
         Transform identity;
@@ -477,7 +491,8 @@ TEST(ParialSphere, Normal) {
     }
 }
 
-TEST(PartialSphere, Reintersect) {
+TEST(PartialSphere, Reintersect)
+{
     for (int i = 0; i < 100; ++i) {
         RNG rng(i);
         Transform identity;
@@ -496,7 +511,8 @@ TEST(PartialSphere, Reintersect) {
     }
 }
 
-TEST(Cylinder, Reintersect) {
+TEST(Cylinder, Reintersect)
+{
     for (int i = 0; i < 100; ++i) {
         RNG rng(i);
         Transform identity;
@@ -541,7 +557,8 @@ TEST(Paraboloid, Reintersect) {
 }
 #endif
 
-TEST(Triangle, BadCases) {
+TEST(Triangle, BadCases)
+{
     Transform identity;
     int indices[3] = {0, 1, 2};
     Point3f p[3] = {Point3f(-1113.45459, -79.049614, -56.2431908),

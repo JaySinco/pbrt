@@ -46,12 +46,13 @@
 #include <string>
 #include <vector>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Loc represents a position in a file being parsed.
-struct Loc {
+struct Loc
+{
     Loc() = default;
-    Loc(const std::string &filename) : filename(filename) {}
+    Loc(const std::string &filename): filename(filename) {}
 
     std::string filename;
     int line = 1, column = 0;
@@ -63,10 +64,11 @@ extern Loc *parserLoc;
 // Reimplement enough of absl/std::string_view as needed for the below
 // (Bringing on the abseil dependency at this point just for this seems
 // excessive.)
-class string_view {
-  public:
-    string_view(const char *start, size_t size) : ptr(start), length(size) {}
-    string_view() : ptr(nullptr), length(0) {}
+class string_view
+{
+public:
+    string_view(const char *start, size_t size): ptr(start), length(size) {}
+    string_view(): ptr(nullptr), length(0) {}
 
     const char *data() const { return ptr; }
     size_t size() const { return length; }
@@ -78,7 +80,8 @@ class string_view {
     const char *begin() const { return ptr; }
     const char *end() const { return ptr + length; }
 
-    bool operator==(const char *str) const {
+    bool operator==(const char *str) const
+    {
         int index;
         for (index = 0; *str; ++index, ++str) {
             if (index >= length) return false;
@@ -88,20 +91,22 @@ class string_view {
     }
     bool operator!=(const char *str) const { return !(*this == str); }
 
-    void remove_prefix(int n) {
+    void remove_prefix(int n)
+    {
         ptr += n;
         length -= n;
     }
     void remove_suffix(int n) { length -= n; }
 
-  private:
+private:
     const char *ptr;
     size_t length;
 };
 
 // Tokenizer converts a single pbrt scene file into a series of tokens.
-class Tokenizer {
-  public:
+class Tokenizer
+{
+public:
     static std::unique_ptr<Tokenizer> CreateFromFile(
         const std::string &filename,
         std::function<void(const char *)> errorCallback);
@@ -116,14 +121,15 @@ class Tokenizer {
 
     Loc loc;
 
-  private:
+private:
     Tokenizer(std::string str, std::function<void(const char *)> errorCallback);
 #if defined(PBRT_HAVE_MMAP) || defined(PBRT_IS_WINDOWS)
     Tokenizer(void *ptr, size_t len, std::string filename,
               std::function<void(const char *)> errorCallback);
 #endif
 
-    int getChar() {
+    int getChar()
+    {
         if (pos == end) return EOF;
         int ch = *pos++;
         if (ch == '\n') {
@@ -133,7 +139,8 @@ class Tokenizer {
             ++loc.column;
         return ch;
     }
-    void ungetChar() {
+    void ungetChar()
+    {
         --pos;
         if (*pos == '\n')
             // Don't worry about the column; we'll be going to the start of

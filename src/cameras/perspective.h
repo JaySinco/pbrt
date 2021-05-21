@@ -43,11 +43,12 @@
 #include "camera.h"
 #include "film.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PerspectiveCamera Declarations
-class PerspectiveCamera : public ProjectiveCamera {
-  public:
+class PerspectiveCamera: public ProjectiveCamera
+{
+public:
     // PerspectiveCamera Public Methods
     PerspectiveCamera(const AnimatedTransform &CameraToWorld,
                       const Bounds2f &screenWindow, Float shutterOpen,
@@ -62,7 +63,7 @@ class PerspectiveCamera : public ProjectiveCamera {
                        Vector3f *wi, Float *pdf, Point2f *pRaster,
                        VisibilityTester *vis) const;
 
-  private:
+private:
     // PerspectiveCamera Private Data
     Vector3f dxCamera, dyCamera;
     Float A;

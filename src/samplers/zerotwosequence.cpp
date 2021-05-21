@@ -36,12 +36,13 @@
 #include "paramset.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ZeroTwoSequenceSampler Method Definitions
 ZeroTwoSequenceSampler::ZeroTwoSequenceSampler(int64_t samplesPerPixel,
                                                int nSampledDimensions)
-    : PixelSampler(RoundUpPow2(samplesPerPixel), nSampledDimensions) {
+    : PixelSampler(RoundUpPow2(samplesPerPixel), nSampledDimensions)
+{
     if (!IsPowerOf2(samplesPerPixel))
         Warning(
             "Pixel samples being rounded up to power of 2 "
@@ -49,7 +50,8 @@ ZeroTwoSequenceSampler::ZeroTwoSequenceSampler(int64_t samplesPerPixel,
             samplesPerPixel, RoundUpPow2(samplesPerPixel));
 }
 
-void ZeroTwoSequenceSampler::StartPixel(const Point2i &p) {
+void ZeroTwoSequenceSampler::StartPixel(const Point2i &p)
+{
     ProfilePhase _(Prof::StartPixel);
     // Generate 1D and 2D pixel sample components using $(0,2)$-sequence
     for (size_t i = 0; i < samples1D.size(); ++i)
@@ -67,13 +69,15 @@ void ZeroTwoSequenceSampler::StartPixel(const Point2i &p) {
     PixelSampler::StartPixel(p);
 }
 
-std::unique_ptr<Sampler> ZeroTwoSequenceSampler::Clone(int seed) {
+std::unique_ptr<Sampler> ZeroTwoSequenceSampler::Clone(int seed)
+{
     ZeroTwoSequenceSampler *lds = new ZeroTwoSequenceSampler(*this);
     lds->rng.SetSequence(seed);
     return std::unique_ptr<Sampler>(lds);
 }
 
-ZeroTwoSequenceSampler *CreateZeroTwoSequenceSampler(const ParamSet &params) {
+ZeroTwoSequenceSampler *CreateZeroTwoSequenceSampler(const ParamSet &params)
+{
     int nsamp = params.FindOneInt("pixelsamples", 16);
     int sd = params.FindOneInt("dimensions", 4);
     if (PbrtOptions.quickRender) nsamp = 1;

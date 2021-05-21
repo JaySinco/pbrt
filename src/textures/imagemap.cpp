@@ -35,15 +35,16 @@
 #include "imageio.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ImageTexture Method Definitions
 template <typename Tmemory, typename Treturn>
 ImageTexture<Tmemory, Treturn>::ImageTexture(
     std::unique_ptr<TextureMapping2D> mapping, const std::string &filename,
     bool doTrilinear, Float maxAniso, ImageWrap wrapMode, Float scale,
     bool gamma)
-    : mapping(std::move(mapping)) {
+    : mapping(std::move(mapping))
+{
     mipmap =
         GetTexture(filename, doTrilinear, maxAniso, wrapMode, scale, gamma);
 }
@@ -51,7 +52,8 @@ ImageTexture<Tmemory, Treturn>::ImageTexture(
 template <typename Tmemory, typename Treturn>
 MIPMap<Tmemory> *ImageTexture<Tmemory, Treturn>::GetTexture(
     const std::string &filename, bool doTrilinear, Float maxAniso,
-    ImageWrap wrap, Float scale, bool gamma) {
+    ImageWrap wrap, Float scale, bool gamma)
+{
     // Return _MIPMap_ from texture cache if present
     TexInfo texInfo(filename, doTrilinear, maxAniso, wrap, scale, gamma);
     if (textures.find(texInfo) != textures.end())
@@ -101,7 +103,8 @@ template <typename Tmemory, typename Treturn>
 std::map<TexInfo, std::unique_ptr<MIPMap<Tmemory>>>
     ImageTexture<Tmemory, Treturn>::textures;
 ImageTexture<Float, Float> *CreateImageFloatTexture(const Transform &tex2world,
-                                                    const TextureParams &tp) {
+                                                    const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");
@@ -143,7 +146,8 @@ ImageTexture<Float, Float> *CreateImageFloatTexture(const Transform &tex2world,
 }
 
 ImageTexture<RGBSpectrum, Spectrum> *CreateImageSpectrumTexture(
-    const Transform &tex2world, const TextureParams &tp) {
+    const Transform &tex2world, const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");

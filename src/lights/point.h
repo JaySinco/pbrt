@@ -43,17 +43,20 @@
 #include "light.h"
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PointLight Declarations
-class PointLight : public Light {
-  public:
+class PointLight: public Light
+{
+public:
     // PointLight Public Methods
     PointLight(const Transform &LightToWorld,
                const MediumInterface &mediumInterface, const Spectrum &I)
         : Light((int)LightFlags::DeltaPosition, LightToWorld, mediumInterface),
           pLight(LightToWorld(Point3f(0, 0, 0))),
-          I(I) {}
+          I(I)
+    {
+    }
     Spectrum Sample_Li(const Interaction &ref, const Point2f &u, Vector3f *wi,
                        Float *pdf, VisibilityTester *vis) const;
     Spectrum Power() const;
@@ -64,7 +67,7 @@ class PointLight : public Light {
     void Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
                 Float *pdfDir) const;
 
-  private:
+private:
     // PointLight Private Data
     const Point3f pLight;
     const Spectrum I;

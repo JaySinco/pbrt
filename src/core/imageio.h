@@ -43,8 +43,8 @@
 #include "geometry.h"
 #include <cctype>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ImageIO Declarations
 std::unique_ptr<RGBSpectrum[]> ReadImage(const std::string &name,
                                          Point2i *resolution);

@@ -33,16 +33,18 @@
 // textures/uv.cpp*
 #include "textures/uv.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // UVTexture Method Definitions
 Texture<Float> *CreateUVFloatTexture(const Transform &tex2world,
-                                     const TextureParams &tp) {
+                                     const TextureParams &tp)
+{
     return nullptr;
 }
 
 UVTexture *CreateUVSpectrumTexture(const Transform &tex2world,
-                                   const TextureParams &tp) {
+                                   const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");

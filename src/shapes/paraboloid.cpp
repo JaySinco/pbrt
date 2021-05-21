@@ -36,8 +36,8 @@
 #include "efloat.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Paraboloid Method Definitions
 Paraboloid::Paraboloid(const Transform *o2w, const Transform *w2o, bool ro,
                        Float radius, Float z0, Float z1, Float phiMax)
@@ -45,15 +45,19 @@ Paraboloid::Paraboloid(const Transform *o2w, const Transform *w2o, bool ro,
       radius(radius),
       zMin(std::min(z0, z1)),
       zMax(std::max(z0, z1)),
-      phiMax(Radians(Clamp(phiMax, 0, 360))) {}
-Bounds3f Paraboloid::ObjectBound() const {
+      phiMax(Radians(Clamp(phiMax, 0, 360)))
+{
+}
+Bounds3f Paraboloid::ObjectBound() const
+{
     Point3f p1 = Point3f(-radius, -radius, zMin);
     Point3f p2 = Point3f(radius, radius, zMax);
     return Bounds3f(p1, p2);
 }
 
 bool Paraboloid::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
-                           bool testAlphaTexture) const {
+                           bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersect);
     Float phi;
     Point3f pHit;
@@ -151,7 +155,8 @@ bool Paraboloid::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
     return true;
 }
 
-bool Paraboloid::IntersectP(const Ray &r, bool testAlphaTexture) const {
+bool Paraboloid::IntersectP(const Ray &r, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersectP);
     Float phi;
     Point3f pHit;
@@ -200,14 +205,16 @@ bool Paraboloid::IntersectP(const Ray &r, bool testAlphaTexture) const {
     return true;
 }
 
-Float Paraboloid::Area() const {
+Float Paraboloid::Area() const
+{
     Float radius2 = radius * radius;
     Float k = 4 * zMax / radius2;
     return (radius2 * radius2 * phiMax / (12 * zMax * zMax)) *
            (std::pow(k * zMax + 1, 1.5f) - std::pow(k * zMin + 1, 1.5f));
 }
 
-Interaction Paraboloid::Sample(const Point2f &u, Float *pdf) const {
+Interaction Paraboloid::Sample(const Point2f &u, Float *pdf) const
+{
     LOG(FATAL) << "Paraboloid::Sample not implemented.";
     return Interaction();
 }
@@ -215,7 +222,8 @@ Interaction Paraboloid::Sample(const Point2f &u, Float *pdf) const {
 std::shared_ptr<Paraboloid> CreateParaboloidShape(const Transform *o2w,
                                                   const Transform *w2o,
                                                   bool reverseOrientation,
-                                                  const ParamSet &params) {
+                                                  const ParamSet &params)
+{
     Float radius = params.FindOneFloat("radius", 1);
     Float zmin = params.FindOneFloat("zmin", 0);
     Float zmax = params.FindOneFloat("zmax", 1);

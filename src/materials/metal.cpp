@@ -37,8 +37,8 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MetalMaterial Method Definitions
 MetalMaterial::MetalMaterial(const std::shared_ptr<Texture<Spectrum>> &eta,
                              const std::shared_ptr<Texture<Spectrum>> &k,
@@ -53,12 +53,15 @@ MetalMaterial::MetalMaterial(const std::shared_ptr<Texture<Spectrum>> &eta,
       uRoughness(uRoughness),
       vRoughness(vRoughness),
       bumpMap(bumpMap),
-      remapRoughness(remapRoughness) {}
+      remapRoughness(remapRoughness)
+{
+}
 
 void MetalMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                                MemoryArena &arena,
                                                TransportMode mode,
-                                               bool allowMultipleLobes) const {
+                                               bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
@@ -111,7 +114,8 @@ const Float CopperK[CopperSamples] = {
     2.678062, 2.809, 3.01075,  3.24,  3.458187, 3.67,  3.863125, 4.05,
     4.239563, 4.43,  4.619563, 4.817, 5.034125, 5.26,  5.485625, 5.717};
 
-MetalMaterial *CreateMetalMaterial(const TextureParams &mp) {
+MetalMaterial *CreateMetalMaterial(const TextureParams &mp)
+{
     static Spectrum copperN =
         Spectrum::FromSampled(CopperWavelengths, CopperN, CopperSamples);
     std::shared_ptr<Texture<Spectrum>> eta =

@@ -41,8 +41,8 @@
 // core/interpolation.h*
 #include "pbrt.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Spline Interpolation Declarations
 Float CatmullRom(int size, const Float *nodes, const Float *values, Float x);
 bool CatmullRomWeights(int size, const Float *nodes, Float x, int *offset,

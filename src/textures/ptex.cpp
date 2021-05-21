@@ -40,10 +40,10 @@
 
 #include <Ptexture.h>
 
-namespace pbrt {
-
-namespace {
-
+namespace pbrt
+{
+namespace
+{
 // Reference count for the cache. Note: we assume that PtexTextures aren't
 // being created/destroyed concurrently by multiple threads.
 int nActiveTextures;
@@ -54,7 +54,8 @@ STAT_COUNTER("Texture/Ptex files accessed", nFilesAccessed);
 STAT_COUNTER("Texture/Ptex block reads", nBlockReads);
 STAT_MEMORY_COUNTER("Memory/Ptex peak memory used", peakMemoryUsed);
 
-struct : public PtexErrorHandler {
+struct: public PtexErrorHandler
+{
     void reportError(const char *error) override { Error("%s", error); }
 } errorHandler;
 
@@ -63,7 +64,8 @@ struct : public PtexErrorHandler {
 // PtexTexture Method Definitions
 template <typename T>
 PtexTexture<T>::PtexTexture(const std::string &filename, Float gamma)
-    : filename(filename), gamma(gamma) {
+    : filename(filename), gamma(gamma)
+{
     if (!cache) {
         CHECK_EQ(nActiveTextures, 0);
         int maxFiles = 100;
@@ -96,7 +98,8 @@ PtexTexture<T>::PtexTexture(const std::string &filename, Float gamma)
 }
 
 template <typename T>
-PtexTexture<T>::~PtexTexture() {
+PtexTexture<T>::~PtexTexture()
+{
     if (--nActiveTextures == 0) {
         LOG(INFO) << "Releasing ptex cache";
         Ptex::PtexCache::Stats stats;
@@ -111,12 +114,14 @@ PtexTexture<T>::~PtexTexture() {
 }
 
 template <typename T>
-inline T fromResult(int nc, float *result) {
+inline T fromResult(int nc, float *result)
+{
     return T::unimplemented;
 }
 
 template <>
-inline Float fromResult<Float>(int nc, float *result) {
+inline Float fromResult<Float>(int nc, float *result)
+{
     if (nc == 1)
         return result[0];
     else
@@ -124,7 +129,8 @@ inline Float fromResult<Float>(int nc, float *result) {
 }
 
 template <>
-inline Spectrum fromResult<Spectrum>(int nc, float *result) {
+inline Spectrum fromResult<Spectrum>(int nc, float *result)
+{
     if (nc == 1)
         return Spectrum(result[0]);
     else {
@@ -134,7 +140,8 @@ inline Spectrum fromResult<Spectrum>(int nc, float *result) {
 }
 
 template <typename T>
-T PtexTexture<T>::Evaluate(const SurfaceInteraction &si) const {
+T PtexTexture<T>::Evaluate(const SurfaceInteraction &si) const
+{
     ProfilePhase _(Prof::TexFiltPtex);
 
     if (!valid) return T{};
@@ -165,14 +172,16 @@ T PtexTexture<T>::Evaluate(const SurfaceInteraction &si) const {
 }
 
 PtexTexture<Float> *CreatePtexFloatTexture(const Transform &tex2world,
-                                           const TextureParams &tp) {
+                                           const TextureParams &tp)
+{
     std::string filename = tp.FindFilename("filename");
     Float gamma = tp.FindFloat("gamma", 2.2);
     return new PtexTexture<Float>(filename, gamma);
 }
 
 PtexTexture<Spectrum> *CreatePtexSpectrumTexture(const Transform &tex2world,
-                                                 const TextureParams &tp) {
+                                                 const TextureParams &tp)
+{
     std::string filename = tp.FindFilename("filename");
     Float gamma = tp.FindFloat("gamma", 2.2);
     return new PtexTexture<Spectrum>(filename, gamma);

@@ -38,13 +38,14 @@
 #include "interaction.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // UberMaterial Method Definitions
 void UberMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                               MemoryArena &arena,
                                               TransportMode mode,
-                                              bool allowMultipleLobes) const {
+                                              bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     Float e = eta->Evaluate(*si);
@@ -99,7 +100,8 @@ void UberMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
             ARENA_ALLOC(arena, SpecularTransmission)(kt, 1.f, e, mode));
 }
 
-UberMaterial *CreateUberMaterial(const TextureParams &mp) {
+UberMaterial *CreateUberMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> Kd =
         mp.GetSpectrumTexture("Kd", Spectrum(0.25f));
     std::shared_ptr<Texture<Spectrum>> Ks =

@@ -1,7 +1,26 @@
+---
 BasedOnStyle: Google
-AccessModifierOffset: -2
-IndentCaseLabels: false
-PointerBindsToType: false
-Standard: Cpp11
 IndentWidth: 4
+---
+Language: Cpp
+AccessModifierOffset: -4
 SortIncludes: false
+BreakBeforeBraces: Custom
+DerivePointerAlignment: false
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeRangeBasedForLoopColon: false
+SpaceBeforeInheritanceColon: false
+PointerAlignment: Right
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterObjCDeclaration: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+---

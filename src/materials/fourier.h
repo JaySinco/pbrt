@@ -45,11 +45,12 @@
 #include "interpolation.h"
 #include <map>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // FourierMaterial Declarations
-class FourierMaterial : public Material {
-  public:
+class FourierMaterial: public Material
+{
+public:
     // FourierMaterial Public Methods
     FourierMaterial(const std::string &filename,
                     const std::shared_ptr<Texture<Float>> &bump);
@@ -57,7 +58,7 @@ class FourierMaterial : public Material {
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // FourierMaterial Private Data
     FourierBSDFTable *bsdfTable;
     std::shared_ptr<Texture<Float>> bumpMap;

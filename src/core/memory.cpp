@@ -33,10 +33,11 @@
 // core/memory.cpp*
 #include "memory.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Memory Allocation Functions
-void *AllocAligned(size_t size) {
+void *AllocAligned(size_t size)
+{
 #if defined(PBRT_HAVE__ALIGNED_MALLOC)
     return _aligned_malloc(size, PBRT_L1_CACHE_LINE_SIZE);
 #elif defined(PBRT_HAVE_POSIX_MEMALIGN)
@@ -48,7 +49,8 @@ void *AllocAligned(size_t size) {
 #endif
 }
 
-void FreeAligned(void *ptr) {
+void FreeAligned(void *ptr)
+{
     if (!ptr) return;
 #if defined(PBRT_HAVE__ALIGNED_MALLOC)
     _aligned_free(ptr);

@@ -35,8 +35,8 @@
 #include "stats.h"
 #include "lowdiscrepancy.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Shape Method Definitions
 Shape::~Shape() {}
 
@@ -46,14 +46,16 @@ Shape::Shape(const Transform *ObjectToWorld, const Transform *WorldToObject,
     : ObjectToWorld(ObjectToWorld),
       WorldToObject(WorldToObject),
       reverseOrientation(reverseOrientation),
-      transformSwapsHandedness(ObjectToWorld->SwapsHandedness()) {
+      transformSwapsHandedness(ObjectToWorld->SwapsHandedness())
+{
     ++nShapesCreated;
 }
 
 Bounds3f Shape::WorldBound() const { return (*ObjectToWorld)(ObjectBound()); }
 
 Interaction Shape::Sample(const Interaction &ref, const Point2f &u,
-                          Float *pdf) const {
+                          Float *pdf) const
+{
     Interaction intr = Sample(u, pdf);
     Vector3f wi = intr.p - ref.p;
     if (wi.LengthSquared() == 0)
@@ -68,7 +70,8 @@ Interaction Shape::Sample(const Interaction &ref, const Point2f &u,
     return intr;
 }
 
-Float Shape::Pdf(const Interaction &ref, const Vector3f &wi) const {
+Float Shape::Pdf(const Interaction &ref, const Vector3f &wi) const
+{
     // Intersect sample ray with area light geometry
     Ray ray = ref.SpawnRay(wi);
     Float tHit;
@@ -85,7 +88,8 @@ Float Shape::Pdf(const Interaction &ref, const Vector3f &wi) const {
     return pdf;
 }
 
-Float Shape::SolidAngle(const Point3f &p, int nSamples) const {
+Float Shape::SolidAngle(const Point3f &p, int nSamples) const
+{
     Interaction ref(p, Normal3f(), Vector3f(), Vector3f(0, 0, 1), 0,
                     MediumInterface{});
     double solidAngle = 0;

@@ -9,7 +9,8 @@
 
 using namespace pbrt;
 
-TEST(StringPrintf, Basics) {
+TEST(StringPrintf, Basics)
+{
     EXPECT_EQ(StringPrintf("Hello, world"), "Hello, world");
     EXPECT_EQ(StringPrintf("x = %d", 5), "x = 5");
     EXPECT_EQ(StringPrintf("%f, %f, %f", 1., 1.5, -8.125), "1, 1.5, -8.125");
@@ -18,7 +19,8 @@ TEST(StringPrintf, Basics) {
 #endif
 }
 
-TEST(OperatorLeftShiftPrint, Basics) {
+TEST(OperatorLeftShiftPrint, Basics)
+{
     {
         std::ostringstream os;
         os << Point2f(105.5, -12.75);

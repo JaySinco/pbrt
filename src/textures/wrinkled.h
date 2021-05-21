@@ -43,23 +43,27 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // WrinkledTexture Declarations
 template <typename T>
-class WrinkledTexture : public Texture<T> {
-  public:
+class WrinkledTexture: public Texture<T>
+{
+public:
     // WrinkledTexture Public Methods
     WrinkledTexture(std::unique_ptr<TextureMapping3D> mapping, int octaves,
                     Float omega)
-        : mapping(std::move(mapping)), octaves(octaves), omega(omega) {}
-    T Evaluate(const SurfaceInteraction &si) const {
+        : mapping(std::move(mapping)), octaves(octaves), omega(omega)
+    {
+    }
+    T Evaluate(const SurfaceInteraction &si) const
+    {
         Vector3f dpdx, dpdy;
         Point3f p = mapping->Map(si, &dpdx, &dpdy);
         return Turbulence(p, dpdx, dpdy, omega, octaves);
     }
 
-  private:
+private:
     // WrinkledTexture Private Data
     std::unique_ptr<TextureMapping3D> mapping;
     int octaves;

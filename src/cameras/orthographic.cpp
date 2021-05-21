@@ -37,11 +37,12 @@
 #include "sampling.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // OrthographicCamera Definitions
 Float OrthographicCamera::GenerateRay(const CameraSample &sample,
-                                      Ray *ray) const {
+                                      Ray *ray) const
+{
     ProfilePhase prof(Prof::GenerateCameraRay);
     // Compute raster and camera sample positions
     Point3f pFilm = Point3f(sample.pFilm.x, sample.pFilm.y, 0);
@@ -67,7 +68,8 @@ Float OrthographicCamera::GenerateRay(const CameraSample &sample,
 }
 
 Float OrthographicCamera::GenerateRayDifferential(const CameraSample &sample,
-                                                  RayDifferential *ray) const {
+                                                  RayDifferential *ray) const
+{
     ProfilePhase prof(Prof::GenerateCameraRay);
     // Compute main orthographic viewing ray
 
@@ -119,7 +121,8 @@ Float OrthographicCamera::GenerateRayDifferential(const CameraSample &sample,
 
 OrthographicCamera *CreateOrthographicCamera(const ParamSet &params,
                                              const AnimatedTransform &cam2world,
-                                             Film *film, const Medium *medium) {
+                                             Film *film, const Medium *medium)
+{
     // Extract common camera parameters from _ParamSet_
     Float shutteropen = params.FindOneFloat("shutteropen", 0.f);
     Float shutterclose = params.FindOneFloat("shutterclose", 1.f);

@@ -36,10 +36,11 @@
 #include "paramset.h"
 #include "texture.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // NURBS Evaluation Functions
-static int KnotOffset(const Float *knot, int order, int np, Float t) {
+static int KnotOffset(const Float *knot, int order, int np, Float t)
+{
     int firstKnot = order - 1;
 
     int knotOffset = firstKnot;
@@ -51,9 +52,11 @@ static int KnotOffset(const Float *knot, int order, int np, Float t) {
 
 // doesn't handle flat out discontinuities in the curve...
 
-struct Homogeneous3 {
+struct Homogeneous3
+{
     Homogeneous3() { x = y = z = w = 0.; }
-    Homogeneous3(Float xx, Float yy, Float zz, Float ww) {
+    Homogeneous3(Float xx, Float yy, Float zz, Float ww)
+    {
         x = xx;
         y = yy;
         z = zz;
@@ -65,7 +68,8 @@ struct Homogeneous3 {
 
 static Homogeneous3 NURBSEvaluate(int order, const Float *knot,
                                   const Homogeneous3 *cp, int np, int cpStride,
-                                  Float t, Vector3f *deriv = nullptr) {
+                                  Float t, Vector3f *deriv = nullptr)
+{
     //    int nKnots = np + order;
     Float alpha;
 
@@ -115,7 +119,8 @@ static Homogeneous3 NURBSEvaluate(int order, const Float *knot,
 static Point3f NURBSEvaluateSurface(int uOrder, const Float *uKnot, int ucp,
                                     Float u, int vOrder, const Float *vKnot,
                                     int vcp, Float v, const Homogeneous3 *cp,
-                                    Vector3f *dpdu, Vector3f *dpdv) {
+                                    Vector3f *dpdu, Vector3f *dpdv)
+{
     Homogeneous3 *iso = ALLOCA(Homogeneous3, std::max(uOrder, vOrder));
 
     int uOffset = KnotOffset(uKnot, uOrder, ucp, u);
@@ -144,7 +149,8 @@ static Point3f NURBSEvaluateSurface(int uOrder, const Float *uKnot, int ucp,
 std::vector<std::shared_ptr<Shape>> CreateNURBS(const Transform *o2w,
                                                 const Transform *w2o,
                                                 bool reverseOrientation,
-                                                const ParamSet &params) {
+                                                const ParamSet &params)
+{
     int nu = params.FindOneInt("nu", -1);
     if (nu == -1) {
         Error("Must provide number of control points \"nu\" with NURBS shape.");

@@ -38,12 +38,13 @@
 #include "paramset.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // KdSubsurfaceMaterial Method Definitions
 void KdSubsurfaceMaterial::ComputeScatteringFunctions(
     SurfaceInteraction *si, MemoryArena &arena, TransportMode mode,
-    bool allowMultipleLobes) const {
+    bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     Spectrum R = Kr->Evaluate(*si).Clamp();
@@ -96,7 +97,8 @@ void KdSubsurfaceMaterial::ComputeScatteringFunctions(
                                                      sig_a, sig_s, table);
 }
 
-KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const TextureParams &mp) {
+KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const TextureParams &mp)
+{
     Float Kd[3] = {.5, .5, .5};
     std::shared_ptr<Texture<Spectrum>> kd =
         mp.GetSpectrumTexture("Kd", Spectrum::FromRGB(Kd));

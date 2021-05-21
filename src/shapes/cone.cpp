@@ -36,23 +36,27 @@
 #include "efloat.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Cone Method Definitions
 Cone::Cone(const Transform *o2w, const Transform *w2o, bool ro, Float height,
            Float radius, Float phiMax)
     : Shape(o2w, w2o, ro),
       radius(radius),
       height(height),
-      phiMax(Radians(Clamp(phiMax, 0, 360))) {}
-Bounds3f Cone::ObjectBound() const {
+      phiMax(Radians(Clamp(phiMax, 0, 360)))
+{
+}
+Bounds3f Cone::ObjectBound() const
+{
     Point3f p1 = Point3f(-radius, -radius, 0);
     Point3f p2 = Point3f(radius, radius, height);
     return Bounds3f(p1, p2);
 }
 
 bool Cone::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
-                     bool testAlphaTexture) const {
+                     bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersect);
     Float phi;
     Point3f pHit;
@@ -146,7 +150,8 @@ bool Cone::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
     return true;
 }
 
-bool Cone::IntersectP(const Ray &r, bool testAlphaTexture) const {
+bool Cone::IntersectP(const Ray &r, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersectP);
     Float phi;
     Point3f pHit;
@@ -196,12 +201,14 @@ bool Cone::IntersectP(const Ray &r, bool testAlphaTexture) const {
     return true;
 }
 
-Float Cone::Area() const {
+Float Cone::Area() const
+{
     return radius * std::sqrt((height * height) + (radius * radius)) * phiMax /
            2;
 }
 
-Interaction Cone::Sample(const Point2f &u, Float *pdf) const {
+Interaction Cone::Sample(const Point2f &u, Float *pdf) const
+{
     LOG(FATAL) << "Cone::Sample not implemented.";
     return Interaction();
 }
@@ -209,7 +216,8 @@ Interaction Cone::Sample(const Point2f &u, Float *pdf) const {
 std::shared_ptr<Cone> CreateConeShape(const Transform *o2w,
                                       const Transform *w2o,
                                       bool reverseOrientation,
-                                      const ParamSet &params) {
+                                      const ParamSet &params)
+{
     Float radius = params.FindOneFloat("radius", 1);
     Float height = params.FindOneFloat("height", 1);
     Float phimax = params.FindOneFloat("phimax", 360);

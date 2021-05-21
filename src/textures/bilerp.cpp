@@ -33,11 +33,12 @@
 // textures/bilerp.cpp*
 #include "textures/bilerp.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // BilerpTexture Method Definitions
 BilerpTexture<Float> *CreateBilerpFloatTexture(const Transform &tex2world,
-                                               const TextureParams &tp) {
+                                               const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");
@@ -66,7 +67,8 @@ BilerpTexture<Float> *CreateBilerpFloatTexture(const Transform &tex2world,
 }
 
 BilerpTexture<Spectrum> *CreateBilerpSpectrumTexture(const Transform &tex2world,
-                                                     const TextureParams &tp) {
+                                                     const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");

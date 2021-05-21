@@ -36,10 +36,11 @@
 #include "parallel.h"
 #include "scene.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // BSSRDF Utility Functions
-Float FresnelMoment1(Float eta) {
+Float FresnelMoment1(Float eta)
+{
     Float eta2 = eta * eta, eta3 = eta2 * eta, eta4 = eta3 * eta,
           eta5 = eta4 * eta;
     if (eta < 1)
@@ -50,7 +51,8 @@ Float FresnelMoment1(Float eta) {
                1.27198f * eta4 + 0.12746f * eta5;
 }
 
-Float FresnelMoment2(Float eta) {
+Float FresnelMoment2(Float eta)
+{
     Float eta2 = eta * eta, eta3 = eta2 * eta, eta4 = eta3 * eta,
           eta5 = eta4 * eta;
     if (eta < 1) {
@@ -64,8 +66,8 @@ Float FresnelMoment2(Float eta) {
     }
 }
 
-Float BeamDiffusionMS(Float sigma_s, Float sigma_a, Float g, Float eta,
-                      Float r) {
+Float BeamDiffusionMS(Float sigma_s, Float sigma_a, Float g, Float eta, Float r)
+{
     const int nSamples = 100;
     Float Ed = 0;
     // Precompute information for dipole integrand
@@ -119,8 +121,8 @@ Float BeamDiffusionMS(Float sigma_s, Float sigma_a, Float g, Float eta,
     return Ed / nSamples;
 }
 
-Float BeamDiffusionSS(Float sigma_s, Float sigma_a, Float g, Float eta,
-                      Float r) {
+Float BeamDiffusionSS(Float sigma_s, Float sigma_a, Float g, Float eta, Float r)
+{
     // Compute material parameters and minimum $t$ below the critical angle
     Float sigma_t = sigma_a + sigma_s, rho = sigma_s / sigma_t;
     Float tCrit = r * std::sqrt(eta * eta - 1);
@@ -142,7 +144,8 @@ Float BeamDiffusionSS(Float sigma_s, Float sigma_a, Float g, Float eta,
     return Ess / nSamples;
 }
 
-void ComputeBeamDiffusionBSSRDF(Float g, Float eta, BSSRDFTable *t) {
+void ComputeBeamDiffusionBSSRDF(Float g, Float eta, BSSRDFTable *t)
+{
     // Choose radius values of the diffusion profile discretization
     t->radiusSamples[0] = 0;
     t->radiusSamples[1] = 2.5e-3f;
@@ -179,7 +182,8 @@ void ComputeBeamDiffusionBSSRDF(Float g, Float eta, BSSRDFTable *t) {
 
 void SubsurfaceFromDiffuse(const BSSRDFTable &t, const Spectrum &rhoEff,
                            const Spectrum &mfp, Spectrum *sigma_a,
-                           Spectrum *sigma_s) {
+                           Spectrum *sigma_s)
+{
     for (int c = 0; c < Spectrum::nSamples; ++c) {
         Float rho = InvertCatmullRom(t.nRhoSamples, t.rhoSamples.get(),
                                      t.rhoEff.get(), rhoEff[c]);
@@ -196,9 +200,12 @@ BSSRDFTable::BSSRDFTable(int nRhoSamples, int nRadiusSamples)
       radiusSamples(new Float[nRadiusSamples]),
       profile(new Float[nRadiusSamples * nRhoSamples]),
       rhoEff(new Float[nRhoSamples]),
-      profileCDF(new Float[nRadiusSamples * nRhoSamples]) {}
+      profileCDF(new Float[nRadiusSamples * nRhoSamples])
+{
+}
 
-Spectrum TabulatedBSSRDF::Sr(Float r) const {
+Spectrum TabulatedBSSRDF::Sr(Float r) const
+{
     Spectrum Sr(0.f);
     for (int ch = 0; ch < Spectrum::nSamples; ++ch) {
         // Convert $r$ into unitless optical radius $r_{\roman{optical}}$
@@ -235,7 +242,8 @@ Spectrum TabulatedBSSRDF::Sr(Float r) const {
 
 Spectrum SeparableBSSRDF::Sample_S(const Scene &scene, Float u1,
                                    const Point2f &u2, MemoryArena &arena,
-                                   SurfaceInteraction *si, Float *pdf) const {
+                                   SurfaceInteraction *si, Float *pdf) const
+{
     ProfilePhase pp(Prof::BSSRDFSampling);
     Spectrum Sp = Sample_Sp(scene, u1, u2, arena, si, pdf);
     if (!Sp.IsBlack()) {
@@ -249,7 +257,8 @@ Spectrum SeparableBSSRDF::Sample_S(const Scene &scene, Float u1,
 
 Spectrum SeparableBSSRDF::Sample_Sp(const Scene &scene, Float u1,
                                     const Point2f &u2, MemoryArena &arena,
-                                    SurfaceInteraction *pi, Float *pdf) const {
+                                    SurfaceInteraction *pi, Float *pdf) const
+{
     ProfilePhase pp(Prof::BSSRDFEvaluation);
     // Choose projection axis for BSSRDF sampling
     Vector3f vx, vy, vz;
@@ -296,7 +305,8 @@ Spectrum SeparableBSSRDF::Sample_Sp(const Scene &scene, Float u1,
     // Intersect BSSRDF sampling ray against the scene geometry
 
     // Declare _IntersectionChain_ and linked list
-    struct IntersectionChain {
+    struct IntersectionChain
+    {
         SurfaceInteraction si;
         IntersectionChain *next = nullptr;
     };
@@ -330,7 +340,8 @@ Spectrum SeparableBSSRDF::Sample_Sp(const Scene &scene, Float u1,
     return this->Sp(*pi);
 }
 
-Float SeparableBSSRDF::Pdf_Sp(const SurfaceInteraction &pi) const {
+Float SeparableBSSRDF::Pdf_Sp(const SurfaceInteraction &pi) const
+{
     // Express $\pti-\pto$ and $\bold{n}_i$ with respect to local coordinates at
     // $\pto$
     Vector3f d = po.p - pi.p;
@@ -352,7 +363,8 @@ Float SeparableBSSRDF::Pdf_Sp(const SurfaceInteraction &pi) const {
     return pdf;
 }
 
-Float TabulatedBSSRDF::Sample_Sr(int ch, Float u) const {
+Float TabulatedBSSRDF::Sample_Sr(int ch, Float u) const
+{
     if (sigma_t[ch] == 0) return -1;
     return SampleCatmullRom2D(table.nRhoSamples, table.nRadiusSamples,
                               table.rhoSamples.get(), table.radiusSamples.get(),
@@ -361,7 +373,8 @@ Float TabulatedBSSRDF::Sample_Sr(int ch, Float u) const {
            sigma_t[ch];
 }
 
-Float TabulatedBSSRDF::Pdf_Sr(int ch, Float r) const {
+Float TabulatedBSSRDF::Pdf_Sr(int ch, Float r) const
+{
     // Convert $r$ into unitless optical radius $r_{\roman{optical}}$
     Float rOptical = r * sigma_t[ch];
 

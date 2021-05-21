@@ -42,11 +42,12 @@
 #include "material.h"
 #include "pbrt.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // DisneyMaterial Declarations
-class DisneyMaterial : public Material {
-  public:
+class DisneyMaterial: public Material
+{
+public:
     // DisneyMaterial Public Methods
     DisneyMaterial(const std::shared_ptr<Texture<Spectrum>> &color,
                    const std::shared_ptr<Texture<Float>> &metallic,
@@ -78,12 +79,14 @@ class DisneyMaterial : public Material {
           thin(thin),
           flatness(flatness),
           diffTrans(diffTrans),
-          bumpMap(bumpMap) {}
+          bumpMap(bumpMap)
+    {
+    }
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // DisneyMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> color;
     std::shared_ptr<Texture<Float>> metallic, eta;

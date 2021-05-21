@@ -35,8 +35,8 @@
 #include "interaction.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 std::map<std::string, std::unique_ptr<FourierBSDFTable>>
     FourierMaterial::loadedBSDFs;
 
@@ -91,20 +91,23 @@ std::map<std::string, std::unique_ptr<FourierBSDFTable>>
   to port them from Mitsuba.)
 */
 
-inline bool IsBigEndian() {
+inline bool IsBigEndian()
+{
     uint32_t i = 0x01020304;
     char c[4];
     memcpy(c, &i, 4);
     return (c[0] == 1);
 }
 
-static inline uint32_t ByteSwap32(uint32_t x) {
+static inline uint32_t ByteSwap32(uint32_t x)
+{
     return ((((x)&0xFF) << 24) | (((x)&0xFF00) << 8) | (((x)&0xFF0000) >> 8) |
             (((x)&0xFF000000) >> 24));
 }
 
 bool FourierBSDFTable::Read(const std::string &filename,
-                            FourierBSDFTable *bsdfTable) {
+                            FourierBSDFTable *bsdfTable)
+{
     bsdfTable->mu = bsdfTable->cdf = bsdfTable->a = nullptr;
     bsdfTable->aOffset = bsdfTable->m = nullptr;
     bsdfTable->nChannels = 0;
@@ -200,7 +203,8 @@ fail:
 
 FourierMaterial::FourierMaterial(const std::string &filename,
                                  const std::shared_ptr<Texture<Float>> &bumpMap)
-    : bumpMap(bumpMap) {
+    : bumpMap(bumpMap)
+{
     if (loadedBSDFs.find(filename) == loadedBSDFs.end()) {
         std::unique_ptr<FourierBSDFTable> table(new FourierBSDFTable);
         FourierBSDFTable::Read(filename, table.get());
@@ -209,9 +213,11 @@ FourierMaterial::FourierMaterial(const std::string &filename,
     bsdfTable = loadedBSDFs[filename].get();
 }
 
-void FourierMaterial::ComputeScatteringFunctions(
-    SurfaceInteraction *si, MemoryArena &arena, TransportMode mode,
-    bool allowMultipleLobes) const {
+void FourierMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
+                                                 MemoryArena &arena,
+                                                 TransportMode mode,
+                                                 bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
@@ -221,7 +227,8 @@ void FourierMaterial::ComputeScatteringFunctions(
         si->bsdf->Add(ARENA_ALLOC(arena, FourierBSDF)(*bsdfTable, mode));
 }
 
-FourierMaterial *CreateFourierMaterial(const TextureParams &mp) {
+FourierMaterial *CreateFourierMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Float>> bumpMap =
         mp.GetFloatTextureOrNull("bumpmap");
     return new FourierMaterial(mp.FindFilename("bsdffile"), bumpMap);

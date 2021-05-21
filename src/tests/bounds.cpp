@@ -5,20 +5,22 @@
 
 using namespace pbrt;
 
-TEST(Bounds2, IteratorBasic) {
+TEST(Bounds2, IteratorBasic)
+{
     Bounds2i b{{0, 1}, {2, 3}};
     Point2i e[] = {{0, 1}, {1, 1}, {0, 2}, {1, 2}};
     int offset = 0;
-    for (auto p : b) {
+    for (auto p: b) {
         EXPECT_LT(offset, sizeof(e) / sizeof(e[0]));
         EXPECT_EQ(e[offset], p) << "offset = " << offset;
         ++offset;
     }
 }
 
-TEST(Bounds2, IteratorDegenerate) {
+TEST(Bounds2, IteratorDegenerate)
+{
     Bounds2i b{{0, 0}, {0, 10}};
-    for (auto p : b) {
+    for (auto p: b) {
         // This loop should never run.
         bool reached = true;
         EXPECT_FALSE(reached) << "p = " << p;
@@ -26,7 +28,7 @@ TEST(Bounds2, IteratorDegenerate) {
     }
 
     Bounds2i b2{{0, 0}, {4, 0}};
-    for (auto p : b2) {
+    for (auto p: b2) {
         // This loop should never run.
         bool reached = true;
         EXPECT_FALSE(reached) << "p = " << p;
@@ -34,7 +36,7 @@ TEST(Bounds2, IteratorDegenerate) {
     }
 
     Bounds2i b3;
-    for (auto p : b3) {
+    for (auto p: b3) {
         // This loop should never run.
         bool reached = true;
         EXPECT_FALSE(reached) << "p = " << p;
@@ -42,7 +44,8 @@ TEST(Bounds2, IteratorDegenerate) {
     }
 }
 
-TEST(Bounds3, PointDistance) {
+TEST(Bounds3, PointDistance)
+{
     {
         Bounds3f b(Point3f(0, 0, 0), Point3f(1, 1, 1));
 
@@ -81,7 +84,8 @@ TEST(Bounds3, PointDistance) {
     }
 }
 
-TEST(Bounds2, Union) {
+TEST(Bounds2, Union)
+{
     Bounds2f a(Point2f(-10, -10), Point2f(0, 20));
     Bounds2f b;  // degenerate
     Bounds2f c = Union(a, b);
@@ -94,7 +98,8 @@ TEST(Bounds2, Union) {
     EXPECT_EQ(Bounds2f(Point2f(-15, -10), Point2f(0, 20)), e);
 }
 
-TEST(Bounds3, Union) {
+TEST(Bounds3, Union)
+{
     Bounds3f a(Point3f(-10, -10, 5), Point3f(0, 20, 10));
     Bounds3f b;  // degenerate
     Bounds3f c = Union(a, b);

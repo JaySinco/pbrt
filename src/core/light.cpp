@@ -37,8 +37,8 @@
 #include "stats.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_COUNTER("Scene/Lights", numLights);
 STAT_COUNTER("Scene/AreaLights", numAreaLights);
 
@@ -49,17 +49,20 @@ Light::Light(int flags, const Transform &LightToWorld,
       nSamples(std::max(1, nSamples)),
       mediumInterface(mediumInterface),
       LightToWorld(LightToWorld),
-      WorldToLight(Inverse(LightToWorld)) {
+      WorldToLight(Inverse(LightToWorld))
+{
     ++numLights;
 }
 
 Light::~Light() {}
 
-bool VisibilityTester::Unoccluded(const Scene &scene) const {
+bool VisibilityTester::Unoccluded(const Scene &scene) const
+{
     return !scene.IntersectP(p0.SpawnRayTo(p1));
 }
 
-Spectrum VisibilityTester::Tr(const Scene &scene, Sampler &sampler) const {
+Spectrum VisibilityTester::Tr(const Scene &scene, Sampler &sampler) const
+{
     Ray ray(p0.SpawnRayTo(p1));
     Spectrum Tr(1.f);
     while (true) {
@@ -83,7 +86,8 @@ Spectrum Light::Le(const RayDifferential &ray) const { return Spectrum(0.f); }
 
 AreaLight::AreaLight(const Transform &LightToWorld,
                      const MediumInterface &medium, int nSamples)
-    : Light((int)LightFlags::Area, LightToWorld, medium, nSamples) {
+    : Light((int)LightFlags::Area, LightToWorld, medium, nSamples)
+{
     ++numAreaLights;
 }
 

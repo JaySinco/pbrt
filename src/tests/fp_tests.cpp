@@ -9,7 +9,8 @@
 
 using namespace pbrt;
 
-static float GetFloat(RNG &rng) {
+static float GetFloat(RNG &rng)
+{
     float f;
     do {
         f = BitsToFloat(rng.UniformUInt32());
@@ -17,7 +18,8 @@ static float GetFloat(RNG &rng) {
     return f;
 }
 
-static double GetDouble(RNG &rng) {
+static double GetDouble(RNG &rng)
+{
     double d;
     do {
         d = BitsToFloat(uint64_t(rng.UniformUInt32()) |
@@ -26,7 +28,8 @@ static double GetDouble(RNG &rng) {
     return d;
 }
 
-TEST(FloatingPoint, NextUpDownFloat) {
+TEST(FloatingPoint, NextUpDownFloat)
+{
     EXPECT_GT(NextFloatUp(-0.f), 0.f);
     EXPECT_LT(NextFloatDown(0.f), 0.f);
 
@@ -46,7 +49,8 @@ TEST(FloatingPoint, NextUpDownFloat) {
     }
 }
 
-TEST(FloatingPoint, NextUpDownDouble) {
+TEST(FloatingPoint, NextUpDownDouble)
+{
     EXPECT_GT(NextFloatUp(-0.), 0.);
     EXPECT_LT(NextFloatDown(0.), 0.);
 
@@ -66,7 +70,8 @@ TEST(FloatingPoint, NextUpDownDouble) {
     }
 }
 
-TEST(FloatingPoint, FloatBits) {
+TEST(FloatingPoint, FloatBits)
+{
     RNG rng(1);
     for (int i = 0; i < 100000; ++i) {
         uint32_t ui = rng.UniformUInt32();
@@ -77,7 +82,8 @@ TEST(FloatingPoint, FloatBits) {
     }
 }
 
-TEST(FloatingPoint, DoubleBits) {
+TEST(FloatingPoint, DoubleBits)
+{
     RNG rng(2);
     for (int i = 0; i < 100000; ++i) {
         uint64_t ui = (uint64_t(rng.UniformUInt32()) |
@@ -90,7 +96,8 @@ TEST(FloatingPoint, DoubleBits) {
     }
 }
 
-TEST(FloatingPoint, AtomicFloat) {
+TEST(FloatingPoint, AtomicFloat)
+{
     AtomicFloat af(0);
     Float f = 0.;
     EXPECT_EQ(f, af);
@@ -106,33 +113,34 @@ TEST(FloatingPoint, AtomicFloat) {
 // EFloat tests
 
 // Return an exponentially-distributed floating-point value.
-static EFloat getFloat(RNG &rng, Float minExp = -6., Float maxExp = 6.) {
+static EFloat getFloat(RNG &rng, Float minExp = -6., Float maxExp = 6.)
+{
     Float logu = Lerp(rng.UniformFloat(), minExp, maxExp);
     Float val = std::pow(10, logu);
 
     // Choose a random error bound.
     Float err = 0;
     switch (rng.UniformUInt32(4)) {
-    case 0:
-        // no error
-        break;
-    case 1: {
-        // small typical/reasonable error
-        uint32_t ulpError = rng.UniformUInt32(1024);
-        Float offset = BitsToFloat(FloatToBits(val) + ulpError);
-        err = std::abs(offset - val);
-        break;
-    }
-    case 2: {
-        // bigger ~reasonable error
-        uint32_t ulpError = rng.UniformUInt32(1024 * 1024);
-        Float offset = BitsToFloat(FloatToBits(val) + ulpError);
-        err = std::abs(offset - val);
-        break;
-    }
-    case 3: {
-        err = (4 * rng.UniformFloat()) * std::abs(val);
-    }
+        case 0:
+            // no error
+            break;
+        case 1: {
+            // small typical/reasonable error
+            uint32_t ulpError = rng.UniformUInt32(1024);
+            Float offset = BitsToFloat(FloatToBits(val) + ulpError);
+            err = std::abs(offset - val);
+            break;
+        }
+        case 2: {
+            // bigger ~reasonable error
+            uint32_t ulpError = rng.UniformUInt32(1024 * 1024);
+            Float offset = BitsToFloat(FloatToBits(val) + ulpError);
+            err = std::abs(offset - val);
+            break;
+        }
+        case 3: {
+            err = (4 * rng.UniformFloat()) * std::abs(val);
+        }
     }
     Float sign = rng.UniformFloat() < .5 ? -1. : 1.;
     return EFloat(sign * val, err);
@@ -140,30 +148,32 @@ static EFloat getFloat(RNG &rng, Float minExp = -6., Float maxExp = 6.) {
 
 // Given an EFloat covering some range, choose a double-precision "precise"
 // value that is in the EFloat's range.
-static double getPrecise(const EFloat &ef, RNG &rng) {
+static double getPrecise(const EFloat &ef, RNG &rng)
+{
     switch (rng.UniformUInt32(3)) {
-    // 2/3 of the time, pick a value that is right at the end of the range;
-    // this is a maximally difficult / adversarial choice, so should help
-    // ferret out any bugs.
-    case 0:
-        return ef.LowerBound();
-    case 1:
-        return ef.UpperBound();
-    case 2: {
-        // Otherwise choose a value uniformly inside the EFloat's range.
-        Float t = rng.UniformFloat();
-        double p = (1 - t) * ef.LowerBound() + t * ef.UpperBound();
-        if (p > ef.UpperBound()) p = ef.UpperBound();
-        if (p < ef.LowerBound()) p = ef.LowerBound();
-        return p;
-    }
+        // 2/3 of the time, pick a value that is right at the end of the range;
+        // this is a maximally difficult / adversarial choice, so should help
+        // ferret out any bugs.
+        case 0:
+            return ef.LowerBound();
+        case 1:
+            return ef.UpperBound();
+        case 2: {
+            // Otherwise choose a value uniformly inside the EFloat's range.
+            Float t = rng.UniformFloat();
+            double p = (1 - t) * ef.LowerBound() + t * ef.UpperBound();
+            if (p > ef.UpperBound()) p = ef.UpperBound();
+            if (p < ef.LowerBound()) p = ef.LowerBound();
+            return p;
+        }
     }
     return (Float)ef;  // NOTREACHED
 }
 
 static const int kEFloatIters = 1000000;
 
-TEST(EFloat, Abs) {
+TEST(EFloat, Abs)
+{
     for (int trial = 0; trial < kEFloatIters; ++trial) {
         RNG rng(trial);
 
@@ -178,7 +188,8 @@ TEST(EFloat, Abs) {
     }
 }
 
-TEST(EFloat, Sqrt) {
+TEST(EFloat, Sqrt)
+{
     for (int trial = 0; trial < kEFloatIters; ++trial) {
         RNG rng(trial);
 
@@ -198,7 +209,8 @@ TEST(EFloat, Sqrt) {
     }
 }
 
-TEST(EFloat, Add) {
+TEST(EFloat, Add)
+{
     for (int trial = 0; trial < kEFloatIters; ++trial) {
         RNG rng(trial);
 
@@ -213,7 +225,8 @@ TEST(EFloat, Add) {
     }
 }
 
-TEST(EFloat, Sub) {
+TEST(EFloat, Sub)
+{
     for (int trial = 0; trial < kEFloatIters; ++trial) {
         RNG rng(trial);
 
@@ -228,7 +241,8 @@ TEST(EFloat, Sub) {
     }
 }
 
-TEST(EFloat, Mul) {
+TEST(EFloat, Mul)
+{
     for (int trial = 0; trial < kEFloatIters; ++trial) {
         RNG rng(trial);
 
@@ -243,7 +257,8 @@ TEST(EFloat, Mul) {
     }
 }
 
-TEST(EFloat, Div) {
+TEST(EFloat, Div)
+{
     for (int trial = 0; trial < kEFloatIters; ++trial) {
         RNG rng(trial);
 

@@ -44,18 +44,19 @@
 
 #include <string>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PtexTexture Declarations
 template <typename T>
-class PtexTexture : public Texture<T> {
-  public:
+class PtexTexture: public Texture<T>
+{
+public:
     // PtexTexture Public Methods
     PtexTexture(const std::string &filename, Float gamma);
     ~PtexTexture();
     T Evaluate(const SurfaceInteraction &) const;
 
-  private:
+private:
     bool valid;
     const std::string filename;
     const Float gamma;

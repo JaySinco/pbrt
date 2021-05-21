@@ -42,17 +42,18 @@
 #include "sampler.h"
 #include "rng.h"
 
-namespace pbrt {
-
-class RandomSampler : public Sampler {
-  public:
+namespace pbrt
+{
+class RandomSampler: public Sampler
+{
+public:
     RandomSampler(int ns, int seed = 0);
     void StartPixel(const Point2i &);
     Float Get1D();
     Point2f Get2D();
     std::unique_ptr<Sampler> Clone(int seed);
 
-  private:
+private:
     RNG rng;
 };
 

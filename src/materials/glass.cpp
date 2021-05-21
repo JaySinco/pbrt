@@ -38,13 +38,14 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // GlassMaterial Method Definitions
 void GlassMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                                MemoryArena &arena,
                                                TransportMode mode,
-                                               bool allowMultipleLobes) const {
+                                               bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     Float eta = index->Evaluate(*si);
@@ -90,7 +91,8 @@ void GlassMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     }
 }
 
-GlassMaterial *CreateGlassMaterial(const TextureParams &mp) {
+GlassMaterial *CreateGlassMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> Kr =
         mp.GetSpectrumTexture("Kr", Spectrum(1.f));
     std::shared_ptr<Texture<Spectrum>> Kt =

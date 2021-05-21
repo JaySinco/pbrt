@@ -41,11 +41,12 @@
 // shapes/hyperboloid.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Hyperboloid Declarations
-class Hyperboloid : public Shape {
-  public:
+class Hyperboloid: public Shape
+{
+public:
     // Hyperboloid Public Methods
     Hyperboloid(const Transform *o2w, const Transform *w2o, bool ro,
                 const Point3f &point1, const Point3f &point2, Float tm);
@@ -56,7 +57,7 @@ class Hyperboloid : public Shape {
     Float Area() const;
     Interaction Sample(const Point2f &u, Float *pdf) const;
 
-  protected:
+protected:
     // Hyperboloid Private Data
     Point3f p1, p2;
     Float zMin, zMax;

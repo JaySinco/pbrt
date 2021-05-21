@@ -43,17 +43,19 @@
 #include "light.h"
 #include "primitive.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // DiffuseAreaLight Declarations
-class DiffuseAreaLight : public AreaLight {
-  public:
+class DiffuseAreaLight: public AreaLight
+{
+public:
     // DiffuseAreaLight Public Methods
     DiffuseAreaLight(const Transform &LightToWorld,
                      const MediumInterface &mediumInterface, const Spectrum &Le,
                      int nSamples, const std::shared_ptr<Shape> &shape,
                      bool twoSided = false);
-    Spectrum L(const Interaction &intr, const Vector3f &w) const {
+    Spectrum L(const Interaction &intr, const Vector3f &w) const
+    {
         return (twoSided || Dot(intr.n, w) > 0) ? Lemit : Spectrum(0.f);
     }
     Spectrum Power() const;
@@ -66,7 +68,7 @@ class DiffuseAreaLight : public AreaLight {
     void Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
                 Float *pdfDir) const;
 
-  protected:
+protected:
     // DiffuseAreaLight Protected Data
     const Spectrum Lemit;
     std::shared_ptr<Shape> shape;

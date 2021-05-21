@@ -41,11 +41,12 @@
 // samplers/zerotwosequence.h*
 #include "sampler.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ZeroTwoSequenceSampler Declarations
-class ZeroTwoSequenceSampler : public PixelSampler {
-  public:
+class ZeroTwoSequenceSampler: public PixelSampler
+{
+public:
     // ZeroTwoSequenceSampler Public Methods
     ZeroTwoSequenceSampler(int64_t samplesPerPixel, int nSampledDimensions = 4);
     void StartPixel(const Point2i &);

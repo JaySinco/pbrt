@@ -37,10 +37,11 @@
 #include "stats.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Media Local Definitions
-struct MeasuredSS {
+struct MeasuredSS
+{
     const char *name;
     Float sigma_prime_s[3], sigma_a[3];  // mm^-1
 };
@@ -202,8 +203,9 @@ static MeasuredSS SubsurfaceParameterTable[] = {
 PhaseFunction::~PhaseFunction() {}
 
 bool GetMediumScatteringProperties(const std::string &name, Spectrum *sigma_a,
-                                   Spectrum *sigma_prime_s) {
-    for (MeasuredSS &mss : SubsurfaceParameterTable) {
+                                   Spectrum *sigma_prime_s)
+{
+    for (MeasuredSS &mss: SubsurfaceParameterTable) {
         if (name == mss.name) {
             *sigma_a = Spectrum::FromRGB(mss.sigma_a);
             *sigma_prime_s = Spectrum::FromRGB(mss.sigma_prime_s);
@@ -215,7 +217,8 @@ bool GetMediumScatteringProperties(const std::string &name, Spectrum *sigma_a,
 
 // HenyeyGreenstein Method Definitions
 Float HenyeyGreenstein::Sample_p(const Vector3f &wo, Vector3f *wi,
-                                 const Point2f &u) const {
+                                 const Point2f &u) const
+{
     ProfilePhase _(Prof::PhaseFuncSampling);
     // Compute $\cos \theta$ for Henyey--Greenstein sample
     Float cosTheta;
@@ -235,7 +238,8 @@ Float HenyeyGreenstein::Sample_p(const Vector3f &wo, Vector3f *wi,
     return PhaseHG(cosTheta, g);
 }
 
-Float HenyeyGreenstein::p(const Vector3f &wo, const Vector3f &wi) const {
+Float HenyeyGreenstein::p(const Vector3f &wo, const Vector3f &wi) const
+{
     ProfilePhase _(Prof::PhaseFuncEvaluation);
     return PhaseHG(Dot(wo, wi), g);
 }

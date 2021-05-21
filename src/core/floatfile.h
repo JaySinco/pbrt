@@ -41,8 +41,8 @@
 // core/floatfile.h*
 #include "pbrt.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 bool ReadFloatFile(const char *filename, std::vector<Float> *values);
 
 }  // namespace pbrt

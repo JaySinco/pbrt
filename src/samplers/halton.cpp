@@ -35,20 +35,22 @@
 #include "paramset.h"
 #include "rng.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // HaltonSampler Local Constants
 static PBRT_CONSTEXPR int kMaxResolution = 128;
 
 // HaltonSampler Utility Functions
 static void extendedGCD(uint64_t a, uint64_t b, int64_t *x, int64_t *y);
-static uint64_t multiplicativeInverse(int64_t a, int64_t n) {
+static uint64_t multiplicativeInverse(int64_t a, int64_t n)
+{
     int64_t x, y;
     extendedGCD(a, n, &x, &y);
     return Mod(x, n);
 }
 
-static void extendedGCD(uint64_t a, uint64_t b, int64_t *x, int64_t *y) {
+static void extendedGCD(uint64_t a, uint64_t b, int64_t *x, int64_t *y)
+{
     if (b == 0) {
         *x = 1;
         *y = 0;
@@ -63,7 +65,8 @@ static void extendedGCD(uint64_t a, uint64_t b, int64_t *x, int64_t *y) {
 // HaltonSampler Method Definitions
 HaltonSampler::HaltonSampler(int samplesPerPixel, const Bounds2i &sampleBounds,
                              bool sampleAtPixelCenter)
-    : GlobalSampler(samplesPerPixel), sampleAtPixelCenter(sampleAtPixelCenter) {
+    : GlobalSampler(samplesPerPixel), sampleAtPixelCenter(sampleAtPixelCenter)
+{
     // Generate random digit permutations for Halton sampler
     if (radicalInversePermutations.empty()) {
         RNG rng;
@@ -92,7 +95,8 @@ HaltonSampler::HaltonSampler(int samplesPerPixel, const Bounds2i &sampleBounds,
 }
 
 std::vector<uint16_t> HaltonSampler::radicalInversePermutations;
-int64_t HaltonSampler::GetIndexForSample(int64_t sampleNum) const {
+int64_t HaltonSampler::GetIndexForSample(int64_t sampleNum) const
+{
     if (currentPixel != pixelForOffset) {
         // Compute Halton sample offset for _currentPixel_
         offsetForCurrentPixel = 0;
@@ -114,7 +118,8 @@ int64_t HaltonSampler::GetIndexForSample(int64_t sampleNum) const {
     return offsetForCurrentPixel + sampleNum * sampleStride;
 }
 
-Float HaltonSampler::SampleDimension(int64_t index, int dim) const {
+Float HaltonSampler::SampleDimension(int64_t index, int dim) const
+{
     if (sampleAtPixelCenter && (dim == 0 || dim == 1)) return 0.5f;
     if (dim == 0)
         return RadicalInverse(dim, index >> baseExponents[0]);
@@ -125,12 +130,14 @@ Float HaltonSampler::SampleDimension(int64_t index, int dim) const {
                                        PermutationForDimension(dim));
 }
 
-std::unique_ptr<Sampler> HaltonSampler::Clone(int seed) {
+std::unique_ptr<Sampler> HaltonSampler::Clone(int seed)
+{
     return std::unique_ptr<Sampler>(new HaltonSampler(*this));
 }
 
 HaltonSampler *CreateHaltonSampler(const ParamSet &params,
-                                   const Bounds2i &sampleBounds) {
+                                   const Bounds2i &sampleBounds)
+{
     int nsamp = params.FindOneInt("pixelsamples", 16);
     if (PbrtOptions.quickRender) nsamp = 1;
     bool sampleAtCenter = params.FindOneBool("samplepixelcenter", false);

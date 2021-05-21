@@ -42,13 +42,14 @@
 #include <unordered_map>
 #include <vector>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // LightDistribution defines a general interface for classes that provide
 // probability distributions for sampling light sources at a given point in
 // space.
-class LightDistribution {
-  public:
+class LightDistribution
+{
+public:
     virtual ~LightDistribution();
 
     // Given a point |p| in space, this method returns a (hopefully
@@ -66,12 +67,13 @@ std::unique_ptr<LightDistribution> CreateLightSampleDistribution(
 // was the sampling method originally used for the PathIntegrator and the
 // VolPathIntegrator in the printed book, though without the
 // UniformLightDistribution class.)
-class UniformLightDistribution : public LightDistribution {
-  public:
+class UniformLightDistribution: public LightDistribution
+{
+public:
     UniformLightDistribution(const Scene &scene);
     const Distribution1D *Lookup(const Point3f &p) const;
 
-  private:
+private:
     std::unique_ptr<Distribution1D> distrib;
 };
 
@@ -84,12 +86,13 @@ class UniformLightDistribution : public LightDistribution {
 // scene and unimportant in others. (This was the default sampling method
 // used for the BDPT integrator and MLT integrator in the printed book,
 // though also without the PowerLightDistribution class.)
-class PowerLightDistribution : public LightDistribution {
-  public:
+class PowerLightDistribution: public LightDistribution
+{
+public:
     PowerLightDistribution(const Scene &scene);
     const Distribution1D *Lookup(const Point3f &p) const;
 
-  private:
+private:
     std::unique_ptr<Distribution1D> distrib;
 };
 
@@ -97,13 +100,14 @@ class PowerLightDistribution : public LightDistribution {
 // sampling a light source based on an estimate of its contribution to a
 // region of space.  A fixed voxel grid is imposed over the scene bounds
 // and a sampling distribution is computed as needed for each voxel.
-class SpatialLightDistribution : public LightDistribution {
-  public:
+class SpatialLightDistribution: public LightDistribution
+{
+public:
     SpatialLightDistribution(const Scene &scene, int maxVoxels = 64);
     ~SpatialLightDistribution();
     const Distribution1D *Lookup(const Point3f &p) const;
 
-  private:
+private:
     // Compute the sampling distribution for the voxel with integer
     // coordiantes given by "pi".
     Distribution1D *ComputeDistribution(Point3i pi) const;
@@ -116,7 +120,8 @@ class SpatialLightDistribution : public LightDistribution {
     // constructor). During rendering, the table is allocated without
     // locks, using atomic operations. (See the Lookup() method
     // implementation for details.)
-    struct HashEntry {
+    struct HashEntry
+    {
         std::atomic<uint64_t> packedPos;
         std::atomic<Distribution1D *> distribution;
     };

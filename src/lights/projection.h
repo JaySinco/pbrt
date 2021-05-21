@@ -44,11 +44,12 @@
 #include "shape.h"
 #include "mipmap.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ProjectionLight Declarations
-class ProjectionLight : public Light {
-  public:
+class ProjectionLight: public Light
+{
+public:
     // ProjectionLight Public Methods
     ProjectionLight(const Transform &LightToWorld,
                     const MediumInterface &medium, const Spectrum &I,
@@ -64,7 +65,7 @@ class ProjectionLight : public Light {
     void Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
                 Float *pdfDir) const;
 
-  private:
+private:
     // ProjectionLight Private Data
     std::unique_ptr<MIPMap<RGBSpectrum>> projectionMap;
     const Point3f pLight;

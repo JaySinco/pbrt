@@ -45,23 +45,30 @@
 #include "stats.h"
 #include "parallel.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_COUNTER("Texture/EWA lookups", nEWALookups);
 STAT_COUNTER("Texture/Trilinear lookups", nTrilerpLookups);
 STAT_MEMORY_COUNTER("Memory/Texture MIP maps", mipMapMemory);
 
 // MIPMap Helper Declarations
-enum class ImageWrap { Repeat, Black, Clamp };
-struct ResampleWeight {
+enum class ImageWrap
+{
+    Repeat,
+    Black,
+    Clamp
+};
+struct ResampleWeight
+{
     int firstTexel;
     Float weight[4];
 };
 
 // MIPMap Declarations
 template <typename T>
-class MIPMap {
-  public:
+class MIPMap
+{
+public:
     // MIPMap Public Methods
     MIPMap(const Point2i &resolution, const T *data, bool doTri = false,
            Float maxAniso = 8.f, ImageWrap wrapMode = ImageWrap::Repeat);
@@ -72,9 +79,10 @@ class MIPMap {
     T Lookup(const Point2f &st, Float width = 0.f) const;
     T Lookup(const Point2f &st, Vector2f dstdx, Vector2f dstdy) const;
 
-  private:
+private:
     // MIPMap Private Methods
-    std::unique_ptr<ResampleWeight[]> resampleWeights(int oldRes, int newRes) {
+    std::unique_ptr<ResampleWeight[]> resampleWeights(int oldRes, int newRes)
+    {
         CHECK_GE(newRes, oldRes);
         std::unique_ptr<ResampleWeight[]> wt(new ResampleWeight[newRes]);
         Float filterwidth = 2.f;
@@ -96,7 +104,8 @@ class MIPMap {
     }
     Float clamp(Float v) { return Clamp(v, 0.f, Infinity); }
     RGBSpectrum clamp(const RGBSpectrum &v) { return v.Clamp(0.f, Infinity); }
-    SampledSpectrum clamp(const SampledSpectrum &v) {
+    SampledSpectrum clamp(const SampledSpectrum &v)
+    {
         return v.Clamp(0.f, Infinity);
     }
     T triangle(int level, const Point2f &st) const;
@@ -119,7 +128,8 @@ MIPMap<T>::MIPMap(const Point2i &res, const T *img, bool doTrilinear,
     : doTrilinear(doTrilinear),
       maxAnisotropy(maxAnisotropy),
       wrapMode(wrapMode),
-      resolution(res) {
+      resolution(res)
+{
     ProfilePhase _(Prof::MIPMapCreation);
 
     std::unique_ptr<T[]> resampledImage = nullptr;
@@ -184,7 +194,7 @@ MIPMap<T>::MIPMap(const Point2i &res, const T *img, bool doTrilinear,
                     resampledImage[t * resPow2[0] + s] = clamp(workData[t]);
             },
             resPow2[0], 32);
-        for (auto ptr : resampleBufs) delete[] ptr;
+        for (auto ptr: resampleBufs) delete[] ptr;
         resolution = resPow2;
     }
     // Initialize levels of MIPMap from image
@@ -226,31 +236,33 @@ MIPMap<T>::MIPMap(const Point2i &res, const T *img, bool doTrilinear,
 }
 
 template <typename T>
-const T &MIPMap<T>::Texel(int level, int s, int t) const {
+const T &MIPMap<T>::Texel(int level, int s, int t) const
+{
     CHECK_LT(level, pyramid.size());
     const BlockedArray<T> &l = *pyramid[level];
     // Compute texel $(s,t)$ accounting for boundary conditions
     switch (wrapMode) {
-    case ImageWrap::Repeat:
-        s = Mod(s, l.uSize());
-        t = Mod(t, l.vSize());
-        break;
-    case ImageWrap::Clamp:
-        s = Clamp(s, 0, l.uSize() - 1);
-        t = Clamp(t, 0, l.vSize() - 1);
-        break;
-    case ImageWrap::Black: {
-        static const T black = 0.f;
-        if (s < 0 || s >= (int)l.uSize() || t < 0 || t >= (int)l.vSize())
-            return black;
-        break;
-    }
+        case ImageWrap::Repeat:
+            s = Mod(s, l.uSize());
+            t = Mod(t, l.vSize());
+            break;
+        case ImageWrap::Clamp:
+            s = Clamp(s, 0, l.uSize() - 1);
+            t = Clamp(t, 0, l.vSize() - 1);
+            break;
+        case ImageWrap::Black: {
+            static const T black = 0.f;
+            if (s < 0 || s >= (int)l.uSize() || t < 0 || t >= (int)l.vSize())
+                return black;
+            break;
+        }
     }
     return l(s, t);
 }
 
 template <typename T>
-T MIPMap<T>::Lookup(const Point2f &st, Float width) const {
+T MIPMap<T>::Lookup(const Point2f &st, Float width) const
+{
     ++nTrilerpLookups;
     ProfilePhase p(Prof::TexFiltTrilerp);
     // Compute MIPMap level for trilinear filtering
@@ -269,7 +281,8 @@ T MIPMap<T>::Lookup(const Point2f &st, Float width) const {
 }
 
 template <typename T>
-T MIPMap<T>::triangle(int level, const Point2f &st) const {
+T MIPMap<T>::triangle(int level, const Point2f &st) const
+{
     level = Clamp(level, 0, Levels() - 1);
     Float s = st[0] * pyramid[level]->uSize() - 0.5f;
     Float t = st[1] * pyramid[level]->vSize() - 0.5f;
@@ -282,7 +295,8 @@ T MIPMap<T>::triangle(int level, const Point2f &st) const {
 }
 
 template <typename T>
-T MIPMap<T>::Lookup(const Point2f &st, Vector2f dst0, Vector2f dst1) const {
+T MIPMap<T>::Lookup(const Point2f &st, Vector2f dst0, Vector2f dst1) const
+{
     if (doTrilinear) {
         Float width = std::max(std::max(std::abs(dst0[0]), std::abs(dst0[1])),
                                std::max(std::abs(dst1[0]), std::abs(dst1[1])));
@@ -311,7 +325,8 @@ T MIPMap<T>::Lookup(const Point2f &st, Vector2f dst0, Vector2f dst1) const {
 }
 
 template <typename T>
-T MIPMap<T>::EWA(int level, Point2f st, Vector2f dst0, Vector2f dst1) const {
+T MIPMap<T>::EWA(int level, Point2f st, Vector2f dst0, Vector2f dst1) const
+{
     if (level >= Levels()) return Texel(Levels() - 1, 0, 0);
     // Convert EWA coordinates to appropriate scale for level
     st[0] = st[0] * pyramid[level]->uSize() - 0.5f;

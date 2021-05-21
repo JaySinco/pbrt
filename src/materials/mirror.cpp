@@ -38,13 +38,14 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MirrorMaterial Method Definitions
 void MirrorMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                                 MemoryArena &arena,
                                                 TransportMode mode,
-                                                bool allowMultipleLobes) const {
+                                                bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
@@ -54,7 +55,8 @@ void MirrorMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
             R, ARENA_ALLOC(arena, FresnelNoOp)()));
 }
 
-MirrorMaterial *CreateMirrorMaterial(const TextureParams &mp) {
+MirrorMaterial *CreateMirrorMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> Kr =
         mp.GetSpectrumTexture("Kr", Spectrum(0.9f));
     std::shared_ptr<Texture<Float>> bumpMap =

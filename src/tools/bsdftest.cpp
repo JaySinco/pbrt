@@ -17,30 +17,31 @@ static MemoryArena arena;
 static RNG rng;
 
 // extract the red channel from a Spectrum class
-double spectrumRedValue(const Spectrum& s) { return s[0]; }
+double spectrumRedValue(const Spectrum &s) { return s[0]; }
 
-typedef void (*CreateBSDFFunc)(BSDF* bsdf);
+typedef void (*CreateBSDFFunc)(BSDF *bsdf);
 
-void createLambertian(BSDF* bsdf);
-void createOrenNayar0(BSDF* bsdf);
-void createOrenNayar20(BSDF* bsdf);
-void createMicrofacet(BSDF* bsdf, bool beckmann, bool samplevisible,
+void createLambertian(BSDF *bsdf);
+void createOrenNayar0(BSDF *bsdf);
+void createOrenNayar20(BSDF *bsdf);
+void createMicrofacet(BSDF *bsdf, bool beckmann, bool samplevisible,
                       float roughx, float roughy);
-void createMicrofacet30and0(BSDF* bsdf);
-void createFresnelBlend(BSDF* bsdf, bool beckmann, bool samplevisible,
+void createMicrofacet30and0(BSDF *bsdf);
+void createFresnelBlend(BSDF *bsdf, bool beckmann, bool samplevisible,
                         float roughx, float roughy);
 
-typedef void (*GenSampleFunc)(BSDF* bsdf, const Vector3f& wo, Vector3f* wi,
-                              Float* pdf, Spectrum* f);
+typedef void (*GenSampleFunc)(BSDF *bsdf, const Vector3f &wo, Vector3f *wi,
+                              Float *pdf, Spectrum *f);
 
-void Gen_Sample_f(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
-                  Spectrum* f);
-void Gen_CosHemisphere(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
-                       Spectrum* f);
-void Gen_UniformHemisphere(BSDF* bsdf, const Vector3f& wo, Vector3f* wi,
-                           Float* pdf, Spectrum* f);
+void Gen_Sample_f(BSDF *bsdf, const Vector3f &wo, Vector3f *wi, Float *pdf,
+                  Spectrum *f);
+void Gen_CosHemisphere(BSDF *bsdf, const Vector3f &wo, Vector3f *wi, Float *pdf,
+                       Spectrum *f);
+void Gen_UniformHemisphere(BSDF *bsdf, const Vector3f &wo, Vector3f *wi,
+                           Float *pdf, Spectrum *f);
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     Options opt;
     pbrtInit(opt);
 
@@ -62,69 +63,69 @@ int main(int argc, char* argv[]) {
         createLambertian,
         createOrenNayar0,
         createOrenNayar20,
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, true, 0.5, 0.5);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, true, 0.5, 0.5);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, true, 0.2, 0.1);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, true, 0.2, 0.1);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, true, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, true, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, true, 0.33, 0.033);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, true, 0.33, 0.033);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, false, 0.5, 0.5);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, false, 0.5, 0.5);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, false, 0.2, 0.1);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, false, 0.2, 0.1);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, false, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, false, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, true, false, 0.33, 0.033);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createMicrofacet(bsdf, false, false, 0.33, 0.033);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createFresnelBlend(bsdf, true, true, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createFresnelBlend(bsdf, false, true, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createFresnelBlend(bsdf, true, false, 0.15, 0.25);
         },
-        [](BSDF* bsdf) -> void {
+        [](BSDF *bsdf) -> void {
             createFresnelBlend(bsdf, false, false, 0.15, 0.25);
         },
     };
 
-    const char* BSDFFuncDescripArray[] = {
+    const char *BSDFFuncDescripArray[] = {
         "Lambertian",
         "Oren Nayar (sigma 0)",
         "Oren Nayar (sigma 20)",
@@ -158,7 +159,7 @@ int main(int argc, char* argv[]) {
         // CO        Gen_UniformHemisphere,
     };
 
-    const char* SampleFuncDescripArray[] = {
+    const char *SampleFuncDescripArray[] = {
         "BSDF Importance Sampling",
         // CO        "Cos Hemisphere",
         // CO        "Uniform Hemisphere",
@@ -185,7 +186,7 @@ int main(int argc, char* argv[]) {
 
     // for each bsdf model
     for (int model = 0; model < numModels; model++) {
-        BSDF* bsdf;
+        BSDF *bsdf;
 
         // create BSDF which requires creating a Shape, casting a Ray
         // that hits the shape to get a SurfaceInteraction object.
@@ -312,8 +313,9 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void Gen_Sample_f(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
-                  Spectrum* f) {
+void Gen_Sample_f(BSDF *bsdf, const Vector3f &wo, Vector3f *wi, Float *pdf,
+                  Spectrum *f)
+{
     // only glossy or diffuse reflections (no specular reflections)
     BxDFType inflags = BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE | BSDF_GLOSSY);
     BxDFType outflags;
@@ -343,8 +345,9 @@ void Gen_Sample_f(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
     }
 }
 
-void Gen_CosHemisphere(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
-                       Spectrum* f) {
+void Gen_CosHemisphere(BSDF *bsdf, const Vector3f &wo, Vector3f *wi, Float *pdf,
+                       Spectrum *f)
+{
     float u1 = rng.UniformFloat();
     float u2 = rng.UniformFloat();
     Vector3f wiL = CosineSampleHemisphere(Point2f(u1, u2));
@@ -355,8 +358,9 @@ void Gen_CosHemisphere(BSDF* bsdf, const Vector3f& wo, Vector3f* wi, Float* pdf,
     *f = bsdf->f(wo, *wi);
 }
 
-void Gen_UniformHemisphere(BSDF* bsdf, const Vector3f& wo, Vector3f* wi,
-                           Float* pdf, Spectrum* f) {
+void Gen_UniformHemisphere(BSDF *bsdf, const Vector3f &wo, Vector3f *wi,
+                           Float *pdf, Spectrum *f)
+{
     float u1 = rng.UniformFloat();
     float u2 = rng.UniformFloat();
     Vector3f wiL = UniformSampleHemisphere(Point2f(u1, u2));
@@ -366,15 +370,17 @@ void Gen_UniformHemisphere(BSDF* bsdf, const Vector3f& wo, Vector3f* wi,
     *f = bsdf->f(wo, *wi);
 }
 
-void createLambertian(BSDF* bsdf) {
+void createLambertian(BSDF *bsdf)
+{
     Spectrum Kd(1);
     bsdf->Add(ARENA_ALLOC(arena, LambertianReflection)(Kd));
 }
 
-void createMicrofacet(BSDF* bsdf, bool beckmann, bool samplevisible,
-                      float roughx, float roughy) {
+void createMicrofacet(BSDF *bsdf, bool beckmann, bool samplevisible,
+                      float roughx, float roughy)
+{
     Spectrum Ks(1);
-    MicrofacetDistribution* distrib;
+    MicrofacetDistribution *distrib;
     if (beckmann) {
         Float alphax = BeckmannDistribution::RoughnessToAlpha(roughx);
         Float alphay = BeckmannDistribution::RoughnessToAlpha(roughy);
@@ -386,16 +392,17 @@ void createMicrofacet(BSDF* bsdf, bool beckmann, bool samplevisible,
         distrib = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(
             alphax, alphay, samplevisible);
     }
-    Fresnel* fresnel = ARENA_ALLOC(arena, FresnelNoOp)();
-    BxDF* bxdf = ARENA_ALLOC(arena, MicrofacetReflection)(Ks, distrib, fresnel);
+    Fresnel *fresnel = ARENA_ALLOC(arena, FresnelNoOp)();
+    BxDF *bxdf = ARENA_ALLOC(arena, MicrofacetReflection)(Ks, distrib, fresnel);
     bsdf->Add(bxdf);
 }
 
-void createFresnelBlend(BSDF* bsdf, bool beckmann, bool samplevisible,
-                        float roughx, float roughy) {
+void createFresnelBlend(BSDF *bsdf, bool beckmann, bool samplevisible,
+                        float roughx, float roughy)
+{
     Spectrum d(0.5);
     Spectrum s(0.5);
-    MicrofacetDistribution* distrib;
+    MicrofacetDistribution *distrib;
     if (beckmann) {
         Float alphax = BeckmannDistribution::RoughnessToAlpha(roughx);
         Float alphay = BeckmannDistribution::RoughnessToAlpha(roughy);
@@ -407,11 +414,12 @@ void createFresnelBlend(BSDF* bsdf, bool beckmann, bool samplevisible,
         distrib = ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(
             alphax, alphay, samplevisible);
     }
-    BxDF* bxdf = ARENA_ALLOC(arena, FresnelBlend)(d, s, distrib);
+    BxDF *bxdf = ARENA_ALLOC(arena, FresnelBlend)(d, s, distrib);
     bsdf->Add(bxdf);
 }
 
-void createMicrofacet30and0(BSDF* bsdf, bool beckmann) {
+void createMicrofacet30and0(BSDF *bsdf, bool beckmann)
+{
     Spectrum Ks(0.5);
     MicrofacetDistribution *distrib1, *distrib2;
     if (beckmann) {
@@ -434,25 +442,27 @@ void createMicrofacet30and0(BSDF* bsdf, bool beckmann) {
             ARENA_ALLOC(arena, TrowbridgeReitzDistribution)(alphax, alphay);
     }
 
-    Fresnel* fresnel = ARENA_ALLOC(arena, FresnelNoOp)();
-    BxDF* bxdf1 =
+    Fresnel *fresnel = ARENA_ALLOC(arena, FresnelNoOp)();
+    BxDF *bxdf1 =
         ARENA_ALLOC(arena, MicrofacetReflection)(Ks, distrib1, fresnel);
     bsdf->Add(bxdf1);
-    BxDF* bxdf2 =
+    BxDF *bxdf2 =
         ARENA_ALLOC(arena, MicrofacetReflection)(Ks, distrib2, fresnel);
     bsdf->Add(bxdf2);
 }
 
-void createOrenNayar0(BSDF* bsdf) {
+void createOrenNayar0(BSDF *bsdf)
+{
     Spectrum Kd(1);
     float sigma = 0.0;
-    BxDF* bxdf = ARENA_ALLOC(arena, OrenNayar)(Kd, sigma);
+    BxDF *bxdf = ARENA_ALLOC(arena, OrenNayar)(Kd, sigma);
     bsdf->Add(bxdf);
 }
 
-void createOrenNayar20(BSDF* bsdf) {
+void createOrenNayar20(BSDF *bsdf)
+{
     Spectrum Kd(1);
     float sigma = 20.0;
-    BxDF* bxdf = ARENA_ALLOC(arena, OrenNayar)(Kd, sigma);
+    BxDF *bxdf = ARENA_ALLOC(arena, OrenNayar)(Kd, sigma);
     bsdf->Add(bxdf);
 }

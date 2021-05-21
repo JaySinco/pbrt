@@ -12,14 +12,16 @@
 
 using namespace pbrt;
 
-TEST(LowDiscrepancy, RadicalInverse) {
+TEST(LowDiscrepancy, RadicalInverse)
+{
     for (int a = 0; a < 1024; ++a) {
         EXPECT_EQ(ReverseBits32(a) * 2.3283064365386963e-10f,
                   RadicalInverse(0, a));
     }
 }
 
-TEST(LowDiscrepancy, ScrambledRadicalInverse) {
+TEST(LowDiscrepancy, ScrambledRadicalInverse)
+{
     for (int dim = 0; dim < 128; ++dim) {
         RNG rng(dim);
         // Random permutation table
@@ -29,7 +31,7 @@ TEST(LowDiscrepancy, ScrambledRadicalInverse) {
         for (int i = 0; i < base; ++i) perm.push_back(base - 1 - i);
         Shuffle(&perm[0], perm.size(), 1, rng);
 
-        for (const uint32_t index : {0, 1, 2, 1151, 32351, 4363211, 681122}) {
+        for (const uint32_t index: {0, 1, 2, 1151, 32351, 4363211, 681122}) {
             // First, compare to the pbrt-v2 implementation.
             {
                 Float val = 0;
@@ -73,7 +75,8 @@ TEST(LowDiscrepancy, ScrambledRadicalInverse) {
     }
 }
 
-TEST(LowDiscrepancy, GeneratorMatrix) {
+TEST(LowDiscrepancy, GeneratorMatrix)
+{
     uint32_t C[32];
     uint32_t Crev[32];
     // Identity matrix, column-wise
@@ -102,7 +105,8 @@ TEST(LowDiscrepancy, GeneratorMatrix) {
     }
 }
 
-TEST(LowDiscrepancy, GrayCodeSample) {
+TEST(LowDiscrepancy, GrayCodeSample)
+{
     uint32_t C[32];
     // Identity matrix, column-wise
     for (int i = 0; i < 32; ++i) C[i] = 1 << i;
@@ -116,7 +120,8 @@ TEST(LowDiscrepancy, GrayCodeSample) {
     }
 }
 
-TEST(LowDiscrepancy, Sobol) {
+TEST(LowDiscrepancy, Sobol)
+{
     // Check that float and double variants match (as float values).
     for (int i = 0; i < 256; ++i) {
         for (int dim = 0; dim < 100; ++dim) {
@@ -135,7 +140,8 @@ TEST(LowDiscrepancy, Sobol) {
 // Make sure samplers that are supposed to generate a single sample in
 // each of the elementary intervals actually do so.
 // TODO: check Halton (where the elementary intervals are (2^i, 3^j)).
-TEST(LowDiscrepancy, ElementaryIntervals) {
+TEST(LowDiscrepancy, ElementaryIntervals)
+{
     auto checkSampler = [](const char *name, std::unique_ptr<Sampler> sampler,
                            int logSamples) {
         // Get all of the samples for a pixel.
@@ -151,7 +157,7 @@ TEST(LowDiscrepancy, ElementaryIntervals) {
             int nx = 1 << i, ny = 1 << (logSamples - i);
 
             std::vector<int> count(1 << logSamples, 0);
-            for (const Point2f &s : samples) {
+            for (const Point2f &s: samples) {
                 // Map the sample to an interval
                 Float x = nx * s.x, y = ny * s.y;
                 EXPECT_GE(x, 0);
@@ -187,7 +193,8 @@ TEST(LowDiscrepancy, ElementaryIntervals) {
     }
 }
 
-TEST(MaxMinDist, MinDist) {
+TEST(MaxMinDist, MinDist)
+{
     // We use a silly O(n^2) distance check below, so don't go all the way up
     // to 2^16 samples.
     for (int logSamples = 2; logSamples <= 10; ++logSamples) {
@@ -228,7 +235,8 @@ TEST(MaxMinDist, MinDist) {
     }
 }
 
-TEST(Distribution1D, Discrete) {
+TEST(Distribution1D, Discrete)
+{
     // Carefully chosen distribution so that transitions line up with
     // (inverse) powers of 2.
     Float func[4] = {0, 1., 0., 3.};
@@ -279,7 +287,8 @@ TEST(Distribution1D, Discrete) {
     }
 }
 
-TEST(Distribution1D, Continuous) {
+TEST(Distribution1D, Continuous)
+{
     Float func[] = {1, 1, 2, 4, 8};
     Distribution1D dist(func, sizeof(func) / sizeof(func[0]));
     EXPECT_EQ(5, dist.Count());

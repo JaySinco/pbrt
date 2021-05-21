@@ -41,12 +41,13 @@
 #include "integrator.h"
 #include <numeric>
 
-namespace pbrt {
-
+namespace pbrt
+{
 LightDistribution::~LightDistribution() {}
 
 std::unique_ptr<LightDistribution> CreateLightSampleDistribution(
-    const std::string &name, const Scene &scene) {
+    const std::string &name, const Scene &scene)
+{
     if (name == "uniform" || scene.lights.size() == 1)
         return std::unique_ptr<LightDistribution>{
             new UniformLightDistribution(scene)};
@@ -65,19 +66,24 @@ std::unique_ptr<LightDistribution> CreateLightSampleDistribution(
     }
 }
 
-UniformLightDistribution::UniformLightDistribution(const Scene &scene) {
+UniformLightDistribution::UniformLightDistribution(const Scene &scene)
+{
     std::vector<Float> prob(scene.lights.size(), Float(1));
     distrib.reset(new Distribution1D(&prob[0], int(prob.size())));
 }
 
-const Distribution1D *UniformLightDistribution::Lookup(const Point3f &p) const {
+const Distribution1D *UniformLightDistribution::Lookup(const Point3f &p) const
+{
     return distrib.get();
 }
 
 PowerLightDistribution::PowerLightDistribution(const Scene &scene)
-    : distrib(ComputeLightPowerDistribution(scene)) {}
+    : distrib(ComputeLightPowerDistribution(scene))
+{
+}
 
-const Distribution1D *PowerLightDistribution::Lookup(const Point3f &p) const {
+const Distribution1D *PowerLightDistribution::Lookup(const Point3f &p) const
+{
     return distrib.get();
 }
 
@@ -97,7 +103,8 @@ static const uint64_t invalidPackedPos = 0xffffffffffffffff;
 
 SpatialLightDistribution::SpatialLightDistribution(const Scene &scene,
                                                    int maxVoxels)
-    : scene(scene) {
+    : scene(scene)
+{
     // Compute the number of voxels so that the widest scene bounding box
     // dimension has maxVoxels voxels and the other dimensions have a number
     // of voxels so that voxels are roughly cube shaped.
@@ -124,7 +131,8 @@ SpatialLightDistribution::SpatialLightDistribution(const Scene &scene,
               << nVoxels[2] << ")";
 }
 
-SpatialLightDistribution::~SpatialLightDistribution() {
+SpatialLightDistribution::~SpatialLightDistribution()
+{
     // Gather statistics about how well the computed distributions are across
     // the buckets.
     for (size_t i = 0; i < hashTableSize; ++i) {
@@ -133,7 +141,8 @@ SpatialLightDistribution::~SpatialLightDistribution() {
     }
 }
 
-const Distribution1D *SpatialLightDistribution::Lookup(const Point3f &p) const {
+const Distribution1D *SpatialLightDistribution::Lookup(const Point3f &p) const
+{
     ProfilePhase _(Prof::LightDistribLookup);
     ++nLookups;
 
@@ -232,8 +241,8 @@ const Distribution1D *SpatialLightDistribution::Lookup(const Point3f &p) const {
     }
 }
 
-Distribution1D *SpatialLightDistribution::ComputeDistribution(
-    Point3i pi) const {
+Distribution1D *SpatialLightDistribution::ComputeDistribution(Point3i pi) const
+{
     ProfilePhase _(Prof::LightDistribCreation);
     ++nCreated;
     ++nDistributions;

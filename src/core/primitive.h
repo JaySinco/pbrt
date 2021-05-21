@@ -45,11 +45,12 @@
 #include "medium.h"
 #include "transform.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Primitive Declarations
-class Primitive {
-  public:
+class Primitive
+{
+public:
     // Primitive Interface
     virtual ~Primitive();
     virtual Bounds3f WorldBound() const = 0;
@@ -64,8 +65,9 @@ class Primitive {
 };
 
 // GeometricPrimitive Declarations
-class GeometricPrimitive : public Primitive {
-  public:
+class GeometricPrimitive: public Primitive
+{
+public:
     // GeometricPrimitive Public Methods
     virtual Bounds3f WorldBound() const;
     virtual bool Intersect(const Ray &r, SurfaceInteraction *isect) const;
@@ -80,7 +82,7 @@ class GeometricPrimitive : public Primitive {
                                     MemoryArena &arena, TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // GeometricPrimitive Private Data
     std::shared_ptr<Shape> shape;
     std::shared_ptr<Material> material;
@@ -89,8 +91,9 @@ class GeometricPrimitive : public Primitive {
 };
 
 // TransformedPrimitive Declarations
-class TransformedPrimitive : public Primitive {
-  public:
+class TransformedPrimitive: public Primitive
+{
+public:
     // TransformedPrimitive Public Methods
     TransformedPrimitive(std::shared_ptr<Primitive> &primitive,
                          const AnimatedTransform &PrimitiveToWorld);
@@ -100,24 +103,27 @@ class TransformedPrimitive : public Primitive {
     const Material *GetMaterial() const { return nullptr; }
     void ComputeScatteringFunctions(SurfaceInteraction *isect,
                                     MemoryArena &arena, TransportMode mode,
-                                    bool allowMultipleLobes) const {
+                                    bool allowMultipleLobes) const
+    {
         LOG(FATAL) << "TransformedPrimitive::ComputeScatteringFunctions() "
                       "shouldn't be "
                       "called";
     }
-    Bounds3f WorldBound() const {
+    Bounds3f WorldBound() const
+    {
         return PrimitiveToWorld.MotionBounds(primitive->WorldBound());
     }
 
-  private:
+private:
     // TransformedPrimitive Private Data
     std::shared_ptr<Primitive> primitive;
     const AnimatedTransform PrimitiveToWorld;
 };
 
 // Aggregate Declarations
-class Aggregate : public Primitive {
-  public:
+class Aggregate: public Primitive
+{
+public:
     // Aggregate Public Methods
     const AreaLight *GetAreaLight() const;
     const Material *GetMaterial() const;

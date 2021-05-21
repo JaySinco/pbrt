@@ -4,7 +4,8 @@
 
 using namespace pbrt;
 
-TEST(FileUtil, HasExtension) {
+TEST(FileUtil, HasExtension)
+{
     EXPECT_TRUE(HasExtension("foo.exr", "exr"));
     EXPECT_TRUE(HasExtension("foo.Exr", "exr"));
     EXPECT_TRUE(HasExtension("foo.Exr", "exR"));
@@ -13,7 +14,8 @@ TEST(FileUtil, HasExtension) {
     EXPECT_FALSE(HasExtension("/foo/png", "ppm"));
 }
 
-TEST(FileUtil, AbsolutePath) {
+TEST(FileUtil, AbsolutePath)
+{
 #ifdef PBRT_IS_WINDOWS
     EXPECT_TRUE(IsAbsolutePath("\\\\foo\\bar.exe"));
     EXPECT_TRUE(IsAbsolutePath("c:\\foo\\bar.exe"));

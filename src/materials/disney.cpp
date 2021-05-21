@@ -58,8 +58,8 @@ licensed under a slightly-modified Apache 2.0 license.
 #include "texture.h"
 #include "rng.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 inline Float sqr(Float x) { return x * x; }
 
 // https://seblagarde.wordpress.com/2013/04/29/memo-on-fresnel-equations/
@@ -69,16 +69,19 @@ inline Float sqr(Float x) { return x * x; }
 // R = R(0) + (1 - R(0)) (1 - cos theta)^5,
 //
 // where R(0) is the reflectance at normal indicence.
-inline Float SchlickWeight(Float cosTheta) {
+inline Float SchlickWeight(Float cosTheta)
+{
     Float m = Clamp(1 - cosTheta, 0, 1);
     return (m * m) * (m * m) * m;
 }
 
-inline Float FrSchlick(Float R0, Float cosTheta) {
+inline Float FrSchlick(Float R0, Float cosTheta)
+{
     return Lerp(SchlickWeight(cosTheta), R0, 1);
 }
 
-inline Spectrum FrSchlick(const Spectrum &R0, Float cosTheta) {
+inline Spectrum FrSchlick(const Spectrum &R0, Float cosTheta)
+{
     return Lerp(SchlickWeight(cosTheta), R0, Spectrum(1.));
 }
 
@@ -89,20 +92,24 @@ inline Float SchlickR0FromEta(Float eta) { return sqr(eta - 1) / sqr(eta + 1); }
 ///////////////////////////////////////////////////////////////////////////
 // DisneyDiffuse
 
-class DisneyDiffuse : public BxDF {
-  public:
+class DisneyDiffuse: public BxDF
+{
+public:
     DisneyDiffuse(const Spectrum &R)
-        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R) {}
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R)
+    {
+    }
     Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
     Spectrum rho(const Vector3f &, int, const Point2f *) const { return R; }
     Spectrum rho(int, const Point2f *, const Point2f *) const { return R; }
     std::string ToString() const;
 
-  private:
+private:
     Spectrum R;
 };
 
-Spectrum DisneyDiffuse::f(const Vector3f &wo, const Vector3f &wi) const {
+Spectrum DisneyDiffuse::f(const Vector3f &wo, const Vector3f &wi) const
+{
     Float Fo = SchlickWeight(AbsCosTheta(wo)),
           Fi = SchlickWeight(AbsCosTheta(wi));
 
@@ -111,7 +118,8 @@ Spectrum DisneyDiffuse::f(const Vector3f &wo, const Vector3f &wi) const {
     return R * InvPi * (1 - Fo / 2) * (1 - Fi / 2);
 }
 
-std::string DisneyDiffuse::ToString() const {
+std::string DisneyDiffuse::ToString() const
+{
     return StringPrintf("[ DisneyDiffuse R: %s ]", R.ToString().c_str());
 }
 
@@ -120,23 +128,27 @@ std::string DisneyDiffuse::ToString() const {
 
 // "Fake" subsurface scattering lobe, based on the Hanrahan-Krueger BRDF
 // approximation of the BSSRDF.
-class DisneyFakeSS : public BxDF {
-  public:
+class DisneyFakeSS: public BxDF
+{
+public:
     DisneyFakeSS(const Spectrum &R, Float roughness)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)),
           R(R),
-          roughness(roughness) {}
+          roughness(roughness)
+    {
+    }
     Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
     Spectrum rho(const Vector3f &, int, const Point2f *) const { return R; }
     Spectrum rho(int, const Point2f *, const Point2f *) const { return R; }
     std::string ToString() const;
 
-  private:
+private:
     Spectrum R;
     Float roughness;
 };
 
-Spectrum DisneyFakeSS::f(const Vector3f &wo, const Vector3f &wi) const {
+Spectrum DisneyFakeSS::f(const Vector3f &wo, const Vector3f &wi) const
+{
     Vector3f wh = wi + wo;
     if (wh.x == 0 && wh.y == 0 && wh.z == 0) return Spectrum(0.);
     wh = Normalize(wh);
@@ -154,7 +166,8 @@ Spectrum DisneyFakeSS::f(const Vector3f &wo, const Vector3f &wi) const {
     return R * InvPi * ss;
 }
 
-std::string DisneyFakeSS::ToString() const {
+std::string DisneyFakeSS::ToString() const
+{
     return StringPrintf("[ DisneyFakeSS R: %s roughness: %f ]",
                         R.ToString().c_str(), roughness);
 }
@@ -162,23 +175,27 @@ std::string DisneyFakeSS::ToString() const {
 ///////////////////////////////////////////////////////////////////////////
 // DisneyRetro
 
-class DisneyRetro : public BxDF {
-  public:
+class DisneyRetro: public BxDF
+{
+public:
     DisneyRetro(const Spectrum &R, Float roughness)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)),
           R(R),
-          roughness(roughness) {}
+          roughness(roughness)
+    {
+    }
     Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
     Spectrum rho(const Vector3f &, int, const Point2f *) const { return R; }
     Spectrum rho(int, const Point2f *, const Point2f *) const { return R; }
     std::string ToString() const;
 
-  private:
+private:
     Spectrum R;
     Float roughness;
 };
 
-Spectrum DisneyRetro::f(const Vector3f &wo, const Vector3f &wi) const {
+Spectrum DisneyRetro::f(const Vector3f &wo, const Vector3f &wi) const
+{
     Vector3f wh = wi + wo;
     if (wh.x == 0 && wh.y == 0 && wh.z == 0) return Spectrum(0.);
     wh = Normalize(wh);
@@ -192,7 +209,8 @@ Spectrum DisneyRetro::f(const Vector3f &wo, const Vector3f &wi) const {
     return R * InvPi * Rr * (Fo + Fi + Fo * Fi * (Rr - 1));
 }
 
-std::string DisneyRetro::ToString() const {
+std::string DisneyRetro::ToString() const
+{
     return StringPrintf("[ DisneyRetro R: %s roughness: %f ]",
                         R.ToString().c_str(), roughness);
 }
@@ -200,20 +218,24 @@ std::string DisneyRetro::ToString() const {
 ///////////////////////////////////////////////////////////////////////////
 // DisneySheen
 
-class DisneySheen : public BxDF {
-  public:
+class DisneySheen: public BxDF
+{
+public:
     DisneySheen(const Spectrum &R)
-        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R) {}
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R)
+    {
+    }
     Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
     Spectrum rho(const Vector3f &, int, const Point2f *) const { return R; }
     Spectrum rho(int, const Point2f *, const Point2f *) const { return R; }
     std::string ToString() const;
 
-  private:
+private:
     Spectrum R;
 };
 
-Spectrum DisneySheen::f(const Vector3f &wo, const Vector3f &wi) const {
+Spectrum DisneySheen::f(const Vector3f &wo, const Vector3f &wi) const
+{
     Vector3f wh = wi + wo;
     if (wh.x == 0 && wh.y == 0 && wh.z == 0) return Spectrum(0.);
     wh = Normalize(wh);
@@ -222,43 +244,50 @@ Spectrum DisneySheen::f(const Vector3f &wo, const Vector3f &wi) const {
     return R * SchlickWeight(cosThetaD);
 }
 
-std::string DisneySheen::ToString() const {
+std::string DisneySheen::ToString() const
+{
     return StringPrintf("[ DisneySheen R: %s]", R.ToString().c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // DisneyClearcoat
 
-class DisneyClearcoat : public BxDF {
-  public:
+class DisneyClearcoat: public BxDF
+{
+public:
     DisneyClearcoat(Float weight, Float gloss)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)),
           weight(weight),
-          gloss(gloss) {}
+          gloss(gloss)
+    {
+    }
     Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
     Spectrum Sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u,
                       Float *pdf, BxDFType *sampledType) const;
     Float Pdf(const Vector3f &wo, const Vector3f &wi) const;
     std::string ToString() const;
 
-  private:
+private:
     Float weight, gloss;
 };
 
-inline Float GTR1(Float cosTheta, Float alpha) {
+inline Float GTR1(Float cosTheta, Float alpha)
+{
     Float alpha2 = alpha * alpha;
     return (alpha2 - 1) /
            (Pi * std::log(alpha2) * (1 + (alpha2 - 1) * cosTheta * cosTheta));
 }
 
 // Smith masking/shadowing term.
-inline Float smithG_GGX(Float cosTheta, Float alpha) {
+inline Float smithG_GGX(Float cosTheta, Float alpha)
+{
     Float alpha2 = alpha * alpha;
     Float cosTheta2 = cosTheta * cosTheta;
     return 1 / (cosTheta + sqrt(alpha2 + cosTheta2 - alpha2 * cosTheta2));
 }
 
-Spectrum DisneyClearcoat::f(const Vector3f &wo, const Vector3f &wi) const {
+Spectrum DisneyClearcoat::f(const Vector3f &wo, const Vector3f &wi) const
+{
     Vector3f wh = wi + wo;
     if (wh.x == 0 && wh.y == 0 && wh.z == 0) return Spectrum(0.);
     wh = Normalize(wh);
@@ -277,7 +306,8 @@ Spectrum DisneyClearcoat::f(const Vector3f &wo, const Vector3f &wi) const {
 
 Spectrum DisneyClearcoat::Sample_f(const Vector3f &wo, Vector3f *wi,
                                    const Point2f &u, Float *pdf,
-                                   BxDFType *sampledType) const {
+                                   BxDFType *sampledType) const
+{
     // TODO: double check all this: there still seem to be some very
     // occasional fireflies with clearcoat; presumably there is a bug
     // somewhere.
@@ -298,7 +328,8 @@ Spectrum DisneyClearcoat::Sample_f(const Vector3f &wo, Vector3f *wi,
     return f(wo, *wi);
 }
 
-Float DisneyClearcoat::Pdf(const Vector3f &wo, const Vector3f &wi) const {
+Float DisneyClearcoat::Pdf(const Vector3f &wo, const Vector3f &wi) const
+{
     if (!SameHemisphere(wo, wi)) return 0;
 
     Vector3f wh = wi + wo;
@@ -313,7 +344,8 @@ Float DisneyClearcoat::Pdf(const Vector3f &wo, const Vector3f &wi) const {
     return Dr * AbsCosTheta(wh) / (4 * Dot(wo, wh));
 }
 
-std::string DisneyClearcoat::ToString() const {
+std::string DisneyClearcoat::ToString() const
+{
     return StringPrintf("[ DisneyClearcoat weight: %f gloss: %f ]", weight,
                         gloss);
 }
@@ -323,20 +355,25 @@ std::string DisneyClearcoat::ToString() const {
 
 // Specialized Fresnel function used for the specular component, based on
 // a mixture between dielectric and the Schlick Fresnel approximation.
-class DisneyFresnel : public Fresnel {
-  public:
+class DisneyFresnel: public Fresnel
+{
+public:
     DisneyFresnel(const Spectrum &R0, Float metallic, Float eta)
-        : R0(R0), metallic(metallic), eta(eta) {}
-    Spectrum Evaluate(Float cosI) const {
+        : R0(R0), metallic(metallic), eta(eta)
+    {
+    }
+    Spectrum Evaluate(Float cosI) const
+    {
         return Lerp(metallic, Spectrum(FrDielectric(cosI, 1, eta)),
                     FrSchlick(R0, cosI));
     }
-    std::string ToString() const {
+    std::string ToString() const
+    {
         return StringPrintf("[ DisneyFresnel R0: %s metallic: %f eta: %f ]",
                             R0.ToString().c_str(), metallic, eta);
     }
 
-  private:
+private:
     const Spectrum R0;
     const Float metallic, eta;
 };
@@ -344,12 +381,16 @@ class DisneyFresnel : public Fresnel {
 ///////////////////////////////////////////////////////////////////////////
 // DisneyMicrofacetDistribution
 
-class DisneyMicrofacetDistribution : public TrowbridgeReitzDistribution {
-  public:
+class DisneyMicrofacetDistribution: public TrowbridgeReitzDistribution
+{
+public:
     DisneyMicrofacetDistribution(Float alphax, Float alphay)
-        : TrowbridgeReitzDistribution(alphax, alphay) {}
+        : TrowbridgeReitzDistribution(alphax, alphay)
+    {
+    }
 
-    Float G(const Vector3f &wo, const Vector3f &wi) const {
+    Float G(const Vector3f &wo, const Vector3f &wi) const
+    {
         // Disney uses the separable masking-shadowing model.
         return G1(wo) * G1(wi);
     }
@@ -362,28 +403,32 @@ class DisneyMicrofacetDistribution : public TrowbridgeReitzDistribution {
 // Disney BRDF to a BSDF with integrated subsurface scattering" (Brent
 // Burley) and "Approximate Reflectance Profiles for Efficient Subsurface
 // Scattering (Christensen and Burley).
-class DisneyBSSRDF : public SeparableBSSRDF {
-  public:
+class DisneyBSSRDF: public SeparableBSSRDF
+{
+public:
     DisneyBSSRDF(const Spectrum &R, const Spectrum &d,
                  const SurfaceInteraction &po, Float eta,
                  const Material *material, TransportMode mode)
         // 0.2 factor comes from personal communication from Brent Burley
         // and Matt Chiang.
-        : SeparableBSSRDF(po, eta, material, mode), R(R), d(0.2 * d) {}
+        : SeparableBSSRDF(po, eta, material, mode), R(R), d(0.2 * d)
+    {
+    }
 
     Spectrum S(const SurfaceInteraction &pi, const Vector3f &wi);
     Spectrum Sr(Float d) const;
     Float Sample_Sr(int ch, Float u) const;
     Float Pdf_Sr(int ch, Float r) const;
 
-  private:
+private:
     Spectrum R, d;
 };
 
 // We need to override BSSRDF::S() so that we can have access to the full
 // hit information in order to modulate based on surface normal
 // orientations..
-Spectrum DisneyBSSRDF::S(const SurfaceInteraction &pi, const Vector3f &wi) {
+Spectrum DisneyBSSRDF::S(const SurfaceInteraction &pi, const Vector3f &wi)
+{
     ProfilePhase pp(Prof::BSSRDFEvaluation);
     // Fade based on relative orientations of the two surface normals to
     // better handle surface cavities. (Details via personal communication
@@ -409,14 +454,16 @@ Spectrum DisneyBSSRDF::S(const SurfaceInteraction &pi, const Vector3f &wi) {
 }
 
 // Diffusion profile from Burley 2015, eq (5).
-Spectrum DisneyBSSRDF::Sr(Float r) const {
+Spectrum DisneyBSSRDF::Sr(Float r) const
+{
     ProfilePhase pp(Prof::BSSRDFEvaluation);
     if (r < 1e-6f) r = 1e-6f;  // Avoid singularity at r == 0.
     return R * (Exp(-Spectrum(r) / d) + Exp(-Spectrum(r) / (3 * d))) /
            (8 * Pi * d * r);
 }
 
-Float DisneyBSSRDF::Sample_Sr(int ch, Float u) const {
+Float DisneyBSSRDF::Sample_Sr(int ch, Float u) const
+{
     // The good news is that diffusion profile implemented in Sr is
     // normalized---integrating in polar coordinates, we have:
     //
@@ -459,7 +506,8 @@ Float DisneyBSSRDF::Sample_Sr(int ch, Float u) const {
     }
 }
 
-Float DisneyBSSRDF::Pdf_Sr(int ch, Float r) const {
+Float DisneyBSSRDF::Pdf_Sr(int ch, Float r) const
+{
     if (r < 1e-6f) r = 1e-6f;  // Avoid singularity at r == 0.
 
     // Weight the two individual PDFs as per the sampling frequency in
@@ -475,7 +523,8 @@ Float DisneyBSSRDF::Pdf_Sr(int ch, Float r) const {
 void DisneyMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                                 MemoryArena &arena,
                                                 TransportMode mode,
-                                                bool allowMultipleLobes) const {
+                                                bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
 
@@ -587,7 +636,8 @@ void DisneyMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     }
 }
 
-DisneyMaterial *CreateDisneyMaterial(const TextureParams &mp) {
+DisneyMaterial *CreateDisneyMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> color =
         mp.GetSpectrumTexture("color", Spectrum(0.5f));
     std::shared_ptr<Texture<Float>> metallic =

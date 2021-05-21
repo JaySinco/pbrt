@@ -43,7 +43,8 @@
 #include "primitive.h"
 #include <atomic>
 
-namespace pbrt {
+namespace pbrt
+{
 struct BVHBuildNode;
 
 // BVHAccel Forward Declarations
@@ -52,10 +53,17 @@ struct MortonPrimitive;
 struct LinearBVHNode;
 
 // BVHAccel Declarations
-class BVHAccel : public Aggregate {
-  public:
+class BVHAccel: public Aggregate
+{
+public:
     // BVHAccel Public Types
-    enum class SplitMethod { SAH, HLBVH, Middle, EqualCounts };
+    enum class SplitMethod
+    {
+        SAH,
+        HLBVH,
+        Middle,
+        EqualCounts
+    };
 
     // BVHAccel Public Methods
     BVHAccel(std::vector<std::shared_ptr<Primitive>> p, int maxPrimsInNode = 1,
@@ -65,7 +73,7 @@ class BVHAccel : public Aggregate {
     bool Intersect(const Ray &ray, SurfaceInteraction *isect) const;
     bool IntersectP(const Ray &ray) const;
 
-  private:
+private:
     // BVHAccel Private Methods
     BVHBuildNode *recursiveBuild(
         MemoryArena &arena, std::vector<BVHPrimitiveInfo> &primitiveInfo,

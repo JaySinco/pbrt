@@ -46,15 +46,17 @@
 #include "scene.h"
 #include "mipmap.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // InfiniteAreaLight Declarations
-class InfiniteAreaLight : public Light {
-  public:
+class InfiniteAreaLight: public Light
+{
+public:
     // InfiniteAreaLight Public Methods
     InfiniteAreaLight(const Transform &LightToWorld, const Spectrum &power,
                       int nSamples, const std::string &texmap);
-    void Preprocess(const Scene &scene) {
+    void Preprocess(const Scene &scene)
+    {
         scene.WorldBound().BoundingSphere(&worldCenter, &worldRadius);
     }
     Spectrum Power() const;
@@ -68,7 +70,7 @@ class InfiniteAreaLight : public Light {
     void Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
                 Float *pdfDir) const;
 
-  private:
+private:
     // InfiniteAreaLight Private Data
     std::unique_ptr<MIPMap<RGBSpectrum>> Lmap;
     Point3f worldCenter;

@@ -47,14 +47,16 @@
 #include <functional>
 #include <mutex>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Statistics Declarations
 class StatsAccumulator;
-class StatRegisterer {
-  public:
+class StatRegisterer
+{
+public:
     // StatRegisterer Public Methods
-    StatRegisterer(std::function<void(StatsAccumulator &)> func) {
+    StatRegisterer(std::function<void(StatsAccumulator &)> func)
+    {
         static std::mutex mutex;
         std::lock_guard<std::mutex> lock(mutex);
         if (!funcs)
@@ -63,7 +65,7 @@ class StatRegisterer {
     }
     static void CallCallbacks(StatsAccumulator &accum);
 
-  private:
+private:
     // StatRegisterer Private Data
     static std::vector<std::function<void(StatsAccumulator &)>> *funcs;
 };
@@ -72,17 +74,21 @@ void PrintStats(FILE *dest);
 void ClearStats();
 void ReportThreadStats();
 
-class StatsAccumulator {
-  public:
+class StatsAccumulator
+{
+public:
     // StatsAccumulator Public Methods
-    void ReportCounter(const std::string &name, int64_t val) {
+    void ReportCounter(const std::string &name, int64_t val)
+    {
         counters[name] += val;
     }
-    void ReportMemoryCounter(const std::string &name, int64_t val) {
+    void ReportMemoryCounter(const std::string &name, int64_t val)
+    {
         memoryCounters[name] += val;
     }
     void ReportIntDistribution(const std::string &name, int64_t sum,
-                               int64_t count, int64_t min, int64_t max) {
+                               int64_t count, int64_t min, int64_t max)
+    {
         intDistributionSums[name] += sum;
         intDistributionCounts[name] += count;
         if (intDistributionMins.find(name) == intDistributionMins.end())
@@ -97,7 +103,8 @@ class StatsAccumulator {
                 std::max(intDistributionMaxs[name], max);
     }
     void ReportFloatDistribution(const std::string &name, double sum,
-                                 int64_t count, double min, double max) {
+                                 int64_t count, double min, double max)
+    {
         floatDistributionSums[name] += sum;
         floatDistributionCounts[name] += count;
         if (floatDistributionMins.find(name) == floatDistributionMins.end())
@@ -111,11 +118,13 @@ class StatsAccumulator {
             floatDistributionMaxs[name] =
                 std::max(floatDistributionMaxs[name], max);
     }
-    void ReportPercentage(const std::string &name, int64_t num, int64_t denom) {
+    void ReportPercentage(const std::string &name, int64_t num, int64_t denom)
+    {
         percentages[name].first += num;
         percentages[name].second += denom;
     }
-    void ReportRatio(const std::string &name, int64_t num, int64_t denom) {
+    void ReportRatio(const std::string &name, int64_t num, int64_t denom)
+    {
         ratios[name].first += num;
         ratios[name].second += denom;
     }
@@ -123,7 +132,7 @@ class StatsAccumulator {
     void Print(FILE *file);
     void Clear();
 
-  private:
+private:
     // StatsAccumulator Private Data
     std::map<std::string, int64_t> counters;
     std::map<std::string, int64_t> memoryCounters;
@@ -139,7 +148,8 @@ class StatsAccumulator {
     std::map<std::string, std::pair<int64_t, int64_t>> ratios;
 };
 
-enum class Prof {
+enum class Prof
+{
     SceneConstruction,
     AccelConstruction,
     TextureLoading,
@@ -251,21 +261,24 @@ static_assert((int)Prof::NumProfCategories ==
 extern PBRT_THREAD_LOCAL uint64_t ProfilerState;
 inline uint64_t CurrentProfilerState() { return ProfilerState; }
 
-class ProfilePhase {
-  public:
+class ProfilePhase
+{
+public:
     // ProfilePhase Public Methods
-    ProfilePhase(Prof p) {
+    ProfilePhase(Prof p)
+    {
         categoryBit = ProfToBits(p);
         reset = (ProfilerState & categoryBit) == 0;
         ProfilerState |= categoryBit;
     }
-    ~ProfilePhase() {
+    ~ProfilePhase()
+    {
         if (reset) ProfilerState &= ~categoryBit;
     }
     ProfilePhase(const ProfilePhase &) = delete;
     ProfilePhase &operator=(const ProfilePhase &) = delete;
 
-  private:
+private:
     // ProfilePhase Private Data
     bool reset;
     uint64_t categoryBit;
@@ -280,19 +293,21 @@ void ClearProfiler();
 void CleanupProfiler();
 
 // Statistics Macros
-#define STAT_COUNTER(title, var)                           \
-    static PBRT_THREAD_LOCAL int64_t var;                  \
-    static void STATS_FUNC##var(StatsAccumulator &accum) { \
-        accum.ReportCounter(title, var);                   \
-        var = 0;                                           \
-    }                                                      \
+#define STAT_COUNTER(title, var)                         \
+    static PBRT_THREAD_LOCAL int64_t var;                \
+    static void STATS_FUNC##var(StatsAccumulator &accum) \
+    {                                                    \
+        accum.ReportCounter(title, var);                 \
+        var = 0;                                         \
+    }                                                    \
     static StatRegisterer STATS_REG##var(STATS_FUNC##var)
-#define STAT_MEMORY_COUNTER(title, var)                    \
-    static PBRT_THREAD_LOCAL int64_t var;                  \
-    static void STATS_FUNC##var(StatsAccumulator &accum) { \
-        accum.ReportMemoryCounter(title, var);             \
-        var = 0;                                           \
-    }                                                      \
+#define STAT_MEMORY_COUNTER(title, var)                  \
+    static PBRT_THREAD_LOCAL int64_t var;                \
+    static void STATS_FUNC##var(StatsAccumulator &accum) \
+    {                                                    \
+        accum.ReportMemoryCounter(title, var);           \
+        var = 0;                                         \
+    }                                                    \
     static StatRegisterer STATS_REG##var(STATS_FUNC##var)
 
 #ifndef PBRT_HAVE_CONSTEXPR
@@ -312,7 +327,8 @@ void CleanupProfiler();
     static PBRT_THREAD_LOCAL int64_t var##count;                           \
     static PBRT_THREAD_LOCAL int64_t var##min = (STATS_INT64_T_MIN);       \
     static PBRT_THREAD_LOCAL int64_t var##max = (STATS_INT64_T_MAX);       \
-    static void STATS_FUNC##var(StatsAccumulator &accum) {                 \
+    static void STATS_FUNC##var(StatsAccumulator &accum)                   \
+    {                                                                      \
         accum.ReportIntDistribution(title, var##sum, var##count, var##min, \
                                     var##max);                             \
         var##sum = 0;                                                      \
@@ -327,7 +343,8 @@ void CleanupProfiler();
     static PBRT_THREAD_LOCAL int64_t var##count;                             \
     static PBRT_THREAD_LOCAL double var##min = (STATS_DBL_T_MIN);            \
     static PBRT_THREAD_LOCAL double var##max = (STATS_DBL_T_MAX);            \
-    static void STATS_FUNC##var(StatsAccumulator &accum) {                   \
+    static void STATS_FUNC##var(StatsAccumulator &accum)                     \
+    {                                                                        \
         accum.ReportFloatDistribution(title, var##sum, var##count, var##min, \
                                       var##max);                             \
         var##sum = 0;                                                        \
@@ -345,20 +362,22 @@ void CleanupProfiler();
         var##max = std::max(var##max, decltype(var##min)(value)); \
     } while (0)
 
-#define STAT_PERCENT(title, numVar, denomVar)                 \
-    static PBRT_THREAD_LOCAL int64_t numVar, denomVar;        \
-    static void STATS_FUNC##numVar(StatsAccumulator &accum) { \
-        accum.ReportPercentage(title, numVar, denomVar);      \
-        numVar = denomVar = 0;                                \
-    }                                                         \
+#define STAT_PERCENT(title, numVar, denomVar)               \
+    static PBRT_THREAD_LOCAL int64_t numVar, denomVar;      \
+    static void STATS_FUNC##numVar(StatsAccumulator &accum) \
+    {                                                       \
+        accum.ReportPercentage(title, numVar, denomVar);    \
+        numVar = denomVar = 0;                              \
+    }                                                       \
     static StatRegisterer STATS_REG##numVar(STATS_FUNC##numVar)
 
-#define STAT_RATIO(title, numVar, denomVar)                   \
-    static PBRT_THREAD_LOCAL int64_t numVar, denomVar;        \
-    static void STATS_FUNC##numVar(StatsAccumulator &accum) { \
-        accum.ReportRatio(title, numVar, denomVar);           \
-        numVar = denomVar = 0;                                \
-    }                                                         \
+#define STAT_RATIO(title, numVar, denomVar)                 \
+    static PBRT_THREAD_LOCAL int64_t numVar, denomVar;      \
+    static void STATS_FUNC##numVar(StatsAccumulator &accum) \
+    {                                                       \
+        accum.ReportRatio(title, numVar, denomVar);         \
+        numVar = denomVar = 0;                              \
+    }                                                       \
     static StatRegisterer STATS_REG##numVar(STATS_FUNC##numVar)
 
 }  // namespace pbrt

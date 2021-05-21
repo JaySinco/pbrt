@@ -38,8 +38,8 @@
 #include "light.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PerspectiveCamera Method Definitions
 PerspectiveCamera::PerspectiveCamera(const AnimatedTransform &CameraToWorld,
                                      const Bounds2f &screenWindow,
@@ -49,7 +49,8 @@ PerspectiveCamera::PerspectiveCamera(const AnimatedTransform &CameraToWorld,
                                      const Medium *medium)
     : ProjectiveCamera(CameraToWorld, Perspective(fov, 1e-2f, 1000.f),
                        screenWindow, shutterOpen, shutterClose, lensRadius,
-                       focalDistance, film, medium) {
+                       focalDistance, film, medium)
+{
     // Compute differential changes in origin for perspective camera rays
     dxCamera =
         (RasterToCamera(Point3f(1, 0, 0)) - RasterToCamera(Point3f(0, 0, 0)));
@@ -65,8 +66,8 @@ PerspectiveCamera::PerspectiveCamera(const AnimatedTransform &CameraToWorld,
     A = std::abs((pMax.x - pMin.x) * (pMax.y - pMin.y));
 }
 
-Float PerspectiveCamera::GenerateRay(const CameraSample &sample,
-                                     Ray *ray) const {
+Float PerspectiveCamera::GenerateRay(const CameraSample &sample, Ray *ray) const
+{
     ProfilePhase prof(Prof::GenerateCameraRay);
     // Compute raster and camera sample positions
     Point3f pFilm = Point3f(sample.pFilm.x, sample.pFilm.y, 0);
@@ -92,7 +93,8 @@ Float PerspectiveCamera::GenerateRay(const CameraSample &sample,
 }
 
 Float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
-                                                 RayDifferential *ray) const {
+                                                 RayDifferential *ray) const
+{
     ProfilePhase prof(Prof::GenerateCameraRay);
     // Compute raster and camera sample positions
     Point3f pFilm = Point3f(sample.pFilm.x, sample.pFilm.y, 0);
@@ -142,7 +144,8 @@ Float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
     return 1;
 }
 
-Spectrum PerspectiveCamera::We(const Ray &ray, Point2f *pRaster2) const {
+Spectrum PerspectiveCamera::We(const Ray &ray, Point2f *pRaster2) const
+{
     // Interpolate camera matrix and check if $\w{}$ is forward-facing
     Transform c2w;
     CameraToWorld.Interpolate(ray.time, &c2w);
@@ -171,7 +174,8 @@ Spectrum PerspectiveCamera::We(const Ray &ray, Point2f *pRaster2) const {
 }
 
 void PerspectiveCamera::Pdf_We(const Ray &ray, Float *pdfPos,
-                               Float *pdfDir) const {
+                               Float *pdfDir) const
+{
     // Interpolate camera matrix and fail if $\w{}$ is not forward-facing
     Transform c2w;
     CameraToWorld.Interpolate(ray.time, &c2w);
@@ -202,7 +206,8 @@ void PerspectiveCamera::Pdf_We(const Ray &ray, Float *pdfPos,
 Spectrum PerspectiveCamera::Sample_Wi(const Interaction &ref, const Point2f &u,
                                       Vector3f *wi, Float *pdf,
                                       Point2f *pRaster,
-                                      VisibilityTester *vis) const {
+                                      VisibilityTester *vis) const
+{
     // Uniformly sample a lens interaction _lensIntr_
     Point2f pLens = lensRadius * ConcentricSampleDisk(u);
     Point3f pLensWorld = CameraToWorld(ref.time, Point3f(pLens.x, pLens.y, 0));
@@ -225,7 +230,8 @@ Spectrum PerspectiveCamera::Sample_Wi(const Interaction &ref, const Point2f &u,
 
 PerspectiveCamera *CreatePerspectiveCamera(const ParamSet &params,
                                            const AnimatedTransform &cam2world,
-                                           Film *film, const Medium *medium) {
+                                           Film *film, const Medium *medium)
+{
     // Extract common camera parameters from _ParamSet_
     Float shutteropen = params.FindOneFloat("shutteropen", 0.f);
     Float shutterclose = params.FindOneFloat("shutterclose", 1.f);

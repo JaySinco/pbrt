@@ -36,18 +36,21 @@
 #include "sampling.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // DistantLight Method Definitions
 DistantLight::DistantLight(const Transform &LightToWorld, const Spectrum &L,
                            const Vector3f &wLight)
     : Light((int)LightFlags::DeltaDirection, LightToWorld, MediumInterface()),
       L(L),
-      wLight(Normalize(LightToWorld(wLight))) {}
+      wLight(Normalize(LightToWorld(wLight)))
+{
+}
 
 Spectrum DistantLight::Sample_Li(const Interaction &ref, const Point2f &u,
                                  Vector3f *wi, Float *pdf,
-                                 VisibilityTester *vis) const {
+                                 VisibilityTester *vis) const
+{
     ProfilePhase _(Prof::LightSample);
     *wi = wLight;
     *pdf = 1;
@@ -57,17 +60,20 @@ Spectrum DistantLight::Sample_Li(const Interaction &ref, const Point2f &u,
     return L;
 }
 
-Spectrum DistantLight::Power() const {
+Spectrum DistantLight::Power() const
+{
     return L * Pi * worldRadius * worldRadius;
 }
 
-Float DistantLight::Pdf_Li(const Interaction &, const Vector3f &) const {
+Float DistantLight::Pdf_Li(const Interaction &, const Vector3f &) const
+{
     return 0.f;
 }
 
 Spectrum DistantLight::Sample_Le(const Point2f &u1, const Point2f &u2,
                                  Float time, Ray *ray, Normal3f *nLight,
-                                 Float *pdfPos, Float *pdfDir) const {
+                                 Float *pdfPos, Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightSample);
     // Choose point on disk oriented toward infinite light direction
     Vector3f v1, v2;
@@ -84,14 +90,16 @@ Spectrum DistantLight::Sample_Le(const Point2f &u1, const Point2f &u2,
 }
 
 void DistantLight::Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
-                          Float *pdfDir) const {
+                          Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightPdf);
     *pdfPos = 1 / (Pi * worldRadius * worldRadius);
     *pdfDir = 0;
 }
 
 std::shared_ptr<DistantLight> CreateDistantLight(const Transform &light2world,
-                                                 const ParamSet &paramSet) {
+                                                 const ParamSet &paramSet)
+{
     Spectrum L = paramSet.FindOneSpectrum("L", Spectrum(1.0));
     Spectrum sc = paramSet.FindOneSpectrum("scale", Spectrum(1.0));
     Point3f from = paramSet.FindOnePoint3f("from", Point3f(0, 0, 0));

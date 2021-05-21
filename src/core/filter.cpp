@@ -33,8 +33,8 @@
 // core/filter.cpp*
 #include "filter.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Filter Method Definitions
 Filter::~Filter() {}
 

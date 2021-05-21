@@ -38,28 +38,33 @@
 #include "parallel.h"
 #include <algorithm>
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_MEMORY_COUNTER("Memory/BVH tree", treeBytes);
 STAT_RATIO("BVH/Primitives per leaf node", totalPrimitives, totalLeafNodes);
 STAT_COUNTER("BVH/Interior nodes", interiorNodes);
 STAT_COUNTER("BVH/Leaf nodes", leafNodes);
 
 // BVHAccel Local Declarations
-struct BVHPrimitiveInfo {
+struct BVHPrimitiveInfo
+{
     BVHPrimitiveInfo() {}
     BVHPrimitiveInfo(size_t primitiveNumber, const Bounds3f &bounds)
         : primitiveNumber(primitiveNumber),
           bounds(bounds),
-          centroid(.5f * bounds.pMin + .5f * bounds.pMax) {}
+          centroid(.5f * bounds.pMin + .5f * bounds.pMax)
+    {
+    }
     size_t primitiveNumber;
     Bounds3f bounds;
     Point3f centroid;
 };
 
-struct BVHBuildNode {
+struct BVHBuildNode
+{
     // BVHBuildNode Public Methods
-    void InitLeaf(int first, int n, const Bounds3f &b) {
+    void InitLeaf(int first, int n, const Bounds3f &b)
+    {
         firstPrimOffset = first;
         nPrimitives = n;
         bounds = b;
@@ -68,7 +73,8 @@ struct BVHBuildNode {
         ++totalLeafNodes;
         totalPrimitives += n;
     }
-    void InitInterior(int axis, BVHBuildNode *c0, BVHBuildNode *c1) {
+    void InitInterior(int axis, BVHBuildNode *c0, BVHBuildNode *c1)
+    {
         children[0] = c0;
         children[1] = c1;
         bounds = Union(c0->bounds, c1->bounds);
@@ -81,19 +87,23 @@ struct BVHBuildNode {
     int splitAxis, firstPrimOffset, nPrimitives;
 };
 
-struct MortonPrimitive {
+struct MortonPrimitive
+{
     int primitiveIndex;
     uint32_t mortonCode;
 };
 
-struct LBVHTreelet {
+struct LBVHTreelet
+{
     int startIndex, nPrimitives;
     BVHBuildNode *buildNodes;
 };
 
-struct LinearBVHNode {
+struct LinearBVHNode
+{
     Bounds3f bounds;
-    union {
+    union
+    {
         int primitivesOffset;   // leaf
         int secondChildOffset;  // interior
     };
@@ -103,7 +113,8 @@ struct LinearBVHNode {
 };
 
 // BVHAccel Utility Functions
-inline uint32_t LeftShift3(uint32_t x) {
+inline uint32_t LeftShift3(uint32_t x)
+{
     CHECK_LE(x, (1 << 10));
     if (x == (1 << 10)) --x;
 #ifdef PBRT_HAVE_BINARY_CONSTANTS
@@ -128,14 +139,16 @@ inline uint32_t LeftShift3(uint32_t x) {
     return x;
 }
 
-inline uint32_t EncodeMorton3(const Vector3f &v) {
+inline uint32_t EncodeMorton3(const Vector3f &v)
+{
     CHECK_GE(v.x, 0);
     CHECK_GE(v.y, 0);
     CHECK_GE(v.z, 0);
     return (LeftShift3(v.z) << 2) | (LeftShift3(v.y) << 1) | LeftShift3(v.x);
 }
 
-static void RadixSort(std::vector<MortonPrimitive> *v) {
+static void RadixSort(std::vector<MortonPrimitive> *v)
+{
     std::vector<MortonPrimitive> tempVector(v->size());
     PBRT_CONSTEXPR int bitsPerPass = 6;
     PBRT_CONSTEXPR int nBits = 30;
@@ -155,7 +168,7 @@ static void RadixSort(std::vector<MortonPrimitive> *v) {
         PBRT_CONSTEXPR int nBuckets = 1 << bitsPerPass;
         int bucketCount[nBuckets] = {0};
         PBRT_CONSTEXPR int bitMask = (1 << bitsPerPass) - 1;
-        for (const MortonPrimitive &mp : in) {
+        for (const MortonPrimitive &mp: in) {
             int bucket = (mp.mortonCode >> lowBit) & bitMask;
             CHECK_GE(bucket, 0);
             CHECK_LT(bucket, nBuckets);
@@ -169,7 +182,7 @@ static void RadixSort(std::vector<MortonPrimitive> *v) {
             outIndex[i] = outIndex[i - 1] + bucketCount[i - 1];
 
         // Store sorted values in output array
-        for (const MortonPrimitive &mp : in) {
+        for (const MortonPrimitive &mp: in) {
             int bucket = (mp.mortonCode >> lowBit) & bitMask;
             out[outIndex[bucket]++] = mp;
         }
@@ -183,7 +196,8 @@ BVHAccel::BVHAccel(std::vector<std::shared_ptr<Primitive>> p,
                    int maxPrimsInNode, SplitMethod splitMethod)
     : maxPrimsInNode(std::min(255, maxPrimsInNode)),
       splitMethod(splitMethod),
-      primitives(std::move(p)) {
+      primitives(std::move(p))
+{
     ProfilePhase _(Prof::AccelConstruction);
     if (primitives.empty()) return;
     // Build BVH from _primitives_
@@ -222,11 +236,13 @@ BVHAccel::BVHAccel(std::vector<std::shared_ptr<Primitive>> p,
     CHECK_EQ(totalNodes, offset);
 }
 
-Bounds3f BVHAccel::WorldBound() const {
+Bounds3f BVHAccel::WorldBound() const
+{
     return nodes ? nodes[0].bounds : Bounds3f();
 }
 
-struct BucketInfo {
+struct BucketInfo
+{
     int count = 0;
     Bounds3f bounds;
 };
@@ -234,7 +250,8 @@ struct BucketInfo {
 BVHBuildNode *BVHAccel::recursiveBuild(
     MemoryArena &arena, std::vector<BVHPrimitiveInfo> &primitiveInfo, int start,
     int end, int *totalNodes,
-    std::vector<std::shared_ptr<Primitive>> &orderedPrims) {
+    std::vector<std::shared_ptr<Primitive>> &orderedPrims)
+{
     CHECK_NE(start, end);
     BVHBuildNode *node = arena.Alloc<BVHBuildNode>();
     (*totalNodes)++;
@@ -273,37 +290,23 @@ BVHBuildNode *BVHAccel::recursiveBuild(
         } else {
             // Partition primitives based on _splitMethod_
             switch (splitMethod) {
-            case SplitMethod::Middle: {
-                // Partition primitives through node's midpoint
-                Float pmid =
-                    (centroidBounds.pMin[dim] + centroidBounds.pMax[dim]) / 2;
-                BVHPrimitiveInfo *midPtr = std::partition(
-                    &primitiveInfo[start], &primitiveInfo[end - 1] + 1,
-                    [dim, pmid](const BVHPrimitiveInfo &pi) {
-                        return pi.centroid[dim] < pmid;
-                    });
-                mid = midPtr - &primitiveInfo[0];
-                // For lots of prims with large overlapping bounding boxes, this
-                // may fail to partition; in that case don't break and fall
-                // through
-                // to EqualCounts.
-                if (mid != start && mid != end) break;
-            }
-            case SplitMethod::EqualCounts: {
-                // Partition primitives into equally-sized subsets
-                mid = (start + end) / 2;
-                std::nth_element(&primitiveInfo[start], &primitiveInfo[mid],
-                                 &primitiveInfo[end - 1] + 1,
-                                 [dim](const BVHPrimitiveInfo &a,
-                                       const BVHPrimitiveInfo &b) {
-                                     return a.centroid[dim] < b.centroid[dim];
-                                 });
-                break;
-            }
-            case SplitMethod::SAH:
-            default: {
-                // Partition primitives using approximate SAH
-                if (nPrimitives <= 2) {
+                case SplitMethod::Middle: {
+                    // Partition primitives through node's midpoint
+                    Float pmid =
+                        (centroidBounds.pMin[dim] + centroidBounds.pMax[dim]) /
+                        2;
+                    BVHPrimitiveInfo *midPtr = std::partition(
+                        &primitiveInfo[start], &primitiveInfo[end - 1] + 1,
+                        [dim, pmid](const BVHPrimitiveInfo &pi) {
+                            return pi.centroid[dim] < pmid;
+                        });
+                    mid = midPtr - &primitiveInfo[0];
+                    // For lots of prims with large overlapping bounding boxes,
+                    // this may fail to partition; in that case don't break and
+                    // fall through to EqualCounts.
+                    if (mid != start && mid != end) break;
+                }
+                case SplitMethod::EqualCounts: {
                     // Partition primitives into equally-sized subsets
                     mid = (start + end) / 2;
                     std::nth_element(&primitiveInfo[start], &primitiveInfo[mid],
@@ -313,79 +316,98 @@ BVHBuildNode *BVHAccel::recursiveBuild(
                                          return a.centroid[dim] <
                                                 b.centroid[dim];
                                      });
-                } else {
-                    // Allocate _BucketInfo_ for SAH partition buckets
-                    PBRT_CONSTEXPR int nBuckets = 12;
-                    BucketInfo buckets[nBuckets];
-
-                    // Initialize _BucketInfo_ for SAH partition buckets
-                    for (int i = start; i < end; ++i) {
-                        int b = nBuckets * centroidBounds.Offset(
-                                               primitiveInfo[i].centroid)[dim];
-                        if (b == nBuckets) b = nBuckets - 1;
-                        CHECK_GE(b, 0);
-                        CHECK_LT(b, nBuckets);
-                        buckets[b].count++;
-                        buckets[b].bounds =
-                            Union(buckets[b].bounds, primitiveInfo[i].bounds);
-                    }
-
-                    // Compute costs for splitting after each bucket
-                    Float cost[nBuckets - 1];
-                    for (int i = 0; i < nBuckets - 1; ++i) {
-                        Bounds3f b0, b1;
-                        int count0 = 0, count1 = 0;
-                        for (int j = 0; j <= i; ++j) {
-                            b0 = Union(b0, buckets[j].bounds);
-                            count0 += buckets[j].count;
-                        }
-                        for (int j = i + 1; j < nBuckets; ++j) {
-                            b1 = Union(b1, buckets[j].bounds);
-                            count1 += buckets[j].count;
-                        }
-                        cost[i] = 1 + (count0 * b0.SurfaceArea() +
-                                       count1 * b1.SurfaceArea()) /
-                                          bounds.SurfaceArea();
-                    }
-
-                    // Find bucket to split at that minimizes SAH metric
-                    Float minCost = cost[0];
-                    int minCostSplitBucket = 0;
-                    for (int i = 1; i < nBuckets - 1; ++i) {
-                        if (cost[i] < minCost) {
-                            minCost = cost[i];
-                            minCostSplitBucket = i;
-                        }
-                    }
-
-                    // Either create leaf or split primitives at selected SAH
-                    // bucket
-                    Float leafCost = nPrimitives;
-                    if (nPrimitives > maxPrimsInNode || minCost < leafCost) {
-                        BVHPrimitiveInfo *pmid = std::partition(
-                            &primitiveInfo[start], &primitiveInfo[end - 1] + 1,
-                            [=](const BVHPrimitiveInfo &pi) {
-                                int b = nBuckets *
-                                        centroidBounds.Offset(pi.centroid)[dim];
-                                if (b == nBuckets) b = nBuckets - 1;
-                                CHECK_GE(b, 0);
-                                CHECK_LT(b, nBuckets);
-                                return b <= minCostSplitBucket;
-                            });
-                        mid = pmid - &primitiveInfo[0];
-                    } else {
-                        // Create leaf _BVHBuildNode_
-                        int firstPrimOffset = orderedPrims.size();
-                        for (int i = start; i < end; ++i) {
-                            int primNum = primitiveInfo[i].primitiveNumber;
-                            orderedPrims.push_back(primitives[primNum]);
-                        }
-                        node->InitLeaf(firstPrimOffset, nPrimitives, bounds);
-                        return node;
-                    }
+                    break;
                 }
-                break;
-            }
+                case SplitMethod::SAH:
+                default: {
+                    // Partition primitives using approximate SAH
+                    if (nPrimitives <= 2) {
+                        // Partition primitives into equally-sized subsets
+                        mid = (start + end) / 2;
+                        std::nth_element(
+                            &primitiveInfo[start], &primitiveInfo[mid],
+                            &primitiveInfo[end - 1] + 1,
+                            [dim](const BVHPrimitiveInfo &a,
+                                  const BVHPrimitiveInfo &b) {
+                                return a.centroid[dim] < b.centroid[dim];
+                            });
+                    } else {
+                        // Allocate _BucketInfo_ for SAH partition buckets
+                        PBRT_CONSTEXPR int nBuckets = 12;
+                        BucketInfo buckets[nBuckets];
+
+                        // Initialize _BucketInfo_ for SAH partition buckets
+                        for (int i = start; i < end; ++i) {
+                            int b =
+                                nBuckets * centroidBounds.Offset(
+                                               primitiveInfo[i].centroid)[dim];
+                            if (b == nBuckets) b = nBuckets - 1;
+                            CHECK_GE(b, 0);
+                            CHECK_LT(b, nBuckets);
+                            buckets[b].count++;
+                            buckets[b].bounds = Union(buckets[b].bounds,
+                                                      primitiveInfo[i].bounds);
+                        }
+
+                        // Compute costs for splitting after each bucket
+                        Float cost[nBuckets - 1];
+                        for (int i = 0; i < nBuckets - 1; ++i) {
+                            Bounds3f b0, b1;
+                            int count0 = 0, count1 = 0;
+                            for (int j = 0; j <= i; ++j) {
+                                b0 = Union(b0, buckets[j].bounds);
+                                count0 += buckets[j].count;
+                            }
+                            for (int j = i + 1; j < nBuckets; ++j) {
+                                b1 = Union(b1, buckets[j].bounds);
+                                count1 += buckets[j].count;
+                            }
+                            cost[i] = 1 + (count0 * b0.SurfaceArea() +
+                                           count1 * b1.SurfaceArea()) /
+                                              bounds.SurfaceArea();
+                        }
+
+                        // Find bucket to split at that minimizes SAH metric
+                        Float minCost = cost[0];
+                        int minCostSplitBucket = 0;
+                        for (int i = 1; i < nBuckets - 1; ++i) {
+                            if (cost[i] < minCost) {
+                                minCost = cost[i];
+                                minCostSplitBucket = i;
+                            }
+                        }
+
+                        // Either create leaf or split primitives at selected
+                        // SAH bucket
+                        Float leafCost = nPrimitives;
+                        if (nPrimitives > maxPrimsInNode ||
+                            minCost < leafCost) {
+                            BVHPrimitiveInfo *pmid = std::partition(
+                                &primitiveInfo[start],
+                                &primitiveInfo[end - 1] + 1,
+                                [=](const BVHPrimitiveInfo &pi) {
+                                    int b = nBuckets * centroidBounds.Offset(
+                                                           pi.centroid)[dim];
+                                    if (b == nBuckets) b = nBuckets - 1;
+                                    CHECK_GE(b, 0);
+                                    CHECK_LT(b, nBuckets);
+                                    return b <= minCostSplitBucket;
+                                });
+                            mid = pmid - &primitiveInfo[0];
+                        } else {
+                            // Create leaf _BVHBuildNode_
+                            int firstPrimOffset = orderedPrims.size();
+                            for (int i = start; i < end; ++i) {
+                                int primNum = primitiveInfo[i].primitiveNumber;
+                                orderedPrims.push_back(primitives[primNum]);
+                            }
+                            node->InitLeaf(firstPrimOffset, nPrimitives,
+                                           bounds);
+                            return node;
+                        }
+                    }
+                    break;
+                }
             }
             node->InitInterior(dim,
                                recursiveBuild(arena, primitiveInfo, start, mid,
@@ -400,10 +422,11 @@ BVHBuildNode *BVHAccel::recursiveBuild(
 BVHBuildNode *BVHAccel::HLBVHBuild(
     MemoryArena &arena, const std::vector<BVHPrimitiveInfo> &primitiveInfo,
     int *totalNodes,
-    std::vector<std::shared_ptr<Primitive>> &orderedPrims) const {
+    std::vector<std::shared_ptr<Primitive>> &orderedPrims) const
+{
     // Compute bounding box of all primitive centroids
     Bounds3f bounds;
-    for (const BVHPrimitiveInfo &pi : primitiveInfo)
+    for (const BVHPrimitiveInfo &pi: primitiveInfo)
         bounds = Union(bounds, pi.centroid);
 
     // Compute Morton indices of primitives
@@ -466,7 +489,7 @@ BVHBuildNode *BVHAccel::HLBVHBuild(
     // Create and return SAH BVH from LBVH treelets
     std::vector<BVHBuildNode *> finishedTreelets;
     finishedTreelets.reserve(treeletsToBuild.size());
-    for (LBVHTreelet &treelet : treeletsToBuild)
+    for (LBVHTreelet &treelet: treeletsToBuild)
         finishedTreelets.push_back(treelet.buildNodes);
     return buildUpperSAH(arena, finishedTreelets, 0, finishedTreelets.size(),
                          totalNodes);
@@ -477,7 +500,8 @@ BVHBuildNode *BVHAccel::emitLBVH(
     const std::vector<BVHPrimitiveInfo> &primitiveInfo,
     MortonPrimitive *mortonPrims, int nPrimitives, int *totalNodes,
     std::vector<std::shared_ptr<Primitive>> &orderedPrims,
-    std::atomic<int> *orderedPrimsOffset, int bitIndex) const {
+    std::atomic<int> *orderedPrimsOffset, int bitIndex) const
+{
     CHECK_GT(nPrimitives, 0);
     if (bitIndex == -1 || nPrimitives < maxPrimsInNode) {
         // Create and return leaf node of LBVH treelet
@@ -538,8 +562,8 @@ BVHBuildNode *BVHAccel::emitLBVH(
 
 BVHBuildNode *BVHAccel::buildUpperSAH(MemoryArena &arena,
                                       std::vector<BVHBuildNode *> &treeletRoots,
-                                      int start, int end,
-                                      int *totalNodes) const {
+                                      int start, int end, int *totalNodes) const
+{
     CHECK_LT(start, end);
     int nNodes = end - start;
     if (nNodes == 1) return treeletRoots[start];
@@ -566,7 +590,8 @@ BVHBuildNode *BVHAccel::buildUpperSAH(MemoryArena &arena,
 
     // Allocate _BucketInfo_ for SAH partition buckets
     PBRT_CONSTEXPR int nBuckets = 12;
-    struct BucketInfo {
+    struct BucketInfo
+    {
         int count = 0;
         Bounds3f bounds;
     };
@@ -638,7 +663,8 @@ BVHBuildNode *BVHAccel::buildUpperSAH(MemoryArena &arena,
     return node;
 }
 
-int BVHAccel::flattenBVHTree(BVHBuildNode *node, int *offset) {
+int BVHAccel::flattenBVHTree(BVHBuildNode *node, int *offset)
+{
     LinearBVHNode *linearNode = &nodes[*offset];
     linearNode->bounds = node->bounds;
     int myOffset = (*offset)++;
@@ -660,7 +686,8 @@ int BVHAccel::flattenBVHTree(BVHBuildNode *node, int *offset) {
 
 BVHAccel::~BVHAccel() { FreeAligned(nodes); }
 
-bool BVHAccel::Intersect(const Ray &ray, SurfaceInteraction *isect) const {
+bool BVHAccel::Intersect(const Ray &ray, SurfaceInteraction *isect) const
+{
     if (!nodes) return false;
     ProfilePhase p(Prof::AccelIntersect);
     bool hit = false;
@@ -700,7 +727,8 @@ bool BVHAccel::Intersect(const Ray &ray, SurfaceInteraction *isect) const {
     return hit;
 }
 
-bool BVHAccel::IntersectP(const Ray &ray) const {
+bool BVHAccel::IntersectP(const Ray &ray) const
+{
     if (!nodes) return false;
     ProfilePhase p(Prof::AccelIntersectP);
     Vector3f invDir(1.f / ray.d.x, 1.f / ray.d.y, 1.f / ray.d.z);
@@ -739,7 +767,8 @@ bool BVHAccel::IntersectP(const Ray &ray) const {
 }
 
 std::shared_ptr<BVHAccel> CreateBVHAccelerator(
-    std::vector<std::shared_ptr<Primitive>> prims, const ParamSet &ps) {
+    std::vector<std::shared_ptr<Primitive>> prims, const ParamSet &ps)
+{
     std::string splitMethodName = ps.FindOneString("splitmethod", "sah");
     BVHAccel::SplitMethod splitMethod;
     if (splitMethodName == "sah")

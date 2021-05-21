@@ -40,21 +40,23 @@
 #include "scene.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_INT_DISTRIBUTION("Integrator/Path length", pathLength);
 STAT_COUNTER("Integrator/Volume interactions", volumeInteractions);
 STAT_COUNTER("Integrator/Surface interactions", surfaceInteractions);
 
 // VolPathIntegrator Method Definitions
-void VolPathIntegrator::Preprocess(const Scene &scene, Sampler &sampler) {
+void VolPathIntegrator::Preprocess(const Scene &scene, Sampler &sampler)
+{
     lightDistribution =
         CreateLightSampleDistribution(lightSampleStrategy, scene);
 }
 
 Spectrum VolPathIntegrator::Li(const RayDifferential &r, const Scene &scene,
                                Sampler &sampler, MemoryArena &arena,
-                               int depth) const {
+                               int depth) const
+{
     ProfilePhase p(Prof::SamplerIntegratorLi);
     Spectrum L(0.f), beta(1.f);
     RayDifferential ray(r);
@@ -105,7 +107,7 @@ Spectrum VolPathIntegrator::Li(const RayDifferential &r, const Scene &scene,
                 if (foundIntersection)
                     L += beta * isect.Le(-ray.d);
                 else
-                    for (const auto &light : scene.infiniteLights)
+                    for (const auto &light: scene.infiniteLights)
                         L += beta * light->Le(ray);
             }
 
@@ -188,9 +190,10 @@ Spectrum VolPathIntegrator::Li(const RayDifferential &r, const Scene &scene,
     return L;
 }
 
-VolPathIntegrator *CreateVolPathIntegrator(
-    const ParamSet &params, std::shared_ptr<Sampler> sampler,
-    std::shared_ptr<const Camera> camera) {
+VolPathIntegrator *CreateVolPathIntegrator(const ParamSet &params,
+                                           std::shared_ptr<Sampler> sampler,
+                                           std::shared_ptr<const Camera> camera)
+{
     int maxDepth = params.FindOneInt("maxdepth", 5);
     int np;
     const int *pb = params.FindInt("pixelbounds", &np);

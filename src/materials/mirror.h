@@ -42,14 +42,16 @@
 #include "pbrt.h"
 #include "material.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MirrorMaterial Declarations
-class MirrorMaterial : public Material {
-  public:
+class MirrorMaterial: public Material
+{
+public:
     // MirrorMaterial Public Methods
     MirrorMaterial(const std::shared_ptr<Texture<Spectrum>> &r,
-                   const std::shared_ptr<Texture<Float>> &bump) {
+                   const std::shared_ptr<Texture<Float>> &bump)
+    {
         Kr = r;
         bumpMap = bump;
     }
@@ -57,7 +59,7 @@ class MirrorMaterial : public Material {
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // MirrorMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> Kr;
     std::shared_ptr<Texture<Float>> bumpMap;

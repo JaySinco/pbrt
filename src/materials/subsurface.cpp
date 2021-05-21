@@ -39,12 +39,13 @@
 #include "paramset.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SubsurfaceMaterial Method Definitions
 void SubsurfaceMaterial::ComputeScatteringFunctions(
     SurfaceInteraction *si, MemoryArena &arena, TransportMode mode,
-    bool allowMultipleLobes) const {
+    bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
 
@@ -96,7 +97,8 @@ void SubsurfaceMaterial::ComputeScatteringFunctions(
                                                      sig_a, sig_s, table);
 }
 
-SubsurfaceMaterial *CreateSubsurfaceMaterial(const TextureParams &mp) {
+SubsurfaceMaterial *CreateSubsurfaceMaterial(const TextureParams &mp)
+{
     Float sig_a_rgb[3] = {.0011f, .0024f, .014f},
           sig_s_rgb[3] = {2.55f, 3.21f, 3.77f};
     Spectrum sig_a = Spectrum::FromRGB(sig_a_rgb),

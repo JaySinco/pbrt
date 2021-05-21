@@ -42,11 +42,12 @@
 // Error Reporting Includes
 #include <stdarg.h>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Error Reporting Functions
 template <typename... Args>
-static std::string StringVaprintf(const std::string &fmt, va_list args) {
+static std::string StringVaprintf(const std::string &fmt, va_list args)
+{
     // Figure out how much space we need to allocate; add an extra
     // character for '\0'.
     va_list argsCopy;
@@ -60,7 +61,8 @@ static std::string StringVaprintf(const std::string &fmt, va_list args) {
 }
 
 static void processError(Loc *loc, const char *format, va_list args,
-                         const char *errorType) {
+                         const char *errorType)
+{
     // Build up an entire formatted error string and print it all at once;
     // this way, if multiple threads are printing messages at once, they
     // don't get jumbled up...
@@ -86,7 +88,8 @@ static void processError(Loc *loc, const char *format, va_list args,
     }
 }
 
-void Warning(const char *format, ...) {
+void Warning(const char *format, ...)
+{
     if (PbrtOptions.quiet) return;
     va_list args;
     va_start(args, format);
@@ -94,7 +97,8 @@ void Warning(const char *format, ...) {
     va_end(args);
 }
 
-void Error(const char *format, ...) {
+void Error(const char *format, ...)
+{
     va_list args;
     va_start(args, format);
     processError(parserLoc, format, args, "Error");

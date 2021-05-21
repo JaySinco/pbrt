@@ -42,45 +42,53 @@
 #include "pbrt.h"
 #include "geometry.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MicrofacetDistribution Declarations
-class MicrofacetDistribution {
-  public:
+class MicrofacetDistribution
+{
+public:
     // MicrofacetDistribution Public Methods
     virtual ~MicrofacetDistribution();
     virtual Float D(const Vector3f &wh) const = 0;
     virtual Float Lambda(const Vector3f &w) const = 0;
-    Float G1(const Vector3f &w) const {
+    Float G1(const Vector3f &w) const
+    {
         //    if (Dot(w, wh) * CosTheta(w) < 0.) return 0.;
         return 1 / (1 + Lambda(w));
     }
-    virtual Float G(const Vector3f &wo, const Vector3f &wi) const {
+    virtual Float G(const Vector3f &wo, const Vector3f &wi) const
+    {
         return 1 / (1 + Lambda(wo) + Lambda(wi));
     }
     virtual Vector3f Sample_wh(const Vector3f &wo, const Point2f &u) const = 0;
     Float Pdf(const Vector3f &wo, const Vector3f &wh) const;
     virtual std::string ToString() const = 0;
 
-  protected:
+protected:
     // MicrofacetDistribution Protected Methods
     MicrofacetDistribution(bool sampleVisibleArea)
-        : sampleVisibleArea(sampleVisibleArea) {}
+        : sampleVisibleArea(sampleVisibleArea)
+    {
+    }
 
     // MicrofacetDistribution Protected Data
     const bool sampleVisibleArea;
 };
 
 inline std::ostream &operator<<(std::ostream &os,
-                                const MicrofacetDistribution &md) {
+                                const MicrofacetDistribution &md)
+{
     os << md.ToString();
     return os;
 }
 
-class BeckmannDistribution : public MicrofacetDistribution {
-  public:
+class BeckmannDistribution: public MicrofacetDistribution
+{
+public:
     // BeckmannDistribution Public Methods
-    static Float RoughnessToAlpha(Float roughness) {
+    static Float RoughnessToAlpha(Float roughness)
+    {
         roughness = std::max(roughness, (Float)1e-3);
         Float x = std::log(roughness);
         return 1.62142f + 0.819955f * x + 0.1734f * x * x +
@@ -89,12 +97,14 @@ class BeckmannDistribution : public MicrofacetDistribution {
     BeckmannDistribution(Float alphax, Float alphay, bool samplevis = true)
         : MicrofacetDistribution(samplevis),
           alphax(std::max(Float(0.001), alphax)),
-          alphay(std::max(Float(0.001), alphay)) {}
+          alphay(std::max(Float(0.001), alphay))
+    {
+    }
     Float D(const Vector3f &wh) const;
     Vector3f Sample_wh(const Vector3f &wo, const Point2f &u) const;
     std::string ToString() const;
 
-  private:
+private:
     // BeckmannDistribution Private Methods
     Float Lambda(const Vector3f &w) const;
 
@@ -102,20 +112,23 @@ class BeckmannDistribution : public MicrofacetDistribution {
     const Float alphax, alphay;
 };
 
-class TrowbridgeReitzDistribution : public MicrofacetDistribution {
-  public:
+class TrowbridgeReitzDistribution: public MicrofacetDistribution
+{
+public:
     // TrowbridgeReitzDistribution Public Methods
     static inline Float RoughnessToAlpha(Float roughness);
     TrowbridgeReitzDistribution(Float alphax, Float alphay,
                                 bool samplevis = true)
         : MicrofacetDistribution(samplevis),
           alphax(std::max(Float(0.001), alphax)),
-          alphay(std::max(Float(0.001), alphay)) {}
+          alphay(std::max(Float(0.001), alphay))
+    {
+    }
     Float D(const Vector3f &wh) const;
     Vector3f Sample_wh(const Vector3f &wo, const Point2f &u) const;
     std::string ToString() const;
 
-  private:
+private:
     // TrowbridgeReitzDistribution Private Methods
     Float Lambda(const Vector3f &w) const;
 
@@ -124,7 +137,8 @@ class TrowbridgeReitzDistribution : public MicrofacetDistribution {
 };
 
 // MicrofacetDistribution Inline Methods
-inline Float TrowbridgeReitzDistribution::RoughnessToAlpha(Float roughness) {
+inline Float TrowbridgeReitzDistribution::RoughnessToAlpha(Float roughness)
+{
     roughness = std::max(roughness, (Float)1e-3);
     Float x = std::log(roughness);
     return 1.62142f + 0.819955f * x + 0.1734f * x * x + 0.0171201f * x * x * x +

@@ -42,11 +42,12 @@
 #include "sampler.h"
 #include "lowdiscrepancy.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MaxMinDistSampler Declarations
-class MaxMinDistSampler : public PixelSampler {
-  public:
+class MaxMinDistSampler: public PixelSampler
+{
+public:
     // MaxMinDistSampler Public Methods
     void StartPixel(const Point2i &);
     std::unique_ptr<Sampler> Clone(int seed);
@@ -76,14 +77,15 @@ class MaxMinDistSampler : public PixelSampler {
                   }
                   return spp;
               }(samplesPerPixel),
-              nSampledDimensions) {
+              nSampledDimensions)
+    {
         int Cindex = Log2Int(samplesPerPixel);
         CHECK(Cindex >= 0 &&
               Cindex < (sizeof(CMaxMinDist) / sizeof(CMaxMinDist[0])));
         CPixel = CMaxMinDist[Cindex];
     }
 
-  private:
+private:
     // MaxMinDistSampler Private Data
     const uint32_t *CPixel;
 };

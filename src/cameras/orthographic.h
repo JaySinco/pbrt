@@ -43,11 +43,12 @@
 #include "camera.h"
 #include "film.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // OrthographicCamera Declarations
-class OrthographicCamera : public ProjectiveCamera {
-  public:
+class OrthographicCamera: public ProjectiveCamera
+{
+public:
     // OrthographicCamera Public Methods
     OrthographicCamera(const AnimatedTransform &CameraToWorld,
                        const Bounds2f &screenWindow, Float shutterOpen,
@@ -55,7 +56,8 @@ class OrthographicCamera : public ProjectiveCamera {
                        Float focalDistance, Film *film, const Medium *medium)
         : ProjectiveCamera(CameraToWorld, Orthographic(0, 1), screenWindow,
                            shutterOpen, shutterClose, lensRadius, focalDistance,
-                           film, medium) {
+                           film, medium)
+    {
         // Compute differential changes in origin for orthographic camera rays
         dxCamera = RasterToCamera(Vector3f(1, 0, 0));
         dyCamera = RasterToCamera(Vector3f(0, 1, 0));
@@ -64,7 +66,7 @@ class OrthographicCamera : public ProjectiveCamera {
     Float GenerateRayDifferential(const CameraSample &sample,
                                   RayDifferential *) const;
 
-  private:
+private:
     // OrthographicCamera Private Data
     Vector3f dxCamera, dyCamera;
 };

@@ -38,12 +38,13 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // TranslucentMaterial Method Definitions
 void TranslucentMaterial::ComputeScatteringFunctions(
     SurfaceInteraction *si, MemoryArena &arena, TransportMode mode,
-    bool allowMultipleLobes) const {
+    bool allowMultipleLobes) const
+{
     // Perform bump mapping with _bumpMap_, if present
     if (bumpMap) Bump(bumpMap, si);
     Float eta = 1.5f;
@@ -78,7 +79,8 @@ void TranslucentMaterial::ComputeScatteringFunctions(
     }
 }
 
-TranslucentMaterial *CreateTranslucentMaterial(const TextureParams &mp) {
+TranslucentMaterial *CreateTranslucentMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> Kd =
         mp.GetSpectrumTexture("Kd", Spectrum(0.25f));
     std::shared_ptr<Texture<Spectrum>> Ks =

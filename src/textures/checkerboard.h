@@ -43,15 +43,20 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // AAMethod Declaration
-enum class AAMethod { None, ClosedForm };
+enum class AAMethod
+{
+    None,
+    ClosedForm
+};
 
 // CheckerboardTexture Declarations
 template <typename T>
-class Checkerboard2DTexture : public Texture<T> {
-  public:
+class Checkerboard2DTexture: public Texture<T>
+{
+public:
     // Checkerboard2DTexture Public Methods
     Checkerboard2DTexture(std::unique_ptr<TextureMapping2D> mapping,
                           const std::shared_ptr<Texture<T>> &tex1,
@@ -60,8 +65,11 @@ class Checkerboard2DTexture : public Texture<T> {
         : mapping(std::move(mapping)),
           tex1(tex1),
           tex2(tex2),
-          aaMethod(aaMethod) {}
-    T Evaluate(const SurfaceInteraction &si) const {
+          aaMethod(aaMethod)
+    {
+    }
+    T Evaluate(const SurfaceInteraction &si) const
+    {
         Vector2f dstdx, dstdy;
         Point2f st = mapping->Map(si, &dstdx, &dstdy);
         if (aaMethod == AAMethod::None) {
@@ -100,7 +108,7 @@ class Checkerboard2DTexture : public Texture<T> {
         }
     }
 
-  private:
+private:
     // Checkerboard2DTexture Private Data
     std::unique_ptr<TextureMapping2D> mapping;
     const std::shared_ptr<Texture<T>> tex1, tex2;
@@ -108,14 +116,18 @@ class Checkerboard2DTexture : public Texture<T> {
 };
 
 template <typename T>
-class Checkerboard3DTexture : public Texture<T> {
-  public:
+class Checkerboard3DTexture: public Texture<T>
+{
+public:
     // Checkerboard3DTexture Public Methods
     Checkerboard3DTexture(std::unique_ptr<TextureMapping3D> mapping,
                           const std::shared_ptr<Texture<T>> &tex1,
                           const std::shared_ptr<Texture<T>> &tex2)
-        : mapping(std::move(mapping)), tex1(tex1), tex2(tex2) {}
-    T Evaluate(const SurfaceInteraction &si) const {
+        : mapping(std::move(mapping)), tex1(tex1), tex2(tex2)
+    {
+    }
+    T Evaluate(const SurfaceInteraction &si) const
+    {
         Vector3f dpdx, dpdy;
         Point3f p = mapping->Map(si, &dpdx, &dpdy);
         if (((int)std::floor(p.x) + (int)std::floor(p.y) +
@@ -127,7 +139,7 @@ class Checkerboard3DTexture : public Texture<T> {
             return tex2->Evaluate(si);
     }
 
-  private:
+private:
     // Checkerboard3DTexture Private Data
     std::unique_ptr<TextureMapping3D> mapping;
     std::shared_ptr<Texture<T>> tex1, tex2;

@@ -42,11 +42,12 @@
 #include "pbrt.h"
 #include "material.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // GlassMaterial Declarations
-class GlassMaterial : public Material {
-  public:
+class GlassMaterial: public Material
+{
+public:
     // GlassMaterial Public Methods
     GlassMaterial(const std::shared_ptr<Texture<Spectrum>> &Kr,
                   const std::shared_ptr<Texture<Spectrum>> &Kt,
@@ -61,12 +62,14 @@ class GlassMaterial : public Material {
           vRoughness(vRoughness),
           index(index),
           bumpMap(bumpMap),
-          remapRoughness(remapRoughness) {}
+          remapRoughness(remapRoughness)
+    {
+    }
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // GlassMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> Kr, Kt;
     std::shared_ptr<Texture<Float>> uRoughness, vRoughness;

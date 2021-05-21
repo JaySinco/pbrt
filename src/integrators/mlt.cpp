@@ -44,8 +44,8 @@
 #include "sampling.h"
 #include "progressreporter.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_PERCENT("Integrator/Acceptance rate", acceptedMutations, totalMutations);
 
 // MLTSampler Constants
@@ -55,7 +55,8 @@ static const int connectionStreamIndex = 2;
 static const int nSampleStreams = 3;
 
 // MLTSampler Method Definitions
-Float MLTSampler::Get1D() {
+Float MLTSampler::Get1D()
+{
     ProfilePhase _(Prof::GetSample);
     int index = GetNextIndex();
     EnsureReady(index);
@@ -64,21 +65,25 @@ Float MLTSampler::Get1D() {
 
 Point2f MLTSampler::Get2D() { return {Get1D(), Get1D()}; }
 
-std::unique_ptr<Sampler> MLTSampler::Clone(int seed) {
+std::unique_ptr<Sampler> MLTSampler::Clone(int seed)
+{
     LOG(FATAL) << "MLTSampler::Clone() is not implemented";
     return nullptr;
 }
 
-void MLTSampler::StartIteration() {
+void MLTSampler::StartIteration()
+{
     currentIteration++;
     largeStep = rng.UniformFloat() < largeStepProbability;
 }
 
-void MLTSampler::Accept() {
+void MLTSampler::Accept()
+{
     if (largeStep) lastLargeStepIteration = currentIteration;
 }
 
-void MLTSampler::EnsureReady(int index) {
+void MLTSampler::EnsureReady(int index)
+{
     // Enlarge _MLTSampler::X_ if necessary and get current $\VEC{X}_i$
     if (index >= X.size()) X.resize(index + 1);
     PrimarySample &Xi = X[index];
@@ -109,13 +114,15 @@ void MLTSampler::EnsureReady(int index) {
     Xi.lastModificationIteration = currentIteration;
 }
 
-void MLTSampler::Reject() {
-    for (auto &Xi : X)
+void MLTSampler::Reject()
+{
+    for (auto &Xi: X)
         if (Xi.lastModificationIteration == currentIteration) Xi.Restore();
     --currentIteration;
 }
 
-void MLTSampler::StartStream(int index) {
+void MLTSampler::StartStream(int index)
+{
     CHECK_LT(index, streamCount);
     streamIndex = index;
     sampleIndex = 0;
@@ -126,7 +133,8 @@ Spectrum MLTIntegrator::L(
     const Scene &scene, MemoryArena &arena,
     const std::unique_ptr<Distribution1D> &lightDistr,
     const std::unordered_map<const Light *, size_t> &lightToIndex,
-    MLTSampler &sampler, int depth, Point2f *pRaster) {
+    MLTSampler &sampler, int depth, Point2f *pRaster)
+{
     sampler.StartStream(cameraStreamIndex);
     // Determine the number of available strategies and pick a specific one
     int s, t, nStrategies;
@@ -162,7 +170,8 @@ Spectrum MLTIntegrator::L(
            nStrategies;
 }
 
-void MLTIntegrator::Render(const Scene &scene) {
+void MLTIntegrator::Render(const Scene &scene)
+{
     std::unique_ptr<Distribution1D> lightDistr =
         ComputeLightPowerDistribution(scene);
 
@@ -278,7 +287,8 @@ void MLTIntegrator::Render(const Scene &scene) {
 }
 
 MLTIntegrator *CreateMLTIntegrator(const ParamSet &params,
-                                   std::shared_ptr<const Camera> camera) {
+                                   std::shared_ptr<const Camera> camera)
+{
     int maxDepth = params.FindOneInt("maxdepth", 5);
     int nBootstrap = params.FindOneInt("bootstrapsamples", 100000);
     int64_t nChains = params.FindOneInt("chains", 1000);

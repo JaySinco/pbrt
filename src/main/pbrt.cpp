@@ -39,7 +39,8 @@
 
 using namespace pbrt;
 
-static void usage(const char *msg = nullptr) {
+static void usage(const char *msg = nullptr)
+{
     if (msg) fprintf(stderr, "pbrt: %s\n\n", msg);
 
     fprintf(stderr, R"(usage: pbrt [<options>] <filename.pbrt...>
@@ -71,7 +72,8 @@ Reformatting options:
 }
 
 // main program
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     google::InitGoogleLogging(argv[0]);
     FLAGS_stderrthreshold = 1;  // Warning and above.
 
@@ -162,7 +164,7 @@ int main(int argc, char *argv[]) {
         pbrtParseFile("-");
     } else {
         // Parse scene from input files
-        for (const std::string &f : filenames) pbrtParseFile(f);
+        for (const std::string &f: filenames) pbrtParseFile(f);
     }
     pbrtCleanup();
     return 0;

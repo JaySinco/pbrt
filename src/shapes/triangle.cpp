@@ -40,12 +40,13 @@
 #include "rply.h"
 #include <array>
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_PERCENT("Intersections/Ray-triangle intersection tests", nHits, nTests);
 
 // Triangle Local Definitions
-static void PlyErrorCallback(p_ply, const char *message) {
+static void PlyErrorCallback(p_ply, const char *message)
+{
     Error("PLY writing error: %s", message);
 }
 
@@ -60,7 +61,8 @@ TriangleMesh::TriangleMesh(
       nVertices(nVertices),
       vertexIndices(vertexIndices, vertexIndices + 3 * nTriangles),
       alphaMask(alphaMask),
-      shadowAlphaMask(shadowAlphaMask) {
+      shadowAlphaMask(shadowAlphaMask)
+{
     ++nMeshes;
     nTris += nTriangles;
     triMeshBytes += sizeof(*this) + this->vertexIndices.size() * sizeof(int) +
@@ -96,7 +98,8 @@ std::vector<std::shared_ptr<Shape>> CreateTriangleMesh(
     int nVertices, const Point3f *p, const Vector3f *s, const Normal3f *n,
     const Point2f *uv, const std::shared_ptr<Texture<Float>> &alphaMask,
     const std::shared_ptr<Texture<Float>> &shadowAlphaMask,
-    const int *faceIndices) {
+    const int *faceIndices)
+{
     std::shared_ptr<TriangleMesh> mesh = std::make_shared<TriangleMesh>(
         *ObjectToWorld, nTriangles, vertexIndices, nVertices, p, s, n, uv,
         alphaMask, shadowAlphaMask, faceIndices);
@@ -111,7 +114,8 @@ std::vector<std::shared_ptr<Shape>> CreateTriangleMesh(
 bool WritePlyFile(const std::string &filename, int nTriangles,
                   const int *vertexIndices, int nVertices, const Point3f *P,
                   const Vector3f *S, const Normal3f *N, const Point2f *UV,
-                  const int *faceIndices) {
+                  const int *faceIndices)
+{
     p_ply plyFile =
         ply_create(filename.c_str(), PLY_DEFAULT, PlyErrorCallback, 0, nullptr);
     if (plyFile == nullptr) return false;
@@ -164,7 +168,8 @@ bool WritePlyFile(const std::string &filename, int nTriangles,
     return true;
 }
 
-Bounds3f Triangle::ObjectBound() const {
+Bounds3f Triangle::ObjectBound() const
+{
     // Get triangle vertices in _p0_, _p1_, and _p2_
     const Point3f &p0 = mesh->p[v[0]];
     const Point3f &p1 = mesh->p[v[1]];
@@ -173,7 +178,8 @@ Bounds3f Triangle::ObjectBound() const {
                  (*WorldToObject)(p2));
 }
 
-Bounds3f Triangle::WorldBound() const {
+Bounds3f Triangle::WorldBound() const
+{
     // Get triangle vertices in _p0_, _p1_, and _p2_
     const Point3f &p0 = mesh->p[v[0]];
     const Point3f &p1 = mesh->p[v[1]];
@@ -182,7 +188,8 @@ Bounds3f Triangle::WorldBound() const {
 }
 
 bool Triangle::Intersect(const Ray &ray, Float *tHit, SurfaceInteraction *isect,
-                         bool testAlphaTexture) const {
+                         bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::TriIntersect);
     ++nTests;
     // Get triangle vertices in _p0_, _p1_, and _p2_
@@ -419,7 +426,8 @@ bool Triangle::Intersect(const Ray &ray, Float *tHit, SurfaceInteraction *isect,
     return true;
 }
 
-bool Triangle::IntersectP(const Ray &ray, bool testAlphaTexture) const {
+bool Triangle::IntersectP(const Ray &ray, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::TriIntersectP);
     ++nTests;
     // Get triangle vertices in _p0_, _p1_, and _p2_
@@ -567,7 +575,8 @@ bool Triangle::IntersectP(const Ray &ray, bool testAlphaTexture) const {
     return true;
 }
 
-Float Triangle::Area() const {
+Float Triangle::Area() const
+{
     // Get triangle vertices in _p0_, _p1_, and _p2_
     const Point3f &p0 = mesh->p[v[0]];
     const Point3f &p1 = mesh->p[v[1]];
@@ -575,7 +584,8 @@ Float Triangle::Area() const {
     return 0.5 * Cross(p1 - p0, p2 - p0).Length();
 }
 
-Interaction Triangle::Sample(const Point2f &u, Float *pdf) const {
+Interaction Triangle::Sample(const Point2f &u, Float *pdf) const
+{
     Point2f b = UniformSampleTriangle(u);
     // Get triangle vertices in _p0_, _p1_, and _p2_
     const Point3f &p0 = mesh->p[v[0]];
@@ -602,7 +612,8 @@ Interaction Triangle::Sample(const Point2f &u, Float *pdf) const {
     return it;
 }
 
-Float Triangle::SolidAngle(const Point3f &p, int nSamples) const {
+Float Triangle::SolidAngle(const Point3f &p, int nSamples) const
+{
     // Project the vertices into the unit sphere around p.
     std::array<Vector3f, 3> pSphere = {Normalize(mesh->p[v[0]] - p),
                                        Normalize(mesh->p[v[1]] - p),
@@ -641,7 +652,8 @@ Float Triangle::SolidAngle(const Point3f &p, int nSamples) const {
 std::vector<std::shared_ptr<Shape>> CreateTriangleMeshShape(
     const Transform *o2w, const Transform *w2o, bool reverseOrientation,
     const ParamSet &params,
-    std::map<std::string, std::shared_ptr<Texture<Float>>> *floatTextures) {
+    std::map<std::string, std::shared_ptr<Texture<Float>>> *floatTextures)
+{
     int nvi, npi, nuvi, nsi, nni;
     const int *vi = params.FindInt("indices", &nvi);
     const Point3f *P = params.FindPoint3f("P", &npi);

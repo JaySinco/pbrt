@@ -43,16 +43,20 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // WindyTexture Declarations
 template <typename T>
-class WindyTexture : public Texture<T> {
-  public:
+class WindyTexture: public Texture<T>
+{
+public:
     // WindyTexture Public Methods
     WindyTexture(std::unique_ptr<TextureMapping3D> mapping)
-        : mapping(std::move(mapping)) {}
-    T Evaluate(const SurfaceInteraction &si) const {
+        : mapping(std::move(mapping))
+    {
+    }
+    T Evaluate(const SurfaceInteraction &si) const
+    {
         Vector3f dpdx, dpdy;
         Point3f P = mapping->Map(si, &dpdx, &dpdy);
         Float windStrength = FBm(.1f * P, .1f * dpdx, .1f * dpdy, .5, 3);
@@ -60,7 +64,7 @@ class WindyTexture : public Texture<T> {
         return std::abs(windStrength) * waveHeight;
     }
 
-  private:
+private:
     std::unique_ptr<TextureMapping3D> mapping;
 };
 

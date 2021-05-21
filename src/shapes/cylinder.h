@@ -41,11 +41,12 @@
 // shapes/cylinder.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Cylinder Declarations
-class Cylinder : public Shape {
-  public:
+class Cylinder: public Shape
+{
+public:
     // Cylinder Public Methods
     Cylinder(const Transform *ObjectToWorld, const Transform *WorldToObject,
              bool reverseOrientation, Float radius, Float zMin, Float zMax,
@@ -54,7 +55,9 @@ class Cylinder : public Shape {
           radius(radius),
           zMin(std::min(zMin, zMax)),
           zMax(std::max(zMin, zMax)),
-          phiMax(Radians(Clamp(phiMax, 0, 360))) {}
+          phiMax(Radians(Clamp(phiMax, 0, 360)))
+    {
+    }
     Bounds3f ObjectBound() const;
     bool Intersect(const Ray &ray, Float *tHit, SurfaceInteraction *isect,
                    bool testAlphaTexture) const;
@@ -62,7 +65,7 @@ class Cylinder : public Shape {
     Float Area() const;
     Interaction Sample(const Point2f &u, Float *pdf) const;
 
-  protected:
+protected:
     // Cylinder Private Data
     const Float radius, zMin, zMax, phiMax;
 };

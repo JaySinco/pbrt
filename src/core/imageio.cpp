@@ -40,8 +40,8 @@
 #include <ImfRgba.h>
 #include <ImfRgbaFile.h>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ImageIO Local Declarations
 static void WriteImageEXR(const std::string &name, const Float *pixels,
                           int xRes, int yRes, int totalXRes, int totalYRes,
@@ -58,7 +58,8 @@ static RGBSpectrum *ReadImagePFM(const std::string &filename, int *xres,
 
 // ImageIO Function Definitions
 std::unique_ptr<RGBSpectrum[]> ReadImage(const std::string &name,
-                                         Point2i *resolution) {
+                                         Point2i *resolution)
+{
     if (HasExtension(name, ".exr"))
         return std::unique_ptr<RGBSpectrum[]>(
             ReadImageEXR(name, &resolution->x, &resolution->y));
@@ -79,7 +80,8 @@ std::unique_ptr<RGBSpectrum[]> ReadImage(const std::string &name,
 }
 
 void WriteImage(const std::string &name, const Float *rgb,
-                const Bounds2i &outputBounds, const Point2i &totalResolution) {
+                const Bounds2i &outputBounds, const Point2i &totalResolution)
+{
     Vector2i resolution = outputBounds.Diagonal();
     if (HasExtension(name, ".exr")) {
         WriteImageEXR(name, rgb, resolution.x, resolution.y, totalResolution.x,
@@ -122,7 +124,8 @@ void WriteImage(const std::string &name, const Float *rgb,
 }
 
 RGBSpectrum *ReadImageEXR(const std::string &name, int *width, int *height,
-                          Bounds2i *dataWindow, Bounds2i *displayWindow) {
+                          Bounds2i *dataWindow, Bounds2i *displayWindow)
+{
     using namespace Imf;
     using namespace Imath;
     try {
@@ -163,7 +166,8 @@ RGBSpectrum *ReadImageEXR(const std::string &name, int *width, int *height,
 
 static void WriteImageEXR(const std::string &name, const Float *pixels,
                           int xRes, int yRes, int totalXRes, int totalYRes,
-                          int xOffset, int yOffset) {
+                          int xOffset, int yOffset)
+{
     using namespace Imf;
     using namespace Imath;
 
@@ -190,7 +194,8 @@ static void WriteImageEXR(const std::string &name, const Float *pixels,
 // TGA Function Definitions
 void WriteImageTGA(const std::string &name, const uint8_t *pixels, int xRes,
                    int yRes, int totalXRes, int totalYRes, int xOffset,
-                   int yOffset) {
+                   int yOffset)
+{
     // Reformat to BGR layout.
     std::unique_ptr<uint8_t[]> outBuf(new uint8_t[3 * xRes * yRes]);
     uint8_t *dst = outBuf.get();
@@ -213,7 +218,8 @@ void WriteImageTGA(const std::string &name, const uint8_t *pixels, int xRes,
 }
 
 static RGBSpectrum *ReadImageTGA(const std::string &name, int *width,
-                                 int *height) {
+                                 int *height)
+{
     tga_image img;
     tga_result result;
     if ((result = tga_read(&img, name.c_str())) != TGA_NOERR) {
@@ -255,7 +261,8 @@ static RGBSpectrum *ReadImageTGA(const std::string &name, int *width,
 }
 
 static RGBSpectrum *ReadImagePNG(const std::string &name, int *width,
-                                 int *height) {
+                                 int *height)
+{
     unsigned char *rgb;
     unsigned w, h;
     unsigned int error = lodepng_decode24_file(&rgb, &w, &h, name.c_str());
@@ -316,7 +323,8 @@ static PBRT_CONSTEXPR bool hostLittleEndian =
 
 #define BUFFER_SIZE 80
 
-static inline int isWhitespace(char c) {
+static inline int isWhitespace(char c)
+{
     return c == ' ' || c == '\n' || c == '\t';
 }
 
@@ -324,7 +332,8 @@ static inline int isWhitespace(char c) {
 // terminator.  i.e. it keeps reading until whitespace is reached.  Returns
 // the number of characters read *not* including the whitespace, and
 // returns -1 on an error.
-static int readWord(FILE *fp, char *buffer, int bufferLength) {
+static int readWord(FILE *fp, char *buffer, int bufferLength)
+{
     int n;
     int c;
 
@@ -347,7 +356,8 @@ static int readWord(FILE *fp, char *buffer, int bufferLength) {
 }
 
 static RGBSpectrum *ReadImagePFM(const std::string &filename, int *xres,
-                                 int *yres) {
+                                 int *yres)
+{
     float *data = nullptr;
     RGBSpectrum *rgb = nullptr;
     char buffer[BUFFER_SIZE];
@@ -434,7 +444,8 @@ fail:
 }
 
 static bool WriteImagePFM(const std::string &filename, const Float *rgb,
-                          int width, int height) {
+                          int width, int height)
+{
     FILE *fp;
     float scale;
 

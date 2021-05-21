@@ -34,14 +34,16 @@
 #include "filters/gaussian.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Gaussian Filter Method Definitions
-Float GaussianFilter::Evaluate(const Point2f &p) const {
+Float GaussianFilter::Evaluate(const Point2f &p) const
+{
     return Gaussian(p.x, expX) * Gaussian(p.y, expY);
 }
 
-GaussianFilter *CreateGaussianFilter(const ParamSet &ps) {
+GaussianFilter *CreateGaussianFilter(const ParamSet &ps)
+{
     // Find common filter parameters
     Float xw = ps.FindOneFloat("xwidth", 2.f);
     Float yw = ps.FindOneFloat("ywidth", 2.f);

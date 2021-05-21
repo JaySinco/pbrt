@@ -35,12 +35,13 @@
 #include "shapes/triangle.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Heightfield Definitions
 std::vector<std::shared_ptr<Shape>> CreateHeightfield(
     const Transform *ObjectToWorld, const Transform *WorldToObject,
-    bool reverseOrientation, const ParamSet &params) {
+    bool reverseOrientation, const ParamSet &params)
+{
     int nx = params.FindOneInt("nu", -1);
     int ny = params.FindOneInt("nv", -1);
     int nitems;

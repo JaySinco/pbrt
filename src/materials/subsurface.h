@@ -44,11 +44,12 @@
 #include "reflection.h"
 #include "bssrdf.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SubsurfaceMaterial Declarations
-class SubsurfaceMaterial : public Material {
-  public:
+class SubsurfaceMaterial: public Material
+{
+public:
     // SubsurfaceMaterial Public Methods
     SubsurfaceMaterial(Float scale,
                        const std::shared_ptr<Texture<Spectrum>> &Kr,
@@ -70,14 +71,15 @@ class SubsurfaceMaterial : public Material {
           bumpMap(bumpMap),
           eta(eta),
           remapRoughness(remapRoughness),
-          table(100, 64) {
+          table(100, 64)
+    {
         ComputeBeamDiffusionBSSRDF(g, eta, &table);
     }
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // SubsurfaceMaterial Private Data
     const Float scale;
     std::shared_ptr<Texture<Spectrum>> Kr, Kt, sigma_a, sigma_s;

@@ -43,12 +43,13 @@
 #include "stats.h"
 #include <map>
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_MEMORY_COUNTER("Memory/Triangle meshes", triMeshBytes);
 
 // Triangle Declarations
-struct TriangleMesh {
+struct TriangleMesh
+{
     // TriangleMesh Public Methods
     TriangleMesh(const Transform &ObjectToWorld, int nTriangles,
                  const int *vertexIndices, int nVertices, const Point3f *P,
@@ -68,13 +69,15 @@ struct TriangleMesh {
     std::vector<int> faceIndices;
 };
 
-class Triangle : public Shape {
-  public:
+class Triangle: public Shape
+{
+public:
     // Triangle Public Methods
     Triangle(const Transform *ObjectToWorld, const Transform *WorldToObject,
              bool reverseOrientation, const std::shared_ptr<TriangleMesh> &mesh,
              int triNumber)
-        : Shape(ObjectToWorld, WorldToObject, reverseOrientation), mesh(mesh) {
+        : Shape(ObjectToWorld, WorldToObject, reverseOrientation), mesh(mesh)
+    {
         v = &mesh->vertexIndices[3 * triNumber];
         triMeshBytes += sizeof(*this);
         faceIndex = mesh->faceIndices.size() ? mesh->faceIndices[triNumber] : 0;
@@ -93,9 +96,10 @@ class Triangle : public Shape {
     // reference point p.
     Float SolidAngle(const Point3f &p, int nSamples = 0) const;
 
-  private:
+private:
     // Triangle Private Methods
-    void GetUVs(Point2f uv[3]) const {
+    void GetUVs(Point2f uv[3]) const
+    {
         if (mesh->uv) {
             uv[0] = mesh->uv[v[0]];
             uv[1] = mesh->uv[v[1]];

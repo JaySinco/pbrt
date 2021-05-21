@@ -36,11 +36,11 @@
 #include "sampler.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // EnvironmentCamera Method Definitions
-Float EnvironmentCamera::GenerateRay(const CameraSample &sample,
-                                     Ray *ray) const {
+Float EnvironmentCamera::GenerateRay(const CameraSample &sample, Ray *ray) const
+{
     ProfilePhase prof(Prof::GenerateCameraRay);
     // Compute environment camera ray direction
     Float theta = Pi * sample.pFilm.y / film->fullResolution.y;
@@ -56,7 +56,8 @@ Float EnvironmentCamera::GenerateRay(const CameraSample &sample,
 
 EnvironmentCamera *CreateEnvironmentCamera(const ParamSet &params,
                                            const AnimatedTransform &cam2world,
-                                           Film *film, const Medium *medium) {
+                                           Film *film, const Medium *medium)
+{
     // Extract common camera parameters from _ParamSet_
     Float shutteropen = params.FindOneFloat("shutteropen", 0.f);
     Float shutterclose = params.FindOneFloat("shutterclose", 1.f);

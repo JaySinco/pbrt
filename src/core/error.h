@@ -41,8 +41,8 @@
 // core/error.h*
 #include "pbrt.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Error Reporting Declarations
 
 // Setup printf format

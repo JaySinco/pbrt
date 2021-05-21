@@ -42,11 +42,12 @@
 #include "pbrt.h"
 #include "integrator.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // AOIntegrator Declarations
-class AOIntegrator : public SamplerIntegrator {
-  public:
+class AOIntegrator: public SamplerIntegrator
+{
+public:
     // AOIntegrator Public Methods
     AOIntegrator(bool cosSample, int nSamples,
                  std::shared_ptr<const Camera> camera,
@@ -54,7 +55,7 @@ class AOIntegrator : public SamplerIntegrator {
     Spectrum Li(const RayDifferential &ray, const Scene &scene,
                 Sampler &sampler, MemoryArena &arena, int depth) const;
 
-  private:
+private:
     bool cosSample;
     int nSamples;
 };

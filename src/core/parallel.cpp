@@ -38,8 +38,8 @@
 #include <thread>
 #include <condition_variable>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Parallel Local Definitions
 static std::vector<std::thread> threads;
 static bool shutdownThreads = false;
@@ -57,25 +57,29 @@ static std::atomic<int> reporterCount;
 static std::condition_variable reportDoneCondition;
 static std::mutex reportDoneMutex;
 
-class ParallelForLoop {
-  public:
+class ParallelForLoop
+{
+public:
     // ParallelForLoop Public Methods
     ParallelForLoop(std::function<void(int64_t)> func1D, int64_t maxIndex,
                     int chunkSize, uint64_t profilerState)
         : func1D(std::move(func1D)),
           maxIndex(maxIndex),
           chunkSize(chunkSize),
-          profilerState(profilerState) {}
+          profilerState(profilerState)
+    {
+    }
     ParallelForLoop(const std::function<void(Point2i)> &f, const Point2i &count,
                     uint64_t profilerState)
         : func2D(f),
           maxIndex(count.x * count.y),
           chunkSize(1),
-          profilerState(profilerState) {
+          profilerState(profilerState)
+    {
         nX = count.x;
     }
 
-  public:
+public:
     // ParallelForLoop Private Data
     std::function<void(int64_t)> func1D;
     std::function<void(Point2i)> func2D;
@@ -88,12 +92,14 @@ class ParallelForLoop {
     int nX = -1;
 
     // ParallelForLoop Private Methods
-    bool Finished() const {
+    bool Finished() const
+    {
         return nextIndex >= maxIndex && activeWorkers == 0;
     }
 };
 
-void Barrier::Wait() {
+void Barrier::Wait()
+{
     std::unique_lock<std::mutex> lock(mutex);
     CHECK_GT(count, 0);
     if (--count == 0)
@@ -108,7 +114,8 @@ void Barrier::Wait() {
 
 static std::condition_variable workListCondition;
 
-static void workerThreadFunc(int tIndex, std::shared_ptr<Barrier> barrier) {
+static void workerThreadFunc(int tIndex, std::shared_ptr<Barrier> barrier)
+{
     LOG(INFO) << "Started execution in worker thread " << tIndex;
     ThreadIndex = tIndex;
 
@@ -181,7 +188,8 @@ static void workerThreadFunc(int tIndex, std::shared_ptr<Barrier> barrier) {
 
 // Parallel Definitions
 void ParallelFor(std::function<void(int64_t)> func, int64_t count,
-                 int chunkSize) {
+                 int chunkSize)
+{
     CHECK(threads.size() > 0 || MaxThreadIndex() == 1);
 
     // Run iterations immediately if not using threads or if _count_ is small
@@ -239,11 +247,13 @@ void ParallelFor(std::function<void(int64_t)> func, int64_t count,
 
 PBRT_THREAD_LOCAL int ThreadIndex;
 
-int MaxThreadIndex() {
+int MaxThreadIndex()
+{
     return PbrtOptions.nThreads == 0 ? NumSystemCores() : PbrtOptions.nThreads;
 }
 
-void ParallelFor2D(std::function<void(Point2i)> func, const Point2i &count) {
+void ParallelFor2D(std::function<void(Point2i)> func, const Point2i &count)
+{
     CHECK(threads.size() > 0 || MaxThreadIndex() == 1);
 
     if (threads.empty() || count.x * count.y <= 1) {
@@ -297,11 +307,13 @@ void ParallelFor2D(std::function<void(Point2i)> func, const Point2i &count) {
     }
 }
 
-int NumSystemCores() {
+int NumSystemCores()
+{
     return std::max(1u, std::thread::hardware_concurrency());
 }
 
-void ParallelInit() {
+void ParallelInit()
+{
     CHECK_EQ(threads.size(), 0);
     int nThreads = MaxThreadIndex();
     ThreadIndex = 0;
@@ -320,7 +332,8 @@ void ParallelInit() {
     barrier->Wait();
 }
 
-void ParallelCleanup() {
+void ParallelCleanup()
+{
     if (threads.empty()) return;
 
     {
@@ -329,12 +342,13 @@ void ParallelCleanup() {
         workListCondition.notify_all();
     }
 
-    for (std::thread &thread : threads) thread.join();
+    for (std::thread &thread: threads) thread.join();
     threads.erase(threads.begin(), threads.end());
     shutdownThreads = false;
 }
 
-void MergeWorkerThreadStats() {
+void MergeWorkerThreadStats()
+{
     std::unique_lock<std::mutex> lock(workListMutex);
     std::unique_lock<std::mutex> doneLock(reportDoneMutex);
     // Set up state so that the worker threads will know that we would like

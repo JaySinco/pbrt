@@ -36,16 +36,18 @@
 #include "sampling.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Disk Method Definitions
-Bounds3f Disk::ObjectBound() const {
+Bounds3f Disk::ObjectBound() const
+{
     return Bounds3f(Point3f(-radius, -radius, height),
                     Point3f(radius, radius, height));
 }
 
 bool Disk::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
-                     bool testAlphaTexture) const {
+                     bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersect);
     // Transform _Ray_ to object space
     Vector3f oErr, dErr;
@@ -94,7 +96,8 @@ bool Disk::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
     return true;
 }
 
-bool Disk::IntersectP(const Ray &r, bool testAlphaTexture) const {
+bool Disk::IntersectP(const Ray &r, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersectP);
     // Transform _Ray_ to object space
     Vector3f oErr, dErr;
@@ -120,11 +123,13 @@ bool Disk::IntersectP(const Ray &r, bool testAlphaTexture) const {
     return true;
 }
 
-Float Disk::Area() const {
+Float Disk::Area() const
+{
     return phiMax * 0.5 * (radius * radius - innerRadius * innerRadius);
 }
 
-Interaction Disk::Sample(const Point2f &u, Float *pdf) const {
+Interaction Disk::Sample(const Point2f &u, Float *pdf) const
+{
     Point2f pd = ConcentricSampleDisk(u);
     Point3f pObj(pd.x * radius, pd.y * radius, height);
     Interaction it;
@@ -138,7 +143,8 @@ Interaction Disk::Sample(const Point2f &u, Float *pdf) const {
 std::shared_ptr<Disk> CreateDiskShape(const Transform *o2w,
                                       const Transform *w2o,
                                       bool reverseOrientation,
-                                      const ParamSet &params) {
+                                      const ParamSet &params)
+{
     Float height = params.FindOneFloat("height", 0.);
     Float radius = params.FindOneFloat("radius", 1);
     Float inner_radius = params.FindOneFloat("innerradius", 0);

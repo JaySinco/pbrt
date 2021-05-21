@@ -37,17 +37,18 @@
 #include "film.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // WhittedIntegrator Method Definitions
 Spectrum WhittedIntegrator::Li(const RayDifferential &ray, const Scene &scene,
                                Sampler &sampler, MemoryArena &arena,
-                               int depth) const {
+                               int depth) const
+{
     Spectrum L(0.);
     // Find closest ray intersection or return background radiance
     SurfaceInteraction isect;
     if (!scene.Intersect(ray, &isect)) {
-        for (const auto &light : scene.lights) L += light->Le(ray);
+        for (const auto &light: scene.lights) L += light->Le(ray);
         return L;
     }
 
@@ -66,7 +67,7 @@ Spectrum WhittedIntegrator::Li(const RayDifferential &ray, const Scene &scene,
     L += isect.Le(wo);
 
     // Add contribution of each light source
-    for (const auto &light : scene.lights) {
+    for (const auto &light: scene.lights) {
         Vector3f wi;
         Float pdf;
         VisibilityTester visibility;
@@ -85,9 +86,10 @@ Spectrum WhittedIntegrator::Li(const RayDifferential &ray, const Scene &scene,
     return L;
 }
 
-WhittedIntegrator *CreateWhittedIntegrator(
-    const ParamSet &params, std::shared_ptr<Sampler> sampler,
-    std::shared_ptr<const Camera> camera) {
+WhittedIntegrator *CreateWhittedIntegrator(const ParamSet &params,
+                                           std::shared_ptr<Sampler> sampler,
+                                           std::shared_ptr<const Camera> camera)
+{
     int maxDepth = params.FindOneInt("maxdepth", 5);
     int np;
     const int *pb = params.FindInt("pixelbounds", &np);

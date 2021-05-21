@@ -9,7 +9,8 @@ using namespace pbrt;
 
 static std::string inTestDir(const std::string &path) { return path; }
 
-static void TestRoundTrip(const char *fn, bool gamma) {
+static void TestRoundTrip(const char *fn, bool gamma)
+{
     Point2i res(16, 29);
     std::vector<Float> pixels(3 * res[0] * res[1]);
     for (int y = 0; y < res[1]; ++y)

@@ -5,7 +5,8 @@
 
 using namespace pbrt;
 
-TEST(Log2, Basics) {
+TEST(Log2, Basics)
+{
     for (int i = 0; i < 32; ++i) {
         uint32_t ui = 1u << i;
         EXPECT_EQ(i, Log2Int(ui));
@@ -29,7 +30,8 @@ TEST(Log2, Basics) {
     }
 }
 
-TEST(Pow2, Basics) {
+TEST(Pow2, Basics)
+{
     for (int i = 0; i < 32; ++i) {
         uint32_t ui = 1u << i;
         EXPECT_EQ(true, IsPowerOf2(ui));
@@ -42,14 +44,16 @@ TEST(Pow2, Basics) {
     }
 }
 
-TEST(CountTrailing, Basics) {
+TEST(CountTrailing, Basics)
+{
     for (int i = 0; i < 32; ++i) {
         uint32_t ui = 1u << i;
         EXPECT_EQ(i, CountTrailingZeros(ui));
     }
 }
 
-TEST(RoundUpPow2, Basics) {
+TEST(RoundUpPow2, Basics)
+{
     EXPECT_EQ(RoundUpPow2(7), 8);
     for (int i = 1; i < (1 << 24); ++i)
         if (IsPowerOf2(i))

@@ -41,11 +41,12 @@
 // shapes/disk.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Disk Declarations
-class Disk : public Shape {
-  public:
+class Disk: public Shape
+{
+public:
     // Disk Public Methods
     Disk(const Transform *ObjectToWorld, const Transform *WorldToObject,
          bool reverseOrientation, Float height, Float radius, Float innerRadius,
@@ -54,7 +55,9 @@ class Disk : public Shape {
           height(height),
           radius(radius),
           innerRadius(innerRadius),
-          phiMax(Radians(Clamp(phiMax, 0, 360))) {}
+          phiMax(Radians(Clamp(phiMax, 0, 360)))
+    {
+    }
     Bounds3f ObjectBound() const;
     bool Intersect(const Ray &ray, Float *tHit, SurfaceInteraction *isect,
                    bool testAlphaTexture) const;
@@ -62,7 +65,7 @@ class Disk : public Shape {
     Float Area() const;
     Interaction Sample(const Point2f &u, Float *pdf) const;
 
-  private:
+private:
     // Disk Private Data
     const Float height, radius, innerRadius, phiMax;
 };

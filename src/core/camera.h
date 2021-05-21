@@ -44,11 +44,12 @@
 #include "transform.h"
 #include "film.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Camera Declarations
-class Camera {
-  public:
+class Camera
+{
+public:
     // Camera Interface
     Camera(const AnimatedTransform &CameraToWorld, Float shutterOpen,
            Float shutterClose, Film *film, const Medium *medium);
@@ -69,20 +70,23 @@ class Camera {
     const Medium *medium;
 };
 
-struct CameraSample {
+struct CameraSample
+{
     Point2f pFilm;
     Point2f pLens;
     Float time;
 };
 
-inline std::ostream &operator<<(std::ostream &os, const CameraSample &cs) {
+inline std::ostream &operator<<(std::ostream &os, const CameraSample &cs)
+{
     os << "[ pFilm: " << cs.pFilm << " , pLens: " << cs.pLens
        << StringPrintf(", time %f ]", cs.time);
     return os;
 }
 
-class ProjectiveCamera : public Camera {
-  public:
+class ProjectiveCamera: public Camera
+{
+public:
     // ProjectiveCamera Public Methods
     ProjectiveCamera(const AnimatedTransform &CameraToWorld,
                      const Transform &CameraToScreen,
@@ -90,7 +94,8 @@ class ProjectiveCamera : public Camera {
                      Float shutterClose, Float lensr, Float focald, Film *film,
                      const Medium *medium)
         : Camera(CameraToWorld, shutterOpen, shutterClose, film, medium),
-          CameraToScreen(CameraToScreen) {
+          CameraToScreen(CameraToScreen)
+    {
         // Initialize depth of field parameters
         lensRadius = lensr;
         focalDistance = focald;
@@ -107,7 +112,7 @@ class ProjectiveCamera : public Camera {
         RasterToCamera = Inverse(CameraToScreen) * RasterToScreen;
     }
 
-  protected:
+protected:
     // ProjectiveCamera Protected Data
     Transform CameraToScreen, RasterToCamera;
     Transform ScreenToRaster, RasterToScreen;

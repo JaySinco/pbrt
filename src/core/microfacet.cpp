@@ -34,11 +34,12 @@
 #include "microfacet.h"
 #include "reflection.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Microfacet Utility Functions
 static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
-                             Float *slope_x, Float *slope_y) {
+                             Float *slope_x, Float *slope_y)
+{
     /* Special case (normal incidence) */
     if (cosThetaI > .9999) {
         Float r = std::sqrt(-std::log(1.0f - U1));
@@ -118,7 +119,8 @@ static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
 }
 
 static Vector3f BeckmannSample(const Vector3f &wi, Float alpha_x, Float alpha_y,
-                               Float U1, Float U2) {
+                               Float U1, Float U2)
+{
     // 1. stretch wi
     Vector3f wiStretched =
         Normalize(Vector3f(alpha_x * wi.x, alpha_y * wi.y, wi.z));
@@ -143,7 +145,8 @@ static Vector3f BeckmannSample(const Vector3f &wi, Float alpha_x, Float alpha_y,
 // MicrofacetDistribution Method Definitions
 MicrofacetDistribution::~MicrofacetDistribution() {}
 
-Float BeckmannDistribution::D(const Vector3f &wh) const {
+Float BeckmannDistribution::D(const Vector3f &wh) const
+{
     Float tan2Theta = Tan2Theta(wh);
     if (std::isinf(tan2Theta)) return 0.;
     Float cos4Theta = Cos2Theta(wh) * Cos2Theta(wh);
@@ -152,7 +155,8 @@ Float BeckmannDistribution::D(const Vector3f &wh) const {
            (Pi * alphax * alphay * cos4Theta);
 }
 
-Float TrowbridgeReitzDistribution::D(const Vector3f &wh) const {
+Float TrowbridgeReitzDistribution::D(const Vector3f &wh) const
+{
     Float tan2Theta = Tan2Theta(wh);
     if (std::isinf(tan2Theta)) return 0.;
     const Float cos4Theta = Cos2Theta(wh) * Cos2Theta(wh);
@@ -162,7 +166,8 @@ Float TrowbridgeReitzDistribution::D(const Vector3f &wh) const {
     return 1 / (Pi * alphax * alphay * cos4Theta * (1 + e) * (1 + e));
 }
 
-Float BeckmannDistribution::Lambda(const Vector3f &w) const {
+Float BeckmannDistribution::Lambda(const Vector3f &w) const
+{
     Float absTanTheta = std::abs(TanTheta(w));
     if (std::isinf(absTanTheta)) return 0.;
     // Compute _alpha_ for direction _w_
@@ -173,7 +178,8 @@ Float BeckmannDistribution::Lambda(const Vector3f &w) const {
     return (1 - 1.259f * a + 0.396f * a * a) / (3.535f * a + 2.181f * a * a);
 }
 
-Float TrowbridgeReitzDistribution::Lambda(const Vector3f &w) const {
+Float TrowbridgeReitzDistribution::Lambda(const Vector3f &w) const
+{
     Float absTanTheta = std::abs(TanTheta(w));
     if (std::isinf(absTanTheta)) return 0.;
     // Compute _alpha_ for direction _w_
@@ -183,18 +189,21 @@ Float TrowbridgeReitzDistribution::Lambda(const Vector3f &w) const {
     return (-1 + std::sqrt(1.f + alpha2Tan2Theta)) / 2;
 }
 
-std::string BeckmannDistribution::ToString() const {
+std::string BeckmannDistribution::ToString() const
+{
     return StringPrintf("[ BeckmannDistribution alphax: %f alphay: %f ]",
                         alphax, alphay);
 }
 
-std::string TrowbridgeReitzDistribution::ToString() const {
+std::string TrowbridgeReitzDistribution::ToString() const
+{
     return StringPrintf("[ TrowbridgeReitzDistribution alphax: %f alphay: %f ]",
                         alphax, alphay);
 }
 
 Vector3f BeckmannDistribution::Sample_wh(const Vector3f &wo,
-                                         const Point2f &u) const {
+                                         const Point2f &u) const
+{
     if (!sampleVisibleArea) {
         // Sample full distribution of normals for Beckmann distribution
 
@@ -236,7 +245,8 @@ Vector3f BeckmannDistribution::Sample_wh(const Vector3f &wo,
 }
 
 static void TrowbridgeReitzSample11(Float cosTheta, Float U1, Float U2,
-                                    Float *slope_x, Float *slope_y) {
+                                    Float *slope_x, Float *slope_y)
+{
     // special case (normal incidence)
     if (cosTheta > .9999) {
         Float r = sqrt(U1 / (1 - U1));
@@ -282,7 +292,8 @@ static void TrowbridgeReitzSample11(Float cosTheta, Float U1, Float U2,
 }
 
 static Vector3f TrowbridgeReitzSample(const Vector3f &wi, Float alpha_x,
-                                      Float alpha_y, Float U1, Float U2) {
+                                      Float alpha_y, Float U1, Float U2)
+{
     // 1. stretch wi
     Vector3f wiStretched =
         Normalize(Vector3f(alpha_x * wi.x, alpha_y * wi.y, wi.z));
@@ -305,7 +316,8 @@ static Vector3f TrowbridgeReitzSample(const Vector3f &wi, Float alpha_x,
 }
 
 Vector3f TrowbridgeReitzDistribution::Sample_wh(const Vector3f &wo,
-                                                const Point2f &u) const {
+                                                const Point2f &u) const
+{
     Vector3f wh;
     if (!sampleVisibleArea) {
         Float cosTheta = 0, phi = (2 * Pi) * u[1];
@@ -335,8 +347,8 @@ Vector3f TrowbridgeReitzDistribution::Sample_wh(const Vector3f &wo,
     return wh;
 }
 
-Float MicrofacetDistribution::Pdf(const Vector3f &wo,
-                                  const Vector3f &wh) const {
+Float MicrofacetDistribution::Pdf(const Vector3f &wo, const Vector3f &wh) const
+{
     if (sampleVisibleArea)
         return D(wh) * G1(wo) * AbsDot(wo, wh) / AbsCosTheta(wo);
     else

@@ -46,8 +46,8 @@
 #include <sys/time.h>
 #endif  // PBRT_HAVE_ITIMER
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Statistics Local Variables
 std::vector<std::function<void(StatsAccumulator &)>> *StatRegisterer::funcs;
 static StatsAccumulator statsAccumulator;
@@ -56,7 +56,8 @@ static StatsAccumulator statsAccumulator;
 // profiling categories that are active), ProfileSample stores a count of
 // the number of times that state has been active when the timer interrupt
 // to record a profiling sample has fired.
-struct ProfileSample {
+struct ProfileSample
+{
     std::atomic<uint64_t> profilerState{0};
     std::atomic<uint64_t> count{0};
 };
@@ -76,14 +77,16 @@ static void ReportProfileSample(int, siginfo_t *, void *);
 #endif  // PBRT_HAVE_ITIMER
 
 // Statistics Definitions
-void ReportThreadStats() {
+void ReportThreadStats()
+{
     static std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
     StatRegisterer::CallCallbacks(statsAccumulator);
 }
 
-void StatRegisterer::CallCallbacks(StatsAccumulator &accum) {
-    for (auto func : *funcs) func(accum);
+void StatRegisterer::CallCallbacks(StatsAccumulator &accum)
+{
+    for (auto func: *funcs) func(accum);
 }
 
 void PrintStats(FILE *dest) { statsAccumulator.Print(dest); }
@@ -91,7 +94,8 @@ void PrintStats(FILE *dest) { statsAccumulator.Print(dest); }
 void ClearStats() { statsAccumulator.Clear(); }
 
 static void getCategoryAndTitle(const std::string &str, std::string *category,
-                                std::string *title) {
+                                std::string *title)
+{
     const char *s = str.c_str();
     const char *slash = strchr(s, '/');
     if (!slash)
@@ -102,18 +106,19 @@ static void getCategoryAndTitle(const std::string &str, std::string *category,
     }
 }
 
-void StatsAccumulator::Print(FILE *dest) {
+void StatsAccumulator::Print(FILE *dest)
+{
     fprintf(dest, "Statistics:\n");
     std::map<std::string, std::vector<std::string>> toPrint;
 
-    for (auto &counter : counters) {
+    for (auto &counter: counters) {
         if (counter.second == 0) continue;
         std::string category, title;
         getCategoryAndTitle(counter.first, &category, &title);
         toPrint[category].push_back(StringPrintf(
             "%-42s               %12" PRIu64, title.c_str(), counter.second));
     }
-    for (auto &counter : memoryCounters) {
+    for (auto &counter: memoryCounters) {
         if (counter.second == 0) continue;
         std::string category, title;
         getCategoryAndTitle(counter.first, &category, &title);
@@ -133,7 +138,7 @@ void StatsAccumulator::Print(FILE *dest) {
             }
         }
     }
-    for (auto &distributionSum : intDistributionSums) {
+    for (auto &distributionSum: intDistributionSums) {
         const std::string &name = distributionSum.first;
         if (intDistributionCounts[name] == 0) continue;
         std::string category, title;
@@ -146,7 +151,7 @@ void StatsAccumulator::Print(FILE *dest) {
                          title.c_str(), avg, intDistributionMins[name],
                          intDistributionMaxs[name]));
     }
-    for (auto &distributionSum : floatDistributionSums) {
+    for (auto &distributionSum: floatDistributionSums) {
         const std::string &name = distributionSum.first;
         if (floatDistributionCounts[name] == 0) continue;
         std::string category, title;
@@ -158,7 +163,7 @@ void StatsAccumulator::Print(FILE *dest) {
                          title.c_str(), avg, floatDistributionMins[name],
                          floatDistributionMaxs[name]));
     }
-    for (auto &percentage : percentages) {
+    for (auto &percentage: percentages) {
         if (percentage.second.second == 0) continue;
         int64_t num = percentage.second.first;
         int64_t denom = percentage.second.second;
@@ -168,7 +173,7 @@ void StatsAccumulator::Print(FILE *dest) {
             StringPrintf("%-42s%12" PRIu64 " / %12" PRIu64 " (%.2f%%)",
                          title.c_str(), num, denom, (100.f * num) / denom));
     }
-    for (auto &ratio : ratios) {
+    for (auto &ratio: ratios) {
         if (ratio.second.second == 0) continue;
         int64_t num = ratio.second.first;
         int64_t denom = ratio.second.second;
@@ -179,14 +184,15 @@ void StatsAccumulator::Print(FILE *dest) {
             denom, (double)num / (double)denom));
     }
 
-    for (auto &categories : toPrint) {
+    for (auto &categories: toPrint) {
         fprintf(dest, "  %s\n", categories.first.c_str());
-        for (auto &item : categories.second)
+        for (auto &item: categories.second)
             fprintf(dest, "    %s\n", item.c_str());
     }
 }
 
-void StatsAccumulator::Clear() {
+void StatsAccumulator::Clear()
+{
     counters.clear();
     memoryCounters.clear();
     intDistributionSums.clear();
@@ -204,7 +210,8 @@ void StatsAccumulator::Clear() {
 PBRT_THREAD_LOCAL uint64_t ProfilerState;
 static std::atomic<bool> profilerRunning{false};
 
-void InitProfiler() {
+void InitProfiler()
+{
     CHECK(!profilerRunning);
 
     // Access the per-thread ProfilerState variable now, so that there's no
@@ -242,7 +249,8 @@ void SuspendProfiler() { ++profilerSuspendCount; }
 
 void ResumeProfiler() { CHECK_GE(--profilerSuspendCount, 0); }
 
-void ProfilerWorkerThreadInit() {
+void ProfilerWorkerThreadInit()
+{
 #ifdef PBRT_HAVE_ITIMER
     // The per-thread initialization in the worker threads has to happen
     // *before* the profiling signal handler is installed.
@@ -257,14 +265,16 @@ void ProfilerWorkerThreadInit() {
 #endif  // PBRT_HAVE_ITIMER
 }
 
-void ClearProfiler() {
-    for (ProfileSample &ps : profileSamples) {
+void ClearProfiler()
+{
+    for (ProfileSample &ps: profileSamples) {
         ps.profilerState = 0;
         ps.count = 0;
     }
 }
 
-void CleanupProfiler() {
+void CleanupProfiler()
+{
     CHECK(profilerRunning);
 #ifdef PBRT_HAVE_ITIMER
     static struct itimerval timer;
@@ -279,7 +289,8 @@ void CleanupProfiler() {
 }
 
 #ifdef PBRT_HAVE_ITIMER
-static void ReportProfileSample(int, siginfo_t *, void *) {
+static void ReportProfileSample(int, siginfo_t *, void *)
+{
     if (profilerSuspendCount > 0) return;
     if (ProfilerState == 0) return;  // A ProgressReporter thread, most likely.
 
@@ -299,7 +310,8 @@ static void ReportProfileSample(int, siginfo_t *, void *) {
 #endif  // PBRT_HAVE_ITIMER
 
 static std::string timeString(float pct,
-                              std::chrono::system_clock::time_point now) {
+                              std::chrono::system_clock::time_point now)
+{
     pct /= 100.;  // remap passed value to to [0,1]
     int64_t ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
                      now - profileStartTime)
@@ -317,7 +329,8 @@ static std::string timeString(float pct,
     return StringPrintf("%4d:%02d:%02d.%02d", h, m, s, ms);
 }
 
-void ReportProfilerResults(FILE *dest) {
+void ReportProfilerResults(FILE *dest)
+{
 #ifdef PBRT_HAVE_ITIMER
     std::chrono::system_clock::time_point now =
         std::chrono::system_clock::now();
@@ -325,7 +338,7 @@ void ReportProfilerResults(FILE *dest) {
     PBRT_CONSTEXPR int NumProfCategories = (int)Prof::NumProfCategories;
     uint64_t overallCount = 0;
     int used = 0;
-    for (const ProfileSample &ps : profileSamples) {
+    for (const ProfileSample &ps: profileSamples) {
         if (ps.count > 0) {
             overallCount += ps.count;
             ++used;
@@ -336,7 +349,7 @@ void ReportProfilerResults(FILE *dest) {
 
     std::map<std::string, uint64_t> flatResults;
     std::map<std::string, uint64_t> hierarchicalResults;
-    for (const ProfileSample &ps : profileSamples) {
+    for (const ProfileSample &ps: profileSamples) {
         if (ps.count == 0) continue;
 
         std::string s;
@@ -358,7 +371,7 @@ void ReportProfilerResults(FILE *dest) {
     }
 
     fprintf(dest, "  Profile\n");
-    for (const auto &r : hierarchicalResults) {
+    for (const auto &r: hierarchicalResults) {
         float pct = (100.f * r.second) / overallCount;
         int indent = 4;
         int slashIndex = r.first.find_last_of("/");
@@ -374,7 +387,7 @@ void ReportProfilerResults(FILE *dest) {
 
     // Sort the flattened ones by time, longest to shortest.
     std::vector<std::pair<std::string, uint64_t>> flatVec;
-    for (const auto &r : flatResults)
+    for (const auto &r: flatResults)
         flatVec.push_back(std::make_pair(r.first, r.second));
     std::sort(
         flatVec.begin(), flatVec.end(),
@@ -382,7 +395,7 @@ void ReportProfilerResults(FILE *dest) {
            std::pair<std::string, uint64_t> b) { return a.second > b.second; });
 
     fprintf(dest, "  Profile (flattened)\n");
-    for (const auto &r : flatVec) {
+    for (const auto &r: flatVec) {
         float pct = (100.f * r.second) / overallCount;
         int indent = 4;
         const char *toPrint = r.first.c_str();

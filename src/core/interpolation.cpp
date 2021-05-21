@@ -33,10 +33,11 @@
 // core/interpolation.cpp*
 #include "interpolation.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Spline Interpolation Definitions
-Float CatmullRom(int size, const Float *nodes, const Float *values, Float x) {
+Float CatmullRom(int size, const Float *nodes, const Float *values, Float x)
+{
     if (!(x >= nodes[0] && x <= nodes[size - 1])) return 0;
     int idx = FindInterval(size, [&](int i) { return nodes[i] <= x; });
     Float x0 = nodes[idx], x1 = nodes[idx + 1];
@@ -59,7 +60,8 @@ Float CatmullRom(int size, const Float *nodes, const Float *values, Float x) {
 }
 
 bool CatmullRomWeights(int size, const Float *nodes, Float x, int *offset,
-                       Float *weights) {
+                       Float *weights)
+{
     // Return _false_ if _x_ is out of bounds
     if (!(x >= nodes[0] && x <= nodes[size - 1])) return false;
 
@@ -102,7 +104,8 @@ bool CatmullRomWeights(int size, const Float *nodes, Float x, int *offset,
 }
 
 Float SampleCatmullRom(int n, const Float *x, const Float *f, const Float *F,
-                       Float u, Float *fval, Float *pdf) {
+                       Float u, Float *fval, Float *pdf)
+{
     // Map _u_ to a spline interval by inverting _F_
     u *= F[n - 1];
     int i = FindInterval(n, [&](int i) { return F[i] <= u; });
@@ -169,7 +172,8 @@ Float SampleCatmullRom(int n, const Float *x, const Float *f, const Float *F,
 Float SampleCatmullRom2D(int size1, int size2, const Float *nodes1,
                          const Float *nodes2, const Float *values,
                          const Float *cdf, Float alpha, Float u, Float *fval,
-                         Float *pdf) {
+                         Float *pdf)
+{
     // Determine offset and coefficients for the _alpha_ parameter
     int offset;
     Float weights[4];
@@ -252,7 +256,8 @@ Float SampleCatmullRom2D(int size1, int size2, const Float *nodes1,
 }
 
 Float IntegrateCatmullRom(int n, const Float *x, const Float *values,
-                          Float *cdf) {
+                          Float *cdf)
+{
     Float sum = 0;
     cdf[0] = 0;
     for (int i = 0; i < n - 1; ++i) {
@@ -279,7 +284,8 @@ Float IntegrateCatmullRom(int n, const Float *x, const Float *values,
     return sum;
 }
 
-Float InvertCatmullRom(int n, const Float *x, const Float *values, Float u) {
+Float InvertCatmullRom(int n, const Float *x, const Float *values, Float u)
+{
     // Stop when _u_ is out of bounds
     if (!(u > values[0]))
         return x[0];
@@ -339,7 +345,8 @@ Float InvertCatmullRom(int n, const Float *x, const Float *values, Float u) {
 }
 
 // Fourier Interpolation Definitions
-Float Fourier(const Float *a, int m, double cosPhi) {
+Float Fourier(const Float *a, int m, double cosPhi)
+{
     double value = 0.0;
     // Initialize cosine iterates
     double cosKMinusOnePhi = cosPhi;
@@ -355,7 +362,8 @@ Float Fourier(const Float *a, int m, double cosPhi) {
 }
 
 Float SampleFourier(const Float *ak, const Float *recip, int m, Float u,
-                    Float *pdf, Float *phiPtr) {
+                    Float *pdf, Float *phiPtr)
+{
     // Pick a side and declare bisection variables
     bool flip = (u >= 0.5);
     if (flip)

@@ -44,18 +44,20 @@
 #include "primitive.h"
 #include "light.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Scene Declarations
-class Scene {
-  public:
+class Scene
+{
+public:
     // Scene Public Methods
     Scene(std::shared_ptr<Primitive> aggregate,
           const std::vector<std::shared_ptr<Light>> &lights)
-        : lights(lights), aggregate(aggregate) {
+        : lights(lights), aggregate(aggregate)
+    {
         // Scene Constructor Implementation
         worldBound = aggregate->WorldBound();
-        for (const auto &light : lights) {
+        for (const auto &light: lights) {
             light->Preprocess(*this);
             if (light->flags & (int)LightFlags::Infinite)
                 infiniteLights.push_back(light);
@@ -73,7 +75,7 @@ class Scene {
     // to loop over them.
     std::vector<std::shared_ptr<Light>> infiniteLights;
 
-  private:
+private:
     // Scene Private Data
     std::shared_ptr<Primitive> aggregate;
     Bounds3f worldBound;

@@ -41,11 +41,12 @@
 // shapes/cone.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Cone Declarations
-class Cone : public Shape {
-  public:
+class Cone: public Shape
+{
+public:
     // Cone Public Methods
     Cone(const Transform *o2w, const Transform *w2o, bool reverseOrientation,
          Float height, Float radius, Float phiMax);
@@ -56,7 +57,7 @@ class Cone : public Shape {
     Float Area() const;
     Interaction Sample(const Point2f &u, Float *pdf) const;
 
-  protected:
+protected:
     // Cone Private Data
     const Float radius, height, phiMax;
 };

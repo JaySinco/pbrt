@@ -43,11 +43,12 @@
 #include "material.h"
 #include "spectrum.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MetalMaterial Declarations
-class MetalMaterial : public Material {
-  public:
+class MetalMaterial: public Material
+{
+public:
     // MetalMaterial Public Methods
     MetalMaterial(const std::shared_ptr<Texture<Spectrum>> &eta,
                   const std::shared_ptr<Texture<Spectrum>> &k,
@@ -60,7 +61,7 @@ class MetalMaterial : public Material {
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // MetalMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> eta, k;
     std::shared_ptr<Texture<Float>> roughness, uRoughness, vRoughness;

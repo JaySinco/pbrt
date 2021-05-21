@@ -43,11 +43,12 @@
 #include "integrator.h"
 #include "lightdistrib.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PathIntegrator Declarations
-class PathIntegrator : public SamplerIntegrator {
-  public:
+class PathIntegrator: public SamplerIntegrator
+{
+public:
     // PathIntegrator Public Methods
     PathIntegrator(int maxDepth, std::shared_ptr<const Camera> camera,
                    std::shared_ptr<Sampler> sampler,
@@ -58,7 +59,7 @@ class PathIntegrator : public SamplerIntegrator {
     Spectrum Li(const RayDifferential &ray, const Scene &scene,
                 Sampler &sampler, MemoryArena &arena, int depth) const;
 
-  private:
+private:
     // PathIntegrator Private Data
     const int maxDepth;
     const Float rrThreshold;

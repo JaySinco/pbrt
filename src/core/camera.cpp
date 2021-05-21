@@ -35,8 +35,8 @@
 #include "sampling.h"
 #include "sampler.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Camera Method Definitions
 Camera::~Camera() { delete film; }
 
@@ -46,7 +46,8 @@ Camera::Camera(const AnimatedTransform &CameraToWorld, Float shutterOpen,
       shutterOpen(shutterOpen),
       shutterClose(shutterClose),
       film(film),
-      medium(medium) {
+      medium(medium)
+{
     if (CameraToWorld.HasScale())
         Warning(
             "Scaling detected in world-to-camera transformation!\n"
@@ -57,13 +58,14 @@ Camera::Camera(const AnimatedTransform &CameraToWorld, Float shutterOpen,
 }
 
 Float Camera::GenerateRayDifferential(const CameraSample &sample,
-                                      RayDifferential *rd) const {
+                                      RayDifferential *rd) const
+{
     Float wt = GenerateRay(sample, rd);
     if (wt == 0) return 0;
 
     // Find camera ray after shifting a fraction of a pixel in the $x$ direction
     Float wtx;
-    for (Float eps : {.05, -.05}) {
+    for (Float eps: {.05, -.05}) {
         CameraSample sshift = sample;
         sshift.pFilm.x += eps;
         Ray rx;
@@ -76,7 +78,7 @@ Float Camera::GenerateRayDifferential(const CameraSample &sample,
 
     // Find camera ray after shifting a fraction of a pixel in the $y$ direction
     Float wty;
-    for (Float eps : {.05, -.05}) {
+    for (Float eps: {.05, -.05}) {
         CameraSample sshift = sample;
         sshift.pFilm.y += eps;
         Ray ry;
@@ -91,18 +93,21 @@ Float Camera::GenerateRayDifferential(const CameraSample &sample,
     return wt;
 }
 
-Spectrum Camera::We(const Ray &ray, Point2f *raster) const {
+Spectrum Camera::We(const Ray &ray, Point2f *raster) const
+{
     LOG(FATAL) << "Camera::We() is not implemented!";
     return Spectrum(0.f);
 }
 
-void Camera::Pdf_We(const Ray &ray, Float *pdfPos, Float *pdfDir) const {
+void Camera::Pdf_We(const Ray &ray, Float *pdfPos, Float *pdfDir) const
+{
     LOG(FATAL) << "Camera::Pdf_We() is not implemented!";
 }
 
 Spectrum Camera::Sample_Wi(const Interaction &ref, const Point2f &u,
                            Vector3f *wi, Float *pdf, Point2f *pRaster,
-                           VisibilityTester *vis) const {
+                           VisibilityTester *vis) const
+{
     LOG(FATAL) << "Camera::Sample_Wi() is not implemented!";
     return Spectrum(0.f);
 }

@@ -41,14 +41,21 @@
 // shapes/curve.h*
 #include "shape.h"
 
-namespace pbrt {
+namespace pbrt
+{
 struct CurveCommon;
 
 // CurveType Declarations
-enum class CurveType { Flat, Cylinder, Ribbon };
+enum class CurveType
+{
+    Flat,
+    Cylinder,
+    Ribbon
+};
 
 // CurveCommon Declarations
-struct CurveCommon {
+struct CurveCommon
+{
     CurveCommon(const Point3f c[4], Float w0, Float w1, CurveType type,
                 const Normal3f *norm);
     const CurveType type;
@@ -59,8 +66,9 @@ struct CurveCommon {
 };
 
 // Curve Declarations
-class Curve : public Shape {
-  public:
+class Curve: public Shape
+{
+public:
     // Curve Public Methods
     Curve(const Transform *ObjectToWorld, const Transform *WorldToObject,
           bool reverseOrientation, const std::shared_ptr<CurveCommon> &common,
@@ -68,14 +76,16 @@ class Curve : public Shape {
         : Shape(ObjectToWorld, WorldToObject, reverseOrientation),
           common(common),
           uMin(uMin),
-          uMax(uMax) {}
+          uMax(uMax)
+    {
+    }
     Bounds3f ObjectBound() const;
     bool Intersect(const Ray &ray, Float *tHit, SurfaceInteraction *isect,
                    bool testAlphaTexture) const;
     Float Area() const;
     Interaction Sample(const Point2f &u, Float *pdf) const;
 
-  private:
+private:
     // Curve Private Methods
     bool recursiveIntersect(const Ray &r, Float *tHit,
                             SurfaceInteraction *isect, const Point3f cp[4],

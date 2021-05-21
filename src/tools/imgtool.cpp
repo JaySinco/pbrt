@@ -21,7 +21,8 @@ extern "C" {
 
 using namespace pbrt;
 
-static void usage(const char *msg = nullptr, ...) {
+static void usage(const char *msg = nullptr, ...)
+{
     if (msg) {
         va_list args;
         va_start(args, msg);
@@ -84,7 +85,8 @@ makesky options:
     exit(1);
 }
 
-int makesky(int argc, char *argv[]) {
+int makesky(int argc, char *argv[])
+{
     const char *outfile = "sky.exr";
     float albedo = 0.5;
     float turbidity = 3.;
@@ -189,7 +191,8 @@ int makesky(int argc, char *argv[]) {
     return 0;
 }
 
-int assemble(int argc, char *argv[]) {
+int assemble(int argc, char *argv[])
+{
     if (argc == 0) usage("no filenames provided to \"assemble\"?");
     const char *outfile = nullptr;
     std::vector<const char *> infiles;
@@ -211,7 +214,7 @@ int assemble(int argc, char *argv[]) {
     int seenMultiple = 0;
     Point2i fullRes;
     Bounds2i displayWindow;
-    for (const char *file : infiles) {
+    for (const char *file: infiles) {
         if (!HasExtension(file, ".exr"))
             usage(
                 "only EXR images include the image bounding boxes that "
@@ -286,7 +289,8 @@ int assemble(int argc, char *argv[]) {
     return 0;
 }
 
-int cat(int argc, char *argv[]) {
+int cat(int argc, char *argv[])
+{
     if (argc == 0) usage("no filenames provided to \"cat\"?");
     bool sort = false;
 
@@ -312,7 +316,7 @@ int cat(int argc, char *argv[]) {
                          const std::pair<Point2i, RGBSpectrum> &b) {
                           return a.second.y() < b.second.y();
                       });
-            for (const auto &v : sorted) {
+            for (const auto &v: sorted) {
                 Float rgb[3];
                 v.second.ToRGB(rgb);
                 printf("(%d, %d): (%.9g %.9g %.9g)\n", v.first.x, v.first.y,
@@ -332,7 +336,8 @@ int cat(int argc, char *argv[]) {
     return 0;
 }
 
-int diff(int argc, char *argv[]) {
+int diff(int argc, char *argv[])
+{
     float tol = 0.;
     const char *outfile = nullptr;
 
@@ -442,7 +447,8 @@ int diff(int argc, char *argv[]) {
     return 0;
 }
 
-int info(int argc, char *argv[]) {
+int info(int argc, char *argv[])
+{
     int err = 0;
     for (int i = 0; i < argc; ++i) {
         Point2i res;
@@ -494,7 +500,8 @@ int info(int argc, char *argv[]) {
 
 std::unique_ptr<RGBSpectrum[]> bloom(std::unique_ptr<RGBSpectrum[]> image,
                                      const Point2i &res, Float level, int width,
-                                     Float scale, int iters) {
+                                     Float scale, int iters)
+{
     std::vector<std::unique_ptr<RGBSpectrum[]>> blurred;
 
     // First, threshold the source image
@@ -585,7 +592,8 @@ std::unique_ptr<RGBSpectrum[]> bloom(std::unique_ptr<RGBSpectrum[]> image,
     return image;
 }
 
-int convert(int argc, char *argv[]) {
+int convert(int argc, char *argv[])
+{
     float scale = 1.f;
     int repeat = 1;
     bool flipy = false;
@@ -765,7 +773,8 @@ int convert(int argc, char *argv[]) {
     return 0;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     google::InitGoogleLogging(argv[0]);
     FLAGS_stderrthreshold = 1;  // Warning and above.
 

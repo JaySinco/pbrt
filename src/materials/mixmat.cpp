@@ -39,13 +39,14 @@
 #include "texture.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MixMaterial Method Definitions
 void MixMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                              MemoryArena &arena,
                                              TransportMode mode,
-                                             bool allowMultipleLobes) const {
+                                             bool allowMultipleLobes) const
+{
     // Compute weights and original _BxDF_s for mix material
     Spectrum s1 = scale->Evaluate(*si).Clamp();
     Spectrum s2 = (Spectrum(1.f) - s1).Clamp();
@@ -64,7 +65,8 @@ void MixMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
 
 MixMaterial *CreateMixMaterial(const TextureParams &mp,
                                const std::shared_ptr<Material> &m1,
-                               const std::shared_ptr<Material> &m2) {
+                               const std::shared_ptr<Material> &m2)
+{
     std::shared_ptr<Texture<Spectrum>> scale =
         mp.GetSpectrumTexture("amount", Spectrum(0.5f));
     return new MixMaterial(m1, m2, scale);

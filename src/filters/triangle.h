@@ -41,12 +41,13 @@
 // filters/triangle.h*
 #include "filter.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Triangle Filter Declarations
-class TriangleFilter : public Filter {
-  public:
-    TriangleFilter(const Vector2f &radius) : Filter(radius) {}
+class TriangleFilter: public Filter
+{
+public:
+    TriangleFilter(const Vector2f &radius): Filter(radius) {}
     Float Evaluate(const Point2f &p) const;
 };
 

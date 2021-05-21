@@ -43,8 +43,8 @@
 #include "shape.h"
 #include "geometry.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 std::vector<std::shared_ptr<Shape>> CreateNURBS(const Transform *o2w,
                                                 const Transform *w2o,
                                                 bool reverseOrientation,

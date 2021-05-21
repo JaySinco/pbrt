@@ -37,8 +37,8 @@
 #include "reflection.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SpotLight Method Definitions
 SpotLight::SpotLight(const Transform &LightToWorld,
                      const MediumInterface &mediumInterface, const Spectrum &I,
@@ -47,11 +47,14 @@ SpotLight::SpotLight(const Transform &LightToWorld,
       pLight(LightToWorld(Point3f(0, 0, 0))),
       I(I),
       cosTotalWidth(std::cos(Radians(totalWidth))),
-      cosFalloffStart(std::cos(Radians(falloffStart))) {}
+      cosFalloffStart(std::cos(Radians(falloffStart)))
+{
+}
 
 Spectrum SpotLight::Sample_Li(const Interaction &ref, const Point2f &u,
                               Vector3f *wi, Float *pdf,
-                              VisibilityTester *vis) const {
+                              VisibilityTester *vis) const
+{
     ProfilePhase _(Prof::LightSample);
     *wi = Normalize(pLight - ref.p);
     *pdf = 1.f;
@@ -60,7 +63,8 @@ Spectrum SpotLight::Sample_Li(const Interaction &ref, const Point2f &u,
     return I * Falloff(-*wi) / DistanceSquared(pLight, ref.p);
 }
 
-Float SpotLight::Falloff(const Vector3f &w) const {
+Float SpotLight::Falloff(const Vector3f &w) const
+{
     Vector3f wl = Normalize(WorldToLight(w));
     Float cosTheta = wl.z;
     if (cosTheta < cosTotalWidth) return 0;
@@ -71,17 +75,20 @@ Float SpotLight::Falloff(const Vector3f &w) const {
     return (delta * delta) * (delta * delta);
 }
 
-Spectrum SpotLight::Power() const {
+Spectrum SpotLight::Power() const
+{
     return I * 2 * Pi * (1 - .5f * (cosFalloffStart + cosTotalWidth));
 }
 
-Float SpotLight::Pdf_Li(const Interaction &, const Vector3f &) const {
+Float SpotLight::Pdf_Li(const Interaction &, const Vector3f &) const
+{
     return 0.f;
 }
 
 Spectrum SpotLight::Sample_Le(const Point2f &u1, const Point2f &u2, Float time,
                               Ray *ray, Normal3f *nLight, Float *pdfPos,
-                              Float *pdfDir) const {
+                              Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightSample);
     Vector3f w = UniformSampleCone(u1, cosTotalWidth);
     *ray = Ray(pLight, LightToWorld(w), Infinity, time, mediumInterface.inside);
@@ -92,7 +99,8 @@ Spectrum SpotLight::Sample_Le(const Point2f &u1, const Point2f &u2, Float time,
 }
 
 void SpotLight::Pdf_Le(const Ray &ray, const Normal3f &, Float *pdfPos,
-                       Float *pdfDir) const {
+                       Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightPdf);
     *pdfPos = 0;
     *pdfDir = (CosTheta(WorldToLight(ray.d)) >= cosTotalWidth)
@@ -102,7 +110,8 @@ void SpotLight::Pdf_Le(const Ray &ray, const Normal3f &, Float *pdfPos,
 
 std::shared_ptr<SpotLight> CreateSpotLight(const Transform &l2w,
                                            const Medium *medium,
-                                           const ParamSet &paramSet) {
+                                           const ParamSet &paramSet)
+{
     Spectrum I = paramSet.FindOneSpectrum("I", Spectrum(1.0));
     Spectrum sc = paramSet.FindOneSpectrum("scale", Spectrum(1.0));
     Float coneangle = paramSet.FindOneFloat("coneangle", 30.);

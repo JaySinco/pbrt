@@ -42,22 +42,25 @@
 #include "sampler.h"
 #include "rng.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // StratifiedSampler Declarations
-class StratifiedSampler : public PixelSampler {
-  public:
+class StratifiedSampler: public PixelSampler
+{
+public:
     // StratifiedSampler Public Methods
     StratifiedSampler(int xPixelSamples, int yPixelSamples, bool jitterSamples,
                       int nSampledDimensions)
         : PixelSampler(xPixelSamples * yPixelSamples, nSampledDimensions),
           xPixelSamples(xPixelSamples),
           yPixelSamples(yPixelSamples),
-          jitterSamples(jitterSamples) {}
+          jitterSamples(jitterSamples)
+    {
+    }
     void StartPixel(const Point2i &);
     std::unique_ptr<Sampler> Clone(int seed);
 
-  private:
+private:
     // StratifiedSampler Private Data
     const int xPixelSamples, yPixelSamples;
     const bool jitterSamples;

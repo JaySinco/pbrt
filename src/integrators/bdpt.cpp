@@ -41,8 +41,8 @@
 #include "sampler.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_PERCENT("Integrator/Zero-radiance paths", zeroRadiancePaths, totalPaths);
 STAT_INT_DISTRIBUTION("Integrator/Path length", pathLength);
 
@@ -53,7 +53,8 @@ int RandomWalk(const Scene &scene, RayDifferential ray, Sampler &sampler,
 
 // BDPT Utility Functions
 Float CorrectShadingNormal(const SurfaceInteraction &isect, const Vector3f &wo,
-                           const Vector3f &wi, TransportMode mode) {
+                           const Vector3f &wi, TransportMode mode)
+{
     if (mode == TransportMode::Importance) {
         Float num = AbsDot(wo, isect.shading.n) * AbsDot(wi, isect.n);
         Float denom = AbsDot(wo, isect.n) * AbsDot(wi, isect.shading.n);
@@ -69,7 +70,8 @@ Float CorrectShadingNormal(const SurfaceInteraction &isect, const Vector3f &wo,
 int GenerateCameraSubpath(const Scene &scene, Sampler &sampler,
                           MemoryArena &arena, int maxDepth,
                           const Camera &camera, const Point2f &pFilm,
-                          Vertex *path) {
+                          Vertex *path)
+{
     if (maxDepth == 0) return 0;
     ProfilePhase _(Prof::BDPTGenerateSubpath);
     // Sample initial ray for camera subpath
@@ -95,8 +97,8 @@ int GenerateCameraSubpath(const Scene &scene, Sampler &sampler,
 int GenerateLightSubpath(
     const Scene &scene, Sampler &sampler, MemoryArena &arena, int maxDepth,
     Float time, const Distribution1D &lightDistr,
-    const std::unordered_map<const Light *, size_t> &lightToIndex,
-    Vertex *path) {
+    const std::unordered_map<const Light *, size_t> &lightToIndex, Vertex *path)
+{
     if (maxDepth == 0) return 0;
     ProfilePhase _(Prof::BDPTGenerateSubpath);
     // Sample initial ray for light subpath
@@ -139,7 +141,8 @@ int GenerateLightSubpath(
 
 int RandomWalk(const Scene &scene, RayDifferential ray, Sampler &sampler,
                MemoryArena &arena, Spectrum beta, Float pdf, int maxDepth,
-               TransportMode mode, Vertex *path) {
+               TransportMode mode, Vertex *path)
+{
     if (maxDepth == 0) return 0;
     int bounces = 0;
     // Declare variables for forward and reverse probability densities
@@ -217,7 +220,8 @@ int RandomWalk(const Scene &scene, RayDifferential ray, Sampler &sampler,
 }
 
 Spectrum G(const Scene &scene, Sampler &sampler, const Vertex &v0,
-           const Vertex &v1) {
+           const Vertex &v1)
+{
     Vector3f d = v0.p() - v1.p();
     Float g = 1 / d.LengthSquared();
     d *= std::sqrt(g);
@@ -230,7 +234,8 @@ Spectrum G(const Scene &scene, Sampler &sampler, const Vertex &v0,
 Float MISWeight(const Scene &scene, Vertex *lightVertices,
                 Vertex *cameraVertices, Vertex &sampled, int s, int t,
                 const Distribution1D &lightPdf,
-                const std::unordered_map<const Light *, size_t> &lightToIndex) {
+                const std::unordered_map<const Light *, size_t> &lightToIndex)
+{
     if (s + t == 2) return 1;
     Float sumRi = 0;
     // Define helper function _remap0_ that deals with Dirac delta functions
@@ -296,12 +301,14 @@ Float MISWeight(const Scene &scene, Vertex *lightVertices,
 }
 
 // BDPT Method Definitions
-inline int BufferIndex(int s, int t) {
+inline int BufferIndex(int s, int t)
+{
     int above = s + t - 2;
     return s + above * (5 + above) / 2;
 }
 
-void BDPTIntegrator::Render(const Scene &scene) {
+void BDPTIntegrator::Render(const Scene &scene)
+{
     std::unique_ptr<LightDistribution> lightDistribution =
         CreateLightSampleDistribution(lightSampleStrategy, scene);
 
@@ -360,7 +367,7 @@ void BDPTIntegrator::Render(const Scene &scene) {
 
                 std::unique_ptr<FilmTile> filmTile =
                     camera->film->GetFilmTile(tileBounds);
-                for (Point2i pPixel : tileBounds) {
+                for (Point2i pPixel: tileBounds) {
                     tileSampler->StartPixel(pPixel);
                     if (!InsideExclusive(pPixel, pixelBounds)) continue;
                     do {
@@ -453,7 +460,8 @@ Spectrum ConnectBDPT(
     int t, const Distribution1D &lightDistr,
     const std::unordered_map<const Light *, size_t> &lightToIndex,
     const Camera &camera, Sampler &sampler, Point2f *pRaster,
-    Float *misWeightPtr) {
+    Float *misWeightPtr)
+{
     ProfilePhase _(Prof::BDPTConnectSubpaths);
     Spectrum L(0.f);
     // Ignore invalid connections related to infinite area lights
@@ -549,7 +557,8 @@ Spectrum ConnectBDPT(
 
 BDPTIntegrator *CreateBDPTIntegrator(const ParamSet &params,
                                      std::shared_ptr<Sampler> sampler,
-                                     std::shared_ptr<const Camera> camera) {
+                                     std::shared_ptr<const Camera> camera)
+{
     int maxDepth = params.FindOneInt("maxdepth", 5);
     bool visualizeStrategies = params.FindOneBool("visualizestrategies", false);
     bool visualizeWeights = params.FindOneBool("visualizeweights", false);

@@ -41,8 +41,8 @@
 // shapes/loopsubdiv.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // LoopSubdiv Declarations
 std::vector<std::shared_ptr<Shape>> CreateLoopSubdiv(const Transform *o2w,
                                                      const Transform *w2o,

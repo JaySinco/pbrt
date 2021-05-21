@@ -41,11 +41,12 @@
 // shapes/paraboloid.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Paraboloid Declarations
-class Paraboloid : public Shape {
-  public:
+class Paraboloid: public Shape
+{
+public:
     // Paraboloid Public Methods
     Paraboloid(const Transform *o2w, const Transform *w2o,
                bool reverseOrientation, Float radius, Float z0, Float z1,
@@ -57,7 +58,7 @@ class Paraboloid : public Shape {
     Float Area() const;
     Interaction Sample(const Point2f &u, Float *pdf) const;
 
-  protected:
+protected:
     // Paraboloid Private Data
     const Float radius, zMin, zMax, phiMax;
 };

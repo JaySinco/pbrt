@@ -41,8 +41,8 @@
 // core/api.h*
 #include "pbrt.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // API Function Declarations
 void pbrtInit(const Options &opt);
 void pbrtCleanup();

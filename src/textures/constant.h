@@ -43,17 +43,18 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ConstantTexture Declarations
 template <typename T>
-class ConstantTexture : public Texture<T> {
-  public:
+class ConstantTexture: public Texture<T>
+{
+public:
     // ConstantTexture Public Methods
-    ConstantTexture(const T &value) : value(value) {}
+    ConstantTexture(const T &value): value(value) {}
     T Evaluate(const SurfaceInteraction &) const { return value; }
 
-  private:
+private:
     T value;
 };
 

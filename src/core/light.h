@@ -43,24 +43,27 @@
 #include "memory.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // LightFlags Declarations
-enum class LightFlags : int {
+enum class LightFlags : int
+{
     DeltaPosition = 1,
     DeltaDirection = 2,
     Area = 4,
     Infinite = 8
 };
 
-inline bool IsDeltaLight(int flags) {
+inline bool IsDeltaLight(int flags)
+{
     return flags & (int)LightFlags::DeltaPosition ||
            flags & (int)LightFlags::DeltaDirection;
 }
 
 // Light Declarations
-class Light {
-  public:
+class Light
+{
+public:
     // Light Interface
     virtual ~Light();
     Light(int flags, const Transform &LightToWorld,
@@ -83,28 +86,32 @@ class Light {
     const int nSamples;
     const MediumInterface mediumInterface;
 
-  protected:
+protected:
     // Light Protected Data
     const Transform LightToWorld, WorldToLight;
 };
 
-class VisibilityTester {
-  public:
+class VisibilityTester
+{
+public:
     VisibilityTester() {}
     // VisibilityTester Public Methods
     VisibilityTester(const Interaction &p0, const Interaction &p1)
-        : p0(p0), p1(p1) {}
+        : p0(p0), p1(p1)
+    {
+    }
     const Interaction &P0() const { return p0; }
     const Interaction &P1() const { return p1; }
     bool Unoccluded(const Scene &scene) const;
     Spectrum Tr(const Scene &scene, Sampler &sampler) const;
 
-  private:
+private:
     Interaction p0, p1;
 };
 
-class AreaLight : public Light {
-  public:
+class AreaLight: public Light
+{
+public:
     // AreaLight Interface
     AreaLight(const Transform &LightToWorld, const MediumInterface &medium,
               int nSamples);

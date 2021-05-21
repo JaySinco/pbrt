@@ -43,21 +43,25 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ScaleTexture Declarations
 template <typename T1, typename T2>
-class ScaleTexture : public Texture<T2> {
-  public:
+class ScaleTexture: public Texture<T2>
+{
+public:
     // ScaleTexture Public Methods
     ScaleTexture(const std::shared_ptr<Texture<T1>> &tex1,
                  const std::shared_ptr<Texture<T2>> &tex2)
-        : tex1(tex1), tex2(tex2) {}
-    T2 Evaluate(const SurfaceInteraction &si) const {
+        : tex1(tex1), tex2(tex2)
+    {
+    }
+    T2 Evaluate(const SurfaceInteraction &si) const
+    {
         return tex1->Evaluate(si) * tex2->Evaluate(si);
     }
 
-  private:
+private:
     // ScaleTexture Private Data
     std::shared_ptr<Texture<T1>> tex1;
     std::shared_ptr<Texture<T2>> tex2;

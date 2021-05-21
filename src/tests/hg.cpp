@@ -7,7 +7,8 @@
 
 using namespace pbrt;
 
-TEST(HenyeyGreenstein, SamplingMatch) {
+TEST(HenyeyGreenstein, SamplingMatch)
+{
     RNG rng;
     for (float g = -.75; g <= 0.75; g += 0.25) {
         HenyeyGreenstein hg(g);
@@ -24,7 +25,8 @@ TEST(HenyeyGreenstein, SamplingMatch) {
     }
 }
 
-TEST(HenyeyGreenstein, SamplingOrientationForward) {
+TEST(HenyeyGreenstein, SamplingOrientationForward)
+{
     RNG rng;
 
     HenyeyGreenstein hg(0.95);
@@ -43,7 +45,8 @@ TEST(HenyeyGreenstein, SamplingOrientationForward) {
     EXPECT_GE(nForward, 10 * nBackward);
 }
 
-TEST(HenyeyGreenstein, SamplingOrientationBackward) {
+TEST(HenyeyGreenstein, SamplingOrientationBackward)
+{
     RNG rng;
 
     HenyeyGreenstein hg(-0.95);
@@ -62,7 +65,8 @@ TEST(HenyeyGreenstein, SamplingOrientationBackward) {
     EXPECT_GE(nBackward, 10 * nForward);
 }
 
-TEST(HenyeyGreenstein, Normalized) {
+TEST(HenyeyGreenstein, Normalized)
+{
     RNG rng;
     for (float g = -.75; g <= 0.75; g += 0.25) {
         HenyeyGreenstein hg(g);

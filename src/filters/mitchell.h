@@ -41,16 +41,20 @@
 // filters/mitchell.h*
 #include "filter.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Mitchell Filter Declarations
-class MitchellFilter : public Filter {
-  public:
+class MitchellFilter: public Filter
+{
+public:
     // MitchellFilter Public Methods
     MitchellFilter(const Vector2f &radius, Float B, Float C)
-        : Filter(radius), B(B), C(C) {}
+        : Filter(radius), B(B), C(C)
+    {
+    }
     Float Evaluate(const Point2f &p) const;
-    Float Mitchell1D(Float x) const {
+    Float Mitchell1D(Float x) const
+    {
         x = std::abs(2 * x);
         if (x > 1)
             return ((-B - 6 * C) * x * x * x + (6 * B + 30 * C) * x * x +
@@ -62,7 +66,7 @@ class MitchellFilter : public Filter {
                    (1.f / 6.f);
     }
 
-  private:
+private:
     const Float B, C;
 };
 

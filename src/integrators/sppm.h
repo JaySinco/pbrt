@@ -44,11 +44,12 @@
 #include "camera.h"
 #include "film.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SPPM Declarations
-class SPPMIntegrator : public Integrator {
-  public:
+class SPPMIntegrator: public Integrator
+{
+public:
     // SPPMIntegrator Public Methods
     SPPMIntegrator(std::shared_ptr<const Camera> &camera, int nIterations,
                    int photonsPerIteration, int maxDepth,
@@ -60,10 +61,12 @@ class SPPMIntegrator : public Integrator {
           photonsPerIteration(photonsPerIteration > 0
                                   ? photonsPerIteration
                                   : camera->film->croppedPixelBounds.Area()),
-          writeFrequency(writeFrequency) {}
+          writeFrequency(writeFrequency)
+    {
+    }
     void Render(const Scene &scene);
 
-  private:
+private:
     // SPPMIntegrator Private Data
     std::shared_ptr<const Camera> camera;
     const Float initialSearchRadius;

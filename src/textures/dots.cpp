@@ -33,11 +33,12 @@
 // textures/dots.cpp*
 #include "textures/dots.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // DotsTexture Method Definitions
 DotsTexture<Float> *CreateDotsFloatTexture(const Transform &tex2world,
-                                           const TextureParams &tp) {
+                                           const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");
@@ -66,7 +67,8 @@ DotsTexture<Float> *CreateDotsFloatTexture(const Transform &tex2world,
 }
 
 DotsTexture<Spectrum> *CreateDotsSpectrumTexture(const Transform &tex2world,
-                                                 const TextureParams &tp) {
+                                                 const TextureParams &tp)
+{
     // Initialize 2D texture mapping _map_ from _tp_
     std::unique_ptr<TextureMapping2D> map;
     std::string type = tp.FindString("mapping", "uv");

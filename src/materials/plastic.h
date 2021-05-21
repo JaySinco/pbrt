@@ -42,11 +42,12 @@
 #include "pbrt.h"
 #include "material.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // PlasticMaterial Declarations
-class PlasticMaterial : public Material {
-  public:
+class PlasticMaterial: public Material
+{
+public:
     // PlasticMaterial Public Methods
     PlasticMaterial(const std::shared_ptr<Texture<Spectrum>> &Kd,
                     const std::shared_ptr<Texture<Spectrum>> &Ks,
@@ -57,12 +58,14 @@ class PlasticMaterial : public Material {
           Ks(Ks),
           roughness(roughness),
           bumpMap(bumpMap),
-          remapRoughness(remapRoughness) {}
+          remapRoughness(remapRoughness)
+    {
+    }
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // PlasticMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> Kd, Ks;
     std::shared_ptr<Texture<Float>> roughness, bumpMap;

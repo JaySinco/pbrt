@@ -37,13 +37,15 @@
 #include "stats.h"
 #include <algorithm>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // KdTreeAccel Local Declarations
-struct KdAccelNode {
+struct KdAccelNode
+{
     // KdAccelNode Methods
     void InitLeaf(int *primNums, int np, std::vector<int> *primitiveIndices);
-    void InitInterior(int axis, int ac, Float s) {
+    void InitInterior(int axis, int ac, Float s)
+    {
         split = s;
         flags = axis;
         aboveChild |= (ac << 2);
@@ -53,25 +55,33 @@ struct KdAccelNode {
     int SplitAxis() const { return flags & 3; }
     bool IsLeaf() const { return (flags & 3) == 3; }
     int AboveChild() const { return aboveChild >> 2; }
-    union {
+    union
+    {
         Float split;                 // Interior
         int onePrimitive;            // Leaf
         int primitiveIndicesOffset;  // Leaf
     };
 
-  private:
-    union {
+private:
+    union
+    {
         int flags;       // Both
         int nPrims;      // Leaf
         int aboveChild;  // Interior
     };
 };
 
-enum class EdgeType { Start, End };
-struct BoundEdge {
+enum class EdgeType
+{
+    Start,
+    End
+};
+struct BoundEdge
+{
     // BoundEdge Public Methods
     BoundEdge() {}
-    BoundEdge(Float t, int primNum, bool starting) : t(t), primNum(primNum) {
+    BoundEdge(Float t, int primNum, bool starting): t(t), primNum(primNum)
+    {
         type = starting ? EdgeType::Start : EdgeType::End;
     }
     Float t;
@@ -87,7 +97,8 @@ KdTreeAccel::KdTreeAccel(std::vector<std::shared_ptr<Primitive>> p,
       traversalCost(traversalCost),
       maxPrims(maxPrims),
       emptyBonus(emptyBonus),
-      primitives(std::move(p)) {
+      primitives(std::move(p))
+{
     // Build kd-tree for accelerator
     ProfilePhase _(Prof::AccelConstruction);
     nextFreeNode = nAllocedNodes = 0;
@@ -97,7 +108,7 @@ KdTreeAccel::KdTreeAccel(std::vector<std::shared_ptr<Primitive>> p,
     // Compute bounds for kd-tree construction
     std::vector<Bounds3f> primBounds;
     primBounds.reserve(primitives.size());
-    for (const std::shared_ptr<Primitive> &prim : primitives) {
+    for (const std::shared_ptr<Primitive> &prim: primitives) {
         Bounds3f b = prim->WorldBound();
         bounds = Union(bounds, b);
         primBounds.push_back(b);
@@ -120,7 +131,8 @@ KdTreeAccel::KdTreeAccel(std::vector<std::shared_ptr<Primitive>> p,
 }
 
 void KdAccelNode::InitLeaf(int *primNums, int np,
-                           std::vector<int> *primitiveIndices) {
+                           std::vector<int> *primitiveIndices)
+{
     flags = 3;
     nPrims |= (np << 2);
     // Store primitive ids for leaf node
@@ -140,7 +152,8 @@ void KdTreeAccel::buildTree(int nodeNum, const Bounds3f &nodeBounds,
                             const std::vector<Bounds3f> &allPrimBounds,
                             int *primNums, int nPrimitives, int depth,
                             const std::unique_ptr<BoundEdge[]> edges[3],
-                            int *prims0, int *prims1, int badRefines) {
+                            int *prims0, int *prims1, int badRefines)
+{
     CHECK_EQ(nodeNum, nextFreeNode);
     // Get next free node from _nodes_ array
     if (nextFreeNode == nAllocedNodes) {
@@ -261,7 +274,8 @@ retrySplit:
               prims0, prims1 + nPrimitives, badRefines);
 }
 
-bool KdTreeAccel::Intersect(const Ray &ray, SurfaceInteraction *isect) const {
+bool KdTreeAccel::Intersect(const Ray &ray, SurfaceInteraction *isect) const
+{
     ProfilePhase p(Prof::AccelIntersect);
     // Compute initial parametric range of ray inside kd-tree extent
     Float tMin, tMax;
@@ -346,7 +360,8 @@ bool KdTreeAccel::Intersect(const Ray &ray, SurfaceInteraction *isect) const {
     return hit;
 }
 
-bool KdTreeAccel::IntersectP(const Ray &ray) const {
+bool KdTreeAccel::IntersectP(const Ray &ray) const
+{
     ProfilePhase p(Prof::AccelIntersectP);
     // Compute initial parametric range of ray inside kd-tree extent
     Float tMin, tMax;
@@ -430,7 +445,8 @@ bool KdTreeAccel::IntersectP(const Ray &ray) const {
 }
 
 std::shared_ptr<KdTreeAccel> CreateKdTreeAccelerator(
-    std::vector<std::shared_ptr<Primitive>> prims, const ParamSet &ps) {
+    std::vector<std::shared_ptr<Primitive>> prims, const ParamSet &ps)
+{
     int isectCost = ps.FindOneInt("intersectcost", 80);
     int travCost = ps.FindOneInt("traversalcost", 1);
     Float emptyBonus = ps.FindOneFloat("emptybonus", 0.5f);

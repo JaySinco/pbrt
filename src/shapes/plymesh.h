@@ -41,8 +41,8 @@
 // shapes/plymesh.h*
 #include "shapes/triangle.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 std::vector<std::shared_ptr<Shape>> CreatePLYMesh(
     const Transform *o2w, const Transform *w2o, bool reverseOrientation,
     const ParamSet &params,

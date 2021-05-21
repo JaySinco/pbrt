@@ -44,8 +44,8 @@
 #include "samplers/halton.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_RATIO(
     "Stochastic Progressive Photon Mapping/Visible points checked per photon "
     "intersection",
@@ -59,19 +59,23 @@ STAT_MEMORY_COUNTER("Memory/SPPM Pixels", pixelMemoryBytes);
 STAT_FLOAT_DISTRIBUTION("Memory/SPPM BSDF and Grid Memory", memoryArenaMB);
 
 // SPPM Local Definitions
-struct SPPMPixel {
+struct SPPMPixel
+{
     // SPPMPixel Public Methods
-    SPPMPixel() : M(0) {}
+    SPPMPixel(): M(0) {}
 
     // SPPMPixel Public Data
     Float radius = 0;
     Spectrum Ld;
-    struct VisiblePoint {
+    struct VisiblePoint
+    {
         // VisiblePoint Public Methods
         VisiblePoint() {}
         VisiblePoint(const Point3f &p, const Vector3f &wo, const BSDF *bsdf,
                      const Spectrum &beta)
-            : p(p), wo(wo), bsdf(bsdf), beta(beta) {}
+            : p(p), wo(wo), bsdf(bsdf), beta(beta)
+        {
+        }
         Point3f p;
         Vector3f wo;
         const BSDF *bsdf = nullptr;
@@ -83,13 +87,15 @@ struct SPPMPixel {
     Spectrum tau;
 };
 
-struct SPPMPixelListNode {
+struct SPPMPixelListNode
+{
     SPPMPixel *pixel;
     SPPMPixelListNode *next;
 };
 
 static bool ToGrid(const Point3f &p, const Bounds3f &bounds,
-                   const int gridRes[3], Point3i *pi) {
+                   const int gridRes[3], Point3i *pi)
+{
     bool inBounds = true;
     Vector3f pg = bounds.Offset(p);
     for (int i = 0; i < 3; ++i) {
@@ -100,14 +106,16 @@ static bool ToGrid(const Point3f &p, const Bounds3f &bounds,
     return inBounds;
 }
 
-inline unsigned int hash(const Point3i &p, int hashSize) {
+inline unsigned int hash(const Point3i &p, int hashSize)
+{
     return (unsigned int)((p.x * 73856093) ^ (p.y * 19349663) ^
                           (p.z * 83492791)) %
            hashSize;
 }
 
 // SPPM Method Definitions
-void SPPMIntegrator::Render(const Scene &scene) {
+void SPPMIntegrator::Render(const Scene &scene)
+{
     ProfilePhase p(Prof::IntegratorRender);
     // Initialize _pixelBounds_ and _pixels_ array for SPPM
     Bounds2i pixelBounds = camera->film->croppedPixelBounds;
@@ -148,7 +156,7 @@ void SPPMIntegrator::Render(const Scene &scene) {
                     int y0 = pixelBounds.pMin.y + tile.y * tileSize;
                     int y1 = std::min(y0 + tileSize, pixelBounds.pMax.y);
                     Bounds2i tileBounds(Point2i(x0, y0), Point2i(x1, y1));
-                    for (Point2i pPixel : tileBounds) {
+                    for (Point2i pPixel: tileBounds) {
                         // Prepare _tileSampler_ for _pPixel_
                         tileSampler->StartPixel(pPixel);
                         tileSampler->SetSampleNumber(iter);
@@ -178,7 +186,7 @@ void SPPMIntegrator::Render(const Scene &scene) {
                             if (!scene.Intersect(ray, &isect)) {
                                 // Accumulate light contributions for ray with
                                 // no intersection
-                                for (const auto &light : scene.lights)
+                                for (const auto &light: scene.lights)
                                     pixel.Ld += beta * light->Le(ray);
                                 break;
                             }
@@ -522,7 +530,8 @@ void SPPMIntegrator::Render(const Scene &scene) {
 }
 
 Integrator *CreateSPPMIntegrator(const ParamSet &params,
-                                 std::shared_ptr<const Camera> camera) {
+                                 std::shared_ptr<const Camera> camera)
+{
     int nIterations =
         params.FindOneInt("iterations", params.FindOneInt("numiterations", 64));
     int maxDepth = params.FindOneInt("maxdepth", 5);

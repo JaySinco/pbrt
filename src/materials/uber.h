@@ -42,11 +42,12 @@
 #include "pbrt.h"
 #include "material.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // UberMaterial Declarations
-class UberMaterial : public Material {
-  public:
+class UberMaterial: public Material
+{
+public:
     UberMaterial(const std::shared_ptr<Texture<Spectrum>> &Kd,
                  const std::shared_ptr<Texture<Spectrum>> &Ks,
                  const std::shared_ptr<Texture<Spectrum>> &Kr,
@@ -68,13 +69,15 @@ class UberMaterial : public Material {
           roughnessv(roughnessv),
           eta(eta),
           bumpMap(bumpMap),
-          remapRoughness(remapRoughness) {}
+          remapRoughness(remapRoughness)
+    {
+    }
 
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
 
-  private:
+private:
     // UberMaterial Private Data
     std::shared_ptr<Texture<Spectrum>> Kd, Ks, Kr, Kt, opacity;
     std::shared_ptr<Texture<Float>> roughness, roughnessu, roughnessv, eta,

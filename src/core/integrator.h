@@ -47,11 +47,12 @@
 #include "sampler.h"
 #include "material.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Integrator Declarations
-class Integrator {
-  public:
+class Integrator
+{
+public:
     // Integrator Interface
     virtual ~Integrator();
     virtual void Render(const Scene &scene) = 0;
@@ -74,13 +75,16 @@ std::unique_ptr<Distribution1D> ComputeLightPowerDistribution(
     const Scene &scene);
 
 // SamplerIntegrator Declarations
-class SamplerIntegrator : public Integrator {
-  public:
+class SamplerIntegrator: public Integrator
+{
+public:
     // SamplerIntegrator Public Methods
     SamplerIntegrator(std::shared_ptr<const Camera> camera,
                       std::shared_ptr<Sampler> sampler,
                       const Bounds2i &pixelBounds)
-        : camera(camera), sampler(sampler), pixelBounds(pixelBounds) {}
+        : camera(camera), sampler(sampler), pixelBounds(pixelBounds)
+    {
+    }
     virtual void Preprocess(const Scene &scene, Sampler &sampler) {}
     void Render(const Scene &scene);
     virtual Spectrum Li(const RayDifferential &ray, const Scene &scene,
@@ -95,11 +99,11 @@ class SamplerIntegrator : public Integrator {
                               const Scene &scene, Sampler &sampler,
                               MemoryArena &arena, int depth) const;
 
-  protected:
+protected:
     // SamplerIntegrator Protected Data
     std::shared_ptr<const Camera> camera;
 
-  private:
+private:
     // SamplerIntegrator Private Data
     std::shared_ptr<Sampler> sampler;
     const Bounds2i pixelBounds;

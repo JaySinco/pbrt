@@ -37,16 +37,18 @@
 #include "efloat.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Sphere Method Definitions
-Bounds3f Sphere::ObjectBound() const {
+Bounds3f Sphere::ObjectBound() const
+{
     return Bounds3f(Point3f(-radius, -radius, zMin),
                     Point3f(radius, radius, zMax));
 }
 
 bool Sphere::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
-                       bool testAlphaTexture) const {
+                       bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersect);
     Float phi;
     Point3f pHit;
@@ -154,7 +156,8 @@ bool Sphere::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
     return true;
 }
 
-bool Sphere::IntersectP(const Ray &r, bool testAlphaTexture) const {
+bool Sphere::IntersectP(const Ray &r, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersectP);
     Float phi;
     Point3f pHit;
@@ -215,7 +218,8 @@ bool Sphere::IntersectP(const Ray &r, bool testAlphaTexture) const {
 
 Float Sphere::Area() const { return phiMax * radius * (zMax - zMin); }
 
-Interaction Sphere::Sample(const Point2f &u, Float *pdf) const {
+Interaction Sphere::Sample(const Point2f &u, Float *pdf) const
+{
     Point3f pObj = Point3f(0, 0, 0) + radius * UniformSampleSphere(u);
     Interaction it;
     it.n = Normalize((*ObjectToWorld)(Normal3f(pObj.x, pObj.y, pObj.z)));
@@ -229,7 +233,8 @@ Interaction Sphere::Sample(const Point2f &u, Float *pdf) const {
 }
 
 Interaction Sphere::Sample(const Interaction &ref, const Point2f &u,
-                           Float *pdf) const {
+                           Float *pdf) const
+{
     Point3f pCenter = (*ObjectToWorld)(Point3f(0, 0, 0));
 
     // Sample uniformly on sphere if $\pt{}$ is inside it
@@ -302,7 +307,8 @@ Interaction Sphere::Sample(const Interaction &ref, const Point2f &u,
     return it;
 }
 
-Float Sphere::Pdf(const Interaction &ref, const Vector3f &wi) const {
+Float Sphere::Pdf(const Interaction &ref, const Vector3f &wi) const
+{
     Point3f pCenter = (*ObjectToWorld)(Point3f(0, 0, 0));
     // Return uniform PDF if point is inside sphere
     Point3f pOrigin =
@@ -316,7 +322,8 @@ Float Sphere::Pdf(const Interaction &ref, const Vector3f &wi) const {
     return UniformConePdf(cosThetaMax);
 }
 
-Float Sphere::SolidAngle(const Point3f &p, int nSamples) const {
+Float Sphere::SolidAngle(const Point3f &p, int nSamples) const
+{
     Point3f pCenter = (*ObjectToWorld)(Point3f(0, 0, 0));
     if (DistanceSquared(p, pCenter) <= radius * radius) return 4 * Pi;
     Float sinTheta2 = radius * radius / DistanceSquared(p, pCenter);
@@ -327,7 +334,8 @@ Float Sphere::SolidAngle(const Point3f &p, int nSamples) const {
 std::shared_ptr<Shape> CreateSphereShape(const Transform *o2w,
                                          const Transform *w2o,
                                          bool reverseOrientation,
-                                         const ParamSet &params) {
+                                         const ParamSet &params)
+{
     Float radius = params.FindOneFloat("radius", 1.f);
     Float zmin = params.FindOneFloat("zmin", -radius);
     Float zmax = params.FindOneFloat("zmax", radius);

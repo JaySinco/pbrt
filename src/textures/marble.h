@@ -43,11 +43,12 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // MarbleTexture Declarations
-class MarbleTexture : public Texture<Spectrum> {
-  public:
+class MarbleTexture: public Texture<Spectrum>
+{
+public:
     // MarbleTexture Public Methods
     MarbleTexture(std::unique_ptr<TextureMapping3D> mapping, int octaves,
                   Float omega, Float scale, Float variation)
@@ -55,8 +56,11 @@ class MarbleTexture : public Texture<Spectrum> {
           octaves(octaves),
           omega(omega),
           scale(scale),
-          variation(variation) {}
-    Spectrum Evaluate(const SurfaceInteraction &si) const {
+          variation(variation)
+    {
+    }
+    Spectrum Evaluate(const SurfaceInteraction &si) const
+    {
         Vector3f dpdx, dpdy;
         Point3f p = mapping->Map(si, &dpdx, &dpdy);
         p *= scale;
@@ -87,7 +91,7 @@ class MarbleTexture : public Texture<Spectrum> {
         return 1.5f * ((1.f - t) * s0 + t * s1);
     }
 
-  private:
+private:
     // MarbleTexture Private Data
     std::unique_ptr<TextureMapping3D> mapping;
     const int octaves;

@@ -41,12 +41,13 @@
 // filters/box.h*
 #include "filter.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Box Filter Declarations
-class BoxFilter : public Filter {
-  public:
-    BoxFilter(const Vector2f &radius) : Filter(radius) {}
+class BoxFilter: public Filter
+{
+public:
+    BoxFilter(const Vector2f &radius): Filter(radius) {}
     Float Evaluate(const Point2f &p) const;
 };
 

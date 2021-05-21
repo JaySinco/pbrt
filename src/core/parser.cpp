@@ -57,47 +57,50 @@
 #include <utility>
 #include <vector>
 
-namespace pbrt {
-
+namespace pbrt
+{
 Loc *parserLoc;
 
-static std::string toString(string_view s) {
+static std::string toString(string_view s)
+{
     return std::string(s.data(), s.size());
 }
 
 STAT_MEMORY_COUNTER("Memory/Tokenizer buffers", tokenizerMemory);
 
-static char decodeEscaped(int ch) {
+static char decodeEscaped(int ch)
+{
     switch (ch) {
-    case EOF:
-        Error("premature EOF after character escape '\\'");
-        exit(1);
-    case 'b':
-        return '\b';
-    case 'f':
-        return '\f';
-    case 'n':
-        return '\n';
-    case 'r':
-        return '\r';
-    case 't':
-        return '\t';
-    case '\\':
-        return '\\';
-    case '\'':
-        return '\'';
-    case '\"':
-        return '\"';
-    default:
-        Error("unexpected escaped character \"%c\"", ch);
-        exit(1);
+        case EOF:
+            Error("premature EOF after character escape '\\'");
+            exit(1);
+        case 'b':
+            return '\b';
+        case 'f':
+            return '\f';
+        case 'n':
+            return '\n';
+        case 'r':
+            return '\r';
+        case 't':
+            return '\t';
+        case '\\':
+            return '\\';
+        case '\'':
+            return '\'';
+        case '\"':
+            return '\"';
+        default:
+            Error("unexpected escaped character \"%c\"", ch);
+            exit(1);
     }
     return 0;  // NOTREACHED
 }
 
 std::unique_ptr<Tokenizer> Tokenizer::CreateFromFile(
     const std::string &filename,
-    std::function<void(const char *)> errorCallback) {
+    std::function<void(const char *)> errorCallback)
+{
     if (filename == "-") {
         // Handle stdin by slurping everything into a string.
         std::string str;
@@ -198,7 +201,8 @@ std::unique_ptr<Tokenizer> Tokenizer::CreateFromFile(
 }
 
 std::unique_ptr<Tokenizer> Tokenizer::CreateFromString(
-    std::string str, std::function<void(const char *)> errorCallback) {
+    std::string str, std::function<void(const char *)> errorCallback)
+{
     // return std::make_unique<Tokenizer>(std::move(str));
     return std::unique_ptr<Tokenizer>(
         new Tokenizer(std::move(str), std::move(errorCallback)));
@@ -208,7 +212,8 @@ Tokenizer::Tokenizer(std::string str,
                      std::function<void(const char *)> errorCallback)
     : loc("<stdin>"),
       errorCallback(std::move(errorCallback)),
-      contents(std::move(str)) {
+      contents(std::move(str))
+{
     pos = contents.data();
     end = pos + contents.size();
     tokenizerMemory += contents.size();
@@ -220,13 +225,15 @@ Tokenizer::Tokenizer(void *ptr, size_t len, std::string filename,
     : loc(filename),
       errorCallback(std::move(errorCallback)),
       unmapPtr(ptr),
-      unmapLength(len) {
+      unmapLength(len)
+{
     pos = (const char *)ptr;
     end = pos + len;
 }
 #endif
 
-Tokenizer::~Tokenizer() {
+Tokenizer::~Tokenizer()
+{
 #ifdef PBRT_HAVE_MMAP
     if (unmapPtr && unmapLength > 0)
         if (munmap(unmapPtr, unmapLength) != 0)
@@ -249,7 +256,8 @@ Tokenizer::~Tokenizer() {
 #endif
 }
 
-string_view Tokenizer::Next() {
+string_view Tokenizer::Next()
+{
     while (true) {
         const char *tokenStart = pos;
         int ch = getChar();
@@ -319,7 +327,8 @@ string_view Tokenizer::Next() {
     }
 }
 
-static double parseNumber(string_view str) {
+static double parseNumber(string_view str)
+{
     // Fast path for a single digit
     if (str.size() == 1) {
         if (!(str[0] >= '0' && str[0] <= '9')) {
@@ -345,7 +354,7 @@ static double parseNumber(string_view str) {
 
     // Can we just use strtol?
     auto isInteger = [](string_view str) {
-        for (char ch : str)
+        for (char ch: str)
             if (!(ch >= '0' && ch <= '9')) return false;
         return true;
     };
@@ -367,11 +376,13 @@ static double parseNumber(string_view str) {
     return val;
 }
 
-inline bool isQuotedString(string_view str) {
+inline bool isQuotedString(string_view str)
+{
     return str.size() >= 2 && str[0] == '"' && str.back() == '"';
 }
 
-static string_view dequoteString(string_view str) {
+static string_view dequoteString(string_view str)
+{
     if (!isQuotedString(str)) {
         Error("\"%s\": expected quoted string", toString(str).c_str());
         exit(1);
@@ -382,7 +393,8 @@ static string_view dequoteString(string_view str) {
     return str;
 }
 
-struct ParamListItem {
+struct ParamListItem
+{
     std::string name;
     double *doubleValues = nullptr;
     const char **stringValues = nullptr;
@@ -393,7 +405,8 @@ struct ParamListItem {
 PBRT_CONSTEXPR int TokenOptional = 0;
 PBRT_CONSTEXPR int TokenRequired = 1;
 
-enum {
+enum
+{
     PARAM_TYPE_INT,
     PARAM_TYPE_BOOL,
     PARAM_TYPE_FLOAT,
@@ -410,7 +423,8 @@ enum {
     PARAM_TYPE_TEXTURE
 };
 
-static bool lookupType(const std::string &decl, int *type, std::string &sname) {
+static bool lookupType(const std::string &decl, int *type, std::string &sname)
+{
     *type = 0;
     // Skip leading space
     auto skipSpace = [&decl](std::string::const_iterator iter) {
@@ -484,44 +498,46 @@ static bool lookupType(const std::string &decl, int *type, std::string &sname) {
     return true;
 }
 
-static const char *paramTypeToName(int type) {
+static const char *paramTypeToName(int type)
+{
     switch (type) {
-    case PARAM_TYPE_INT:
-        return "int";
-    case PARAM_TYPE_BOOL:
-        return "bool";
-    case PARAM_TYPE_FLOAT:
-        return "float";
-    case PARAM_TYPE_POINT2:
-        return "point2";
-    case PARAM_TYPE_VECTOR2:
-        return "vector2";
-    case PARAM_TYPE_POINT3:
-        return "point3";
-    case PARAM_TYPE_VECTOR3:
-        return "vector3";
-    case PARAM_TYPE_NORMAL:
-        return "normal";
-    case PARAM_TYPE_RGB:
-        return "rgb/color";
-    case PARAM_TYPE_XYZ:
-        return "xyz";
-    case PARAM_TYPE_BLACKBODY:
-        return "blackbody";
-    case PARAM_TYPE_SPECTRUM:
-        return "spectrum";
-    case PARAM_TYPE_STRING:
-        return "string";
-    case PARAM_TYPE_TEXTURE:
-        return "texture";
-    default:
-        LOG(FATAL) << "Error in paramTypeToName";
-        return nullptr;
+        case PARAM_TYPE_INT:
+            return "int";
+        case PARAM_TYPE_BOOL:
+            return "bool";
+        case PARAM_TYPE_FLOAT:
+            return "float";
+        case PARAM_TYPE_POINT2:
+            return "point2";
+        case PARAM_TYPE_VECTOR2:
+            return "vector2";
+        case PARAM_TYPE_POINT3:
+            return "point3";
+        case PARAM_TYPE_VECTOR3:
+            return "vector3";
+        case PARAM_TYPE_NORMAL:
+            return "normal";
+        case PARAM_TYPE_RGB:
+            return "rgb/color";
+        case PARAM_TYPE_XYZ:
+            return "xyz";
+        case PARAM_TYPE_BLACKBODY:
+            return "blackbody";
+        case PARAM_TYPE_SPECTRUM:
+            return "spectrum";
+        case PARAM_TYPE_STRING:
+            return "string";
+        case PARAM_TYPE_TEXTURE:
+            return "texture";
+        default:
+            LOG(FATAL) << "Error in paramTypeToName";
+            return nullptr;
     }
 }
 
 static void AddParam(ParamSet &ps, const ParamListItem &item,
-                     SpectrumType spectrumType) {
+                     SpectrumType spectrumType)
+{
     int type;
     std::string name;
     if (lookupType(item.name, &type, name)) {
@@ -710,7 +726,8 @@ static void AddParam(ParamSet &ps, const ParamListItem &item,
 
 template <typename Next, typename Unget>
 ParamSet parseParams(Next nextToken, Unget ungetToken, MemoryArena &arena,
-                     SpectrumType spectrumType) {
+                     SpectrumType spectrumType)
+{
     ParamSet ps;
     while (true) {
         string_view decl = nextToken(TokenOptional);
@@ -783,7 +800,8 @@ ParamSet parseParams(Next nextToken, Unget ungetToken, MemoryArena &arena,
 extern int catIndentCount;
 
 // Parsing Global Interface
-static void parse(std::unique_ptr<Tokenizer> t) {
+static void parse(std::unique_ptr<Tokenizer> t)
+{
     std::vector<std::unique_ptr<Tokenizer>> fileStack;
     fileStack.push_back(std::move(t));
     parserLoc = &fileStack.back()->loc;
@@ -859,240 +877,247 @@ static void parse(std::unique_ptr<Tokenizer> t) {
         if (tok.empty()) break;
 
         switch (tok[0]) {
-        case 'A':
-            if (tok == "AttributeBegin")
-                pbrtAttributeBegin();
-            else if (tok == "AttributeEnd")
-                pbrtAttributeEnd();
-            else if (tok == "ActiveTransform") {
-                string_view a = nextToken(TokenRequired);
-                if (a == "All")
-                    pbrtActiveTransformAll();
-                else if (a == "EndTime")
-                    pbrtActiveTransformEndTime();
-                else if (a == "StartTime")
-                    pbrtActiveTransformStartTime();
+            case 'A':
+                if (tok == "AttributeBegin")
+                    pbrtAttributeBegin();
+                else if (tok == "AttributeEnd")
+                    pbrtAttributeEnd();
+                else if (tok == "ActiveTransform") {
+                    string_view a = nextToken(TokenRequired);
+                    if (a == "All")
+                        pbrtActiveTransformAll();
+                    else if (a == "EndTime")
+                        pbrtActiveTransformEndTime();
+                    else if (a == "StartTime")
+                        pbrtActiveTransformStartTime();
+                    else
+                        syntaxError(tok);
+                } else if (tok == "AreaLightSource")
+                    basicParamListEntrypoint(SpectrumType::Illuminant,
+                                             pbrtAreaLightSource);
+                else if (tok == "Accelerator")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtAccelerator);
                 else
                     syntaxError(tok);
-            } else if (tok == "AreaLightSource")
-                basicParamListEntrypoint(SpectrumType::Illuminant,
-                                         pbrtAreaLightSource);
-            else if (tok == "Accelerator")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtAccelerator);
-            else
-                syntaxError(tok);
-            break;
+                break;
 
-        case 'C':
-            if (tok == "ConcatTransform") {
-                if (nextToken(TokenRequired) != "[") syntaxError(tok);
-                Float m[16];
-                for (int i = 0; i < 16; ++i)
-                    m[i] = parseNumber(nextToken(TokenRequired));
-                if (nextToken(TokenRequired) != "]") syntaxError(tok);
-                pbrtConcatTransform(m);
-            } else if (tok == "CoordinateSystem") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                pbrtCoordinateSystem(toString(n));
-            } else if (tok == "CoordSysTransform") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                pbrtCoordSysTransform(toString(n));
-            } else if (tok == "Camera")
-                basicParamListEntrypoint(SpectrumType::Reflectance, pbrtCamera);
-            else
-                syntaxError(tok);
-            break;
+            case 'C':
+                if (tok == "ConcatTransform") {
+                    if (nextToken(TokenRequired) != "[") syntaxError(tok);
+                    Float m[16];
+                    for (int i = 0; i < 16; ++i)
+                        m[i] = parseNumber(nextToken(TokenRequired));
+                    if (nextToken(TokenRequired) != "]") syntaxError(tok);
+                    pbrtConcatTransform(m);
+                } else if (tok == "CoordinateSystem") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    pbrtCoordinateSystem(toString(n));
+                } else if (tok == "CoordSysTransform") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    pbrtCoordSysTransform(toString(n));
+                } else if (tok == "Camera")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtCamera);
+                else
+                    syntaxError(tok);
+                break;
 
-        case 'F':
-            if (tok == "Film")
-                basicParamListEntrypoint(SpectrumType::Reflectance, pbrtFilm);
-            else
-                syntaxError(tok);
-            break;
+            case 'F':
+                if (tok == "Film")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtFilm);
+                else
+                    syntaxError(tok);
+                break;
 
-        case 'I':
-            if (tok == "Integrator")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtIntegrator);
-            else if (tok == "Include") {
-                // Switch to the given file.
-                std::string filename =
-                    toString(dequoteString(nextToken(TokenRequired)));
-                if (PbrtOptions.cat || PbrtOptions.toPly)
-                    printf("%*sInclude \"%s\"\n", catIndentCount, "",
-                           filename.c_str());
-                else {
-                    filename = AbsolutePath(ResolveFilename(filename));
-                    auto tokError = [](const char *msg) { Error("%s", msg); };
-                    std::unique_ptr<Tokenizer> tinc =
-                        Tokenizer::CreateFromFile(filename, tokError);
-                    if (tinc) {
-                        fileStack.push_back(std::move(tinc));
-                        parserLoc = &fileStack.back()->loc;
-                    }
-                }
-            } else if (tok == "Identity")
-                pbrtIdentity();
-            else
-                syntaxError(tok);
-            break;
-
-        case 'L':
-            if (tok == "LightSource")
-                basicParamListEntrypoint(SpectrumType::Illuminant,
-                                         pbrtLightSource);
-            else if (tok == "LookAt") {
-                Float v[9];
-                for (int i = 0; i < 9; ++i)
-                    v[i] = parseNumber(nextToken(TokenRequired));
-                pbrtLookAt(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7],
-                           v[8]);
-            } else
-                syntaxError(tok);
-            break;
-
-        case 'M':
-            if (tok == "MakeNamedMaterial")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtMakeNamedMaterial);
-            else if (tok == "MakeNamedMedium")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtMakeNamedMedium);
-            else if (tok == "Material")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtMaterial);
-            else if (tok == "MediumInterface") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                std::string names[2];
-                names[0] = toString(n);
-
-                // Check for optional second parameter
-                string_view second = nextToken(TokenOptional);
-                if (!second.empty()) {
-                    if (isQuotedString(second))
-                        names[1] = toString(dequoteString(second));
+            case 'I':
+                if (tok == "Integrator")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtIntegrator);
+                else if (tok == "Include") {
+                    // Switch to the given file.
+                    std::string filename =
+                        toString(dequoteString(nextToken(TokenRequired)));
+                    if (PbrtOptions.cat || PbrtOptions.toPly)
+                        printf("%*sInclude \"%s\"\n", catIndentCount, "",
+                               filename.c_str());
                     else {
-                        ungetToken(second);
-                        names[1] = names[0];
+                        filename = AbsolutePath(ResolveFilename(filename));
+                        auto tokError = [](const char *msg) {
+                            Error("%s", msg);
+                        };
+                        std::unique_ptr<Tokenizer> tinc =
+                            Tokenizer::CreateFromFile(filename, tokError);
+                        if (tinc) {
+                            fileStack.push_back(std::move(tinc));
+                            parserLoc = &fileStack.back()->loc;
+                        }
                     }
+                } else if (tok == "Identity")
+                    pbrtIdentity();
+                else
+                    syntaxError(tok);
+                break;
+
+            case 'L':
+                if (tok == "LightSource")
+                    basicParamListEntrypoint(SpectrumType::Illuminant,
+                                             pbrtLightSource);
+                else if (tok == "LookAt") {
+                    Float v[9];
+                    for (int i = 0; i < 9; ++i)
+                        v[i] = parseNumber(nextToken(TokenRequired));
+                    pbrtLookAt(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7],
+                               v[8]);
                 } else
-                    names[1] = names[0];
+                    syntaxError(tok);
+                break;
 
-                pbrtMediumInterface(names[0], names[1]);
-            } else
+            case 'M':
+                if (tok == "MakeNamedMaterial")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtMakeNamedMaterial);
+                else if (tok == "MakeNamedMedium")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtMakeNamedMedium);
+                else if (tok == "Material")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtMaterial);
+                else if (tok == "MediumInterface") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    std::string names[2];
+                    names[0] = toString(n);
+
+                    // Check for optional second parameter
+                    string_view second = nextToken(TokenOptional);
+                    if (!second.empty()) {
+                        if (isQuotedString(second))
+                            names[1] = toString(dequoteString(second));
+                        else {
+                            ungetToken(second);
+                            names[1] = names[0];
+                        }
+                    } else
+                        names[1] = names[0];
+
+                    pbrtMediumInterface(names[0], names[1]);
+                } else
+                    syntaxError(tok);
+                break;
+
+            case 'N':
+                if (tok == "NamedMaterial") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    pbrtNamedMaterial(toString(n));
+                } else
+                    syntaxError(tok);
+                break;
+
+            case 'O':
+                if (tok == "ObjectBegin") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    pbrtObjectBegin(toString(n));
+                } else if (tok == "ObjectEnd")
+                    pbrtObjectEnd();
+                else if (tok == "ObjectInstance") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    pbrtObjectInstance(toString(n));
+                } else
+                    syntaxError(tok);
+                break;
+
+            case 'P':
+                if (tok == "PixelFilter")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtPixelFilter);
+                else
+                    syntaxError(tok);
+                break;
+
+            case 'R':
+                if (tok == "ReverseOrientation")
+                    pbrtReverseOrientation();
+                else if (tok == "Rotate") {
+                    Float v[4];
+                    for (int i = 0; i < 4; ++i)
+                        v[i] = parseNumber(nextToken(TokenRequired));
+                    pbrtRotate(v[0], v[1], v[2], v[3]);
+                } else
+                    syntaxError(tok);
+                break;
+
+            case 'S':
+                if (tok == "Shape")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtShape);
+                else if (tok == "Sampler")
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             pbrtSampler);
+                else if (tok == "Scale") {
+                    Float v[3];
+                    for (int i = 0; i < 3; ++i)
+                        v[i] = parseNumber(nextToken(TokenRequired));
+                    pbrtScale(v[0], v[1], v[2]);
+                } else
+                    syntaxError(tok);
+                break;
+
+            case 'T':
+                if (tok == "TransformBegin")
+                    pbrtTransformBegin();
+                else if (tok == "TransformEnd")
+                    pbrtTransformEnd();
+                else if (tok == "Transform") {
+                    if (nextToken(TokenRequired) != "[") syntaxError(tok);
+                    Float m[16];
+                    for (int i = 0; i < 16; ++i)
+                        m[i] = parseNumber(nextToken(TokenRequired));
+                    if (nextToken(TokenRequired) != "]") syntaxError(tok);
+                    pbrtTransform(m);
+                } else if (tok == "Translate") {
+                    Float v[3];
+                    for (int i = 0; i < 3; ++i)
+                        v[i] = parseNumber(nextToken(TokenRequired));
+                    pbrtTranslate(v[0], v[1], v[2]);
+                } else if (tok == "TransformTimes") {
+                    Float v[2];
+                    for (int i = 0; i < 2; ++i)
+                        v[i] = parseNumber(nextToken(TokenRequired));
+                    pbrtTransformTimes(v[0], v[1]);
+                } else if (tok == "Texture") {
+                    string_view n = dequoteString(nextToken(TokenRequired));
+                    std::string name = toString(n);
+                    n = dequoteString(nextToken(TokenRequired));
+                    std::string type = toString(n);
+
+                    basicParamListEntrypoint(SpectrumType::Reflectance,
+                                             [&](const std::string &texName,
+                                                 const ParamSet &params) {
+                                                 pbrtTexture(name, type,
+                                                             texName, params);
+                                             });
+                } else
+                    syntaxError(tok);
+                break;
+
+            case 'W':
+                if (tok == "WorldBegin")
+                    pbrtWorldBegin();
+                else if (tok == "WorldEnd")
+                    pbrtWorldEnd();
+                else
+                    syntaxError(tok);
+                break;
+
+            default:
                 syntaxError(tok);
-            break;
-
-        case 'N':
-            if (tok == "NamedMaterial") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                pbrtNamedMaterial(toString(n));
-            } else
-                syntaxError(tok);
-            break;
-
-        case 'O':
-            if (tok == "ObjectBegin") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                pbrtObjectBegin(toString(n));
-            } else if (tok == "ObjectEnd")
-                pbrtObjectEnd();
-            else if (tok == "ObjectInstance") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                pbrtObjectInstance(toString(n));
-            } else
-                syntaxError(tok);
-            break;
-
-        case 'P':
-            if (tok == "PixelFilter")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtPixelFilter);
-            else
-                syntaxError(tok);
-            break;
-
-        case 'R':
-            if (tok == "ReverseOrientation")
-                pbrtReverseOrientation();
-            else if (tok == "Rotate") {
-                Float v[4];
-                for (int i = 0; i < 4; ++i)
-                    v[i] = parseNumber(nextToken(TokenRequired));
-                pbrtRotate(v[0], v[1], v[2], v[3]);
-            } else
-                syntaxError(tok);
-            break;
-
-        case 'S':
-            if (tok == "Shape")
-                basicParamListEntrypoint(SpectrumType::Reflectance, pbrtShape);
-            else if (tok == "Sampler")
-                basicParamListEntrypoint(SpectrumType::Reflectance,
-                                         pbrtSampler);
-            else if (tok == "Scale") {
-                Float v[3];
-                for (int i = 0; i < 3; ++i)
-                    v[i] = parseNumber(nextToken(TokenRequired));
-                pbrtScale(v[0], v[1], v[2]);
-            } else
-                syntaxError(tok);
-            break;
-
-        case 'T':
-            if (tok == "TransformBegin")
-                pbrtTransformBegin();
-            else if (tok == "TransformEnd")
-                pbrtTransformEnd();
-            else if (tok == "Transform") {
-                if (nextToken(TokenRequired) != "[") syntaxError(tok);
-                Float m[16];
-                for (int i = 0; i < 16; ++i)
-                    m[i] = parseNumber(nextToken(TokenRequired));
-                if (nextToken(TokenRequired) != "]") syntaxError(tok);
-                pbrtTransform(m);
-            } else if (tok == "Translate") {
-                Float v[3];
-                for (int i = 0; i < 3; ++i)
-                    v[i] = parseNumber(nextToken(TokenRequired));
-                pbrtTranslate(v[0], v[1], v[2]);
-            } else if (tok == "TransformTimes") {
-                Float v[2];
-                for (int i = 0; i < 2; ++i)
-                    v[i] = parseNumber(nextToken(TokenRequired));
-                pbrtTransformTimes(v[0], v[1]);
-            } else if (tok == "Texture") {
-                string_view n = dequoteString(nextToken(TokenRequired));
-                std::string name = toString(n);
-                n = dequoteString(nextToken(TokenRequired));
-                std::string type = toString(n);
-
-                basicParamListEntrypoint(
-                    SpectrumType::Reflectance,
-                    [&](const std::string &texName, const ParamSet &params) {
-                        pbrtTexture(name, type, texName, params);
-                    });
-            } else
-                syntaxError(tok);
-            break;
-
-        case 'W':
-            if (tok == "WorldBegin")
-                pbrtWorldBegin();
-            else if (tok == "WorldEnd")
-                pbrtWorldEnd();
-            else
-                syntaxError(tok);
-            break;
-
-        default:
-            syntaxError(tok);
         }
     }
 }
 
-void pbrtParseFile(std::string filename) {
+void pbrtParseFile(std::string filename)
+{
     if (filename != "-") SetSearchDirectory(DirectoryContaining(filename));
 
     auto tokError = [](const char *msg) {
@@ -1105,7 +1130,8 @@ void pbrtParseFile(std::string filename) {
     parse(std::move(t));
 }
 
-void pbrtParseString(std::string str) {
+void pbrtParseString(std::string str)
+{
     auto tokError = [](const char *msg) {
         Error("%s", msg);
         exit(1);

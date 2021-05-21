@@ -42,15 +42,18 @@
 #include "camera.h"
 #include "film.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // EnvironmentCamera Declarations
-class EnvironmentCamera : public Camera {
-  public:
+class EnvironmentCamera: public Camera
+{
+public:
     // EnvironmentCamera Public Methods
     EnvironmentCamera(const AnimatedTransform &CameraToWorld, Float shutterOpen,
                       Float shutterClose, Film *film, const Medium *medium)
-        : Camera(CameraToWorld, shutterOpen, shutterClose, film, medium) {}
+        : Camera(CameraToWorld, shutterOpen, shutterClose, film, medium)
+    {
+    }
     Float GenerateRay(const CameraSample &sample, Ray *) const;
 };
 

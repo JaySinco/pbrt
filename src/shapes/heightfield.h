@@ -41,8 +41,8 @@
 // shapes/heightfield.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Heightfield Declarations
 std::vector<std::shared_ptr<Shape>> CreateHeightfield(const Transform *o2w,
                                                       const Transform *w2o,

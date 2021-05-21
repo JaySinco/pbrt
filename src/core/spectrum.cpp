@@ -34,16 +34,18 @@
 #include "spectrum.h"
 #include <algorithm>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Spectrum Method Definitions
-bool SpectrumSamplesSorted(const Float *lambda, const Float *vals, int n) {
+bool SpectrumSamplesSorted(const Float *lambda, const Float *vals, int n)
+{
     for (int i = 0; i < n - 1; ++i)
         if (lambda[i] > lambda[i + 1]) return false;
     return true;
 }
 
-void SortSpectrumSamples(Float *lambda, Float *vals, int n) {
+void SortSpectrumSamples(Float *lambda, Float *vals, int n)
+{
     std::vector<std::pair<Float, Float>> sortVec;
     sortVec.reserve(n);
     for (int i = 0; i < n; ++i)
@@ -56,7 +58,8 @@ void SortSpectrumSamples(Float *lambda, Float *vals, int n) {
 }
 
 Float AverageSpectrumSamples(const Float *lambda, const Float *vals, int n,
-                             Float lambdaStart, Float lambdaEnd) {
+                             Float lambdaStart, Float lambdaEnd)
+{
     for (int i = 0; i < n - 1; ++i) CHECK_GT(lambda[i + 1], lambda[i]);
     CHECK_LT(lambdaStart, lambdaEnd);
     // Handle cases with out-of-bounds range or single sample only
@@ -88,14 +91,15 @@ Float AverageSpectrumSamples(const Float *lambda, const Float *vals, int n,
     return sum / (lambdaEnd - lambdaStart);
 }
 
-RGBSpectrum SampledSpectrum::ToRGBSpectrum() const {
+RGBSpectrum SampledSpectrum::ToRGBSpectrum() const
+{
     Float rgb[3];
     ToRGB(rgb);
     return RGBSpectrum::FromRGB(rgb);
 }
 
-SampledSpectrum SampledSpectrum::FromRGB(const Float rgb[3],
-                                         SpectrumType type) {
+SampledSpectrum SampledSpectrum::FromRGB(const Float rgb[3], SpectrumType type)
+{
     SampledSpectrum r;
     if (type == SpectrumType::Reflectance) {
         // Convert reflectance spectrum to RGB
@@ -169,14 +173,16 @@ SampledSpectrum SampledSpectrum::FromRGB(const Float rgb[3],
     return r.Clamp();
 }
 
-SampledSpectrum::SampledSpectrum(const RGBSpectrum &r, SpectrumType t) {
+SampledSpectrum::SampledSpectrum(const RGBSpectrum &r, SpectrumType t)
+{
     Float rgb[3];
     r.ToRGB(rgb);
     *this = SampledSpectrum::FromRGB(rgb, t);
 }
 
 Float InterpolateSpectrumSamples(const Float *lambda, const Float *vals, int n,
-                                 Float l) {
+                                 Float l)
+{
     for (int i = 0; i < n - 1; ++i) CHECK_GT(lambda[i + 1], lambda[i]);
     if (l <= lambda[0]) return vals[0];
     if (l >= lambda[n - 1]) return vals[n - 1];
@@ -935,7 +941,8 @@ const Float CIE_lambda[nCIESamples] = {
     795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809,
     810, 811, 812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824,
     825, 826, 827, 828, 829, 830};
-void Blackbody(const Float *lambda, int n, Float T, Float *Le) {
+void Blackbody(const Float *lambda, int n, Float T, Float *Le)
+{
     if (T <= 0) {
         for (int i = 0; i < n; ++i) Le[i] = 0.f;
         return;
@@ -953,7 +960,8 @@ void Blackbody(const Float *lambda, int n, Float T, Float *Le) {
     }
 }
 
-void BlackbodyNormalized(const Float *lambda, int n, Float T, Float *Le) {
+void BlackbodyNormalized(const Float *lambda, int n, Float T, Float *Le)
+{
     Blackbody(lambda, n, T, Le);
     // Normalize _Le_ values based on maximum blackbody radiance
     Float lambdaMax = 2.8977721e-3 / T * 1e9;
@@ -1184,7 +1192,8 @@ const Float RGBIllum2SpectBlue[nRGB2SpectSamples] = {
 // destination wavelength with total width equal to the sample spacing.
 void ResampleLinearSpectrum(const Float *lambdaIn, const Float *vIn, int nIn,
                             Float lambdaMin, Float lambdaMax, int nOut,
-                            Float *vOut) {
+                            Float *vOut)
+{
     CHECK_GE(nOut, 2);
     for (int i = 0; i < nIn - 1; ++i) CHECK_GT(lambdaIn[i + 1], lambdaIn[i]);
     CHECK_LT(lambdaMin, lambdaMax);

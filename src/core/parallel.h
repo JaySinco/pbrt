@@ -46,19 +46,22 @@
 #include <functional>
 #include <atomic>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Parallel Declarations
-class AtomicFloat {
-  public:
+class AtomicFloat
+{
+public:
     // AtomicFloat Public Methods
     explicit AtomicFloat(Float v = 0) { bits = FloatToBits(v); }
     operator Float() const { return BitsToFloat(bits); }
-    Float operator=(Float v) {
+    Float operator=(Float v)
+    {
         bits = FloatToBits(v);
         return v;
     }
-    void Add(Float v) {
+    void Add(Float v)
+    {
 #ifdef PBRT_FLOAT_AS_DOUBLE
         uint64_t oldBits = bits, newBits;
 #else
@@ -69,7 +72,7 @@ class AtomicFloat {
         } while (!bits.compare_exchange_weak(oldBits, newBits));
     }
 
-  private:
+private:
 // AtomicFloat Private Data
 #ifdef PBRT_FLOAT_AS_DOUBLE
     std::atomic<uint64_t> bits;
@@ -86,13 +89,14 @@ class AtomicFloat {
 // all threads that use it are passed the shared_ptr. This ensures that
 // memory for the Barrier won't be freed until all threads have
 // successfully cleared it.
-class Barrier {
-  public:
-    Barrier(int count) : count(count) { CHECK_GT(count, 0); }
+class Barrier
+{
+public:
+    Barrier(int count): count(count) { CHECK_GT(count, 0); }
     ~Barrier() { CHECK_EQ(count, 0); }
     void Wait();
 
-  private:
+private:
     std::mutex mutex;
     std::condition_variable cv;
     int count;

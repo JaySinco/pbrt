@@ -43,20 +43,24 @@
 #include "texture.h"
 #include "paramset.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // DotsTexture Declarations
 template <typename T>
-class DotsTexture : public Texture<T> {
-  public:
+class DotsTexture: public Texture<T>
+{
+public:
     // DotsTexture Public Methods
     DotsTexture(std::unique_ptr<TextureMapping2D> mapping,
                 const std::shared_ptr<Texture<T>> &outsideDot,
                 const std::shared_ptr<Texture<T>> &insideDot)
         : mapping(std::move(mapping)),
           outsideDot(outsideDot),
-          insideDot(insideDot) {}
-    T Evaluate(const SurfaceInteraction &si) const {
+          insideDot(insideDot)
+    {
+    }
+    T Evaluate(const SurfaceInteraction &si) const
+    {
         // Compute cell indices for dots
         Vector2f dstdx, dstdy;
         Point2f st = mapping->Map(si, &dstdx, &dstdy);
@@ -77,7 +81,7 @@ class DotsTexture : public Texture<T> {
         return outsideDot->Evaluate(si);
     }
 
-  private:
+private:
     // DotsTexture Private Data
     std::unique_ptr<TextureMapping2D> mapping;
     std::shared_ptr<Texture<T>> outsideDot, insideDot;

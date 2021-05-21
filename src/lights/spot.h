@@ -43,11 +43,12 @@
 #include "light.h"
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // SpotLight Declarations
-class SpotLight : public Light {
-  public:
+class SpotLight: public Light
+{
+public:
     // SpotLight Public Methods
     SpotLight(const Transform &LightToWorld, const MediumInterface &m,
               const Spectrum &I, Float totalWidth, Float falloffStart);
@@ -62,7 +63,7 @@ class SpotLight : public Light {
     void Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
                 Float *pdfDir) const;
 
-  private:
+private:
     // SpotLight Private Data
     const Point3f pLight;
     const Spectrum I;

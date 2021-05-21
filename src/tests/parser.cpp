@@ -12,7 +12,8 @@ using namespace pbrt;
 
 static std::string inTestDir(const std::string &path) { return path; }
 
-static std::vector<std::string> extract(Tokenizer *t) {
+static std::vector<std::string> extract(Tokenizer *t)
+{
     std::vector<std::string> tokens;
     while (true) {
         string_view s = t->Next();
@@ -22,10 +23,11 @@ static std::vector<std::string> extract(Tokenizer *t) {
 }
 
 static void checkTokens(Tokenizer *t,
-                        std::initializer_list<std::string> expected) {
+                        std::initializer_list<std::string> expected)
+{
     std::vector<std::string> tokens = extract(t);
     auto iter = expected.begin();
-    for (const std::string &s : tokens) {
+    for (const std::string &s: tokens) {
         EXPECT_TRUE(iter != expected.end());
         EXPECT_EQ(*iter, s);
         ++iter;
@@ -33,7 +35,8 @@ static void checkTokens(Tokenizer *t,
     EXPECT_TRUE(iter == expected.end());
 }
 
-TEST(Parser, TokenizerBasics) {
+TEST(Parser, TokenizerBasics)
+{
     std::vector<std::string> errors;
     auto err = [&](const char *err) { errors.push_back(err); };
 
@@ -64,7 +67,8 @@ Shape"sphere" # foo bar [
     }
 }
 
-TEST(Parser, TokenizerErrors) {
+TEST(Parser, TokenizerErrors)
+{
     {
         bool gotError = false;
         auto err = [&](const char *err) {
@@ -114,7 +118,8 @@ TEST(Parser, TokenizerErrors) {
     }
 }
 
-TEST(Parser, TokenizeFile) {
+TEST(Parser, TokenizeFile)
+{
     std::string filename = inTestDir("test.tok");
     std::ofstream out(filename);
     out << R"(

@@ -44,11 +44,12 @@
 #include "spectrum.h"
 #include <memory>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Media Declarations
-class PhaseFunction {
-  public:
+class PhaseFunction
+{
+public:
     // PhaseFunction Interface
     virtual ~PhaseFunction();
     virtual Float p(const Vector3f &wo, const Vector3f &wi) const = 0;
@@ -57,7 +58,8 @@ class PhaseFunction {
     virtual std::string ToString() const = 0;
 };
 
-inline std::ostream &operator<<(std::ostream &os, const PhaseFunction &p) {
+inline std::ostream &operator<<(std::ostream &os, const PhaseFunction &p)
+{
     os << p.ToString();
     return os;
 }
@@ -66,14 +68,16 @@ bool GetMediumScatteringProperties(const std::string &name, Spectrum *sigma_a,
                                    Spectrum *sigma_s);
 
 // Media Inline Functions
-inline Float PhaseHG(Float cosTheta, Float g) {
+inline Float PhaseHG(Float cosTheta, Float g)
+{
     Float denom = 1 + g * g + 2 * g * cosTheta;
     return Inv4Pi * (1 - g * g) / (denom * std::sqrt(denom));
 }
 
 // Medium Declarations
-class Medium {
-  public:
+class Medium
+{
+public:
     // Medium Interface
     virtual ~Medium() {}
     virtual Spectrum Tr(const Ray &ray, Sampler &sampler) const = 0;
@@ -83,28 +87,33 @@ class Medium {
 };
 
 // HenyeyGreenstein Declarations
-class HenyeyGreenstein : public PhaseFunction {
-  public:
+class HenyeyGreenstein: public PhaseFunction
+{
+public:
     // HenyeyGreenstein Public Methods
-    HenyeyGreenstein(Float g) : g(g) {}
+    HenyeyGreenstein(Float g): g(g) {}
     Float p(const Vector3f &wo, const Vector3f &wi) const;
     Float Sample_p(const Vector3f &wo, Vector3f *wi,
                    const Point2f &sample) const;
-    std::string ToString() const {
+    std::string ToString() const
+    {
         return StringPrintf("[ HenyeyGreenstein g: %f ]", g);
     }
 
-  private:
+private:
     const Float g;
 };
 
 // MediumInterface Declarations
-struct MediumInterface {
-    MediumInterface() : inside(nullptr), outside(nullptr) {}
+struct MediumInterface
+{
+    MediumInterface(): inside(nullptr), outside(nullptr) {}
     // MediumInterface Public Methods
-    MediumInterface(const Medium *medium) : inside(medium), outside(medium) {}
+    MediumInterface(const Medium *medium): inside(medium), outside(medium) {}
     MediumInterface(const Medium *inside, const Medium *outside)
-        : inside(inside), outside(outside) {}
+        : inside(inside), outside(outside)
+    {
+    }
     bool IsMediumTransition() const { return inside != outside; }
     const Medium *inside, *outside;
 };

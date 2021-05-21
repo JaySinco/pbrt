@@ -39,14 +39,15 @@
 #include "film.h"
 #include "scene.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // AOIntegrator Method Definitions
 AOIntegrator::AOIntegrator(bool cosSample, int ns,
                            std::shared_ptr<const Camera> camera,
                            std::shared_ptr<Sampler> sampler,
                            const Bounds2i &pixelBounds)
-    : SamplerIntegrator(camera, sampler, pixelBounds), cosSample(cosSample) {
+    : SamplerIntegrator(camera, sampler, pixelBounds), cosSample(cosSample)
+{
     nSamples = sampler->RoundCount(ns);
     if (ns != nSamples)
         Warning("Taking %d samples, not %d as specified", nSamples, ns);
@@ -54,8 +55,8 @@ AOIntegrator::AOIntegrator(bool cosSample, int ns,
 }
 
 Spectrum AOIntegrator::Li(const RayDifferential &r, const Scene &scene,
-                          Sampler &sampler, MemoryArena &arena,
-                          int depth) const {
+                          Sampler &sampler, MemoryArena &arena, int depth) const
+{
     ProfilePhase p(Prof::SamplerIntegratorLi);
     Spectrum L(0.f);
     RayDifferential ray(r);
@@ -103,7 +104,8 @@ retry:
 
 AOIntegrator *CreateAOIntegrator(const ParamSet &params,
                                  std::shared_ptr<Sampler> sampler,
-                                 std::shared_ptr<const Camera> camera) {
+                                 std::shared_ptr<const Camera> camera)
+{
     int np;
     const int *pb = params.FindInt("pixelbounds", &np);
     Bounds2i pixelBounds = camera->film->GetSampleBounds();

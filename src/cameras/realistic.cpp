@@ -42,8 +42,8 @@
 #include "lowdiscrepancy.h"
 #include <array>
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_PERCENT("Camera/Rays vignetted by lens system", vignettedRays, totalRays);
 
 // RealisticCamera Method Definitions
@@ -54,7 +54,8 @@ RealisticCamera::RealisticCamera(const AnimatedTransform &CameraToWorld,
                                  std::vector<Float> &lensData, Film *film,
                                  const Medium *medium)
     : Camera(CameraToWorld, shutterOpen, shutterClose, film, medium),
-      simpleWeighting(simpleWeighting) {
+      simpleWeighting(simpleWeighting)
+{
     for (int i = 0; i < (int)lensData.size(); i += 4) {
         if (lensData[i] == 0) {
             if (apertureDiameter > lensData[i + 3]) {
@@ -100,7 +101,8 @@ RealisticCamera::RealisticCamera(const AnimatedTransform &CameraToWorld,
             "https://github.com/mmp/pbrt-v3/issues/162#issuecomment-348625837");
 }
 
-bool RealisticCamera::TraceLensesFromFilm(const Ray &rCamera, Ray *rOut) const {
+bool RealisticCamera::TraceLensesFromFilm(const Ray &rCamera, Ray *rOut) const
+{
     Float elementZ = 0;
     // Transform _rCamera_ from camera to lens system space
     static const Transform CameraToLens = Scale(1, 1, -1);
@@ -155,7 +157,8 @@ bool RealisticCamera::TraceLensesFromFilm(const Ray &rCamera, Ray *rOut) const {
 
 bool RealisticCamera::IntersectSphericalElement(Float radius, Float zCenter,
                                                 const Ray &ray, Float *t,
-                                                Normal3f *n) {
+                                                Normal3f *n)
+{
     // Compute _t0_ and _t1_ for ray--element intersection
     Point3f o = ray.o - Vector3f(0, 0, zCenter);
     Float A = ray.d.x * ray.d.x + ray.d.y * ray.d.y + ray.d.z * ray.d.z;
@@ -175,8 +178,8 @@ bool RealisticCamera::IntersectSphericalElement(Float radius, Float zCenter,
     return true;
 }
 
-bool RealisticCamera::TraceLensesFromScene(const Ray &rCamera,
-                                           Ray *rOut) const {
+bool RealisticCamera::TraceLensesFromScene(const Ray &rCamera, Ray *rOut) const
+{
     Float elementZ = -LensFrontZ();
     // Transform _rCamera_ from camera to lens system space
     static const Transform CameraToLens = Scale(1, 1, -1);
@@ -225,7 +228,8 @@ bool RealisticCamera::TraceLensesFromScene(const Ray &rCamera,
     return true;
 }
 
-void RealisticCamera::DrawLensSystem() const {
+void RealisticCamera::DrawLensSystem() const
+{
     Float sumz = -LensFrontZ();
     Float z = sumz;
     for (size_t i = 0; i < elementInterfaces.size(); ++i) {
@@ -304,7 +308,8 @@ void RealisticCamera::DrawLensSystem() const {
 }
 
 void RealisticCamera::DrawRayPathFromFilm(const Ray &r, bool arrow,
-                                          bool toOpticalIntercept) const {
+                                          bool toOpticalIntercept) const
+{
     Float elementZ = 0;
     // Transform _ray_ from camera to lens system space
     static const Transform CameraToLens = Scale(1, 1, -1);
@@ -370,7 +375,8 @@ done:
 }
 
 void RealisticCamera::DrawRayPathFromScene(const Ray &r, bool arrow,
-                                           bool toOpticalIntercept) const {
+                                           bool toOpticalIntercept) const
+{
     Float elementZ = LensFrontZ() * -1;
 
     // Transform _ray_ from camera to lens system space
@@ -430,7 +436,8 @@ void RealisticCamera::DrawRayPathFromScene(const Ray &r, bool arrow,
 }
 
 void RealisticCamera::ComputeCardinalPoints(const Ray &rIn, const Ray &rOut,
-                                            Float *pz, Float *fz) {
+                                            Float *pz, Float *fz)
+{
     Float tf = -rOut.o.x / rOut.d.x;
     *fz = -rOut(tf).z;
     Float tp = (rIn.o.x - rOut.o.x) / rOut.d.x;
@@ -438,7 +445,8 @@ void RealisticCamera::ComputeCardinalPoints(const Ray &rIn, const Ray &rOut,
 }
 
 void RealisticCamera::ComputeThickLensApproximation(Float pz[2],
-                                                    Float fz[2]) const {
+                                                    Float fz[2]) const
+{
     // Find height $x$ from optical axis for parallel rays
     Float x = .001 * film->diagonal;
 
@@ -458,7 +466,8 @@ void RealisticCamera::ComputeThickLensApproximation(Float pz[2],
     ComputeCardinalPoints(rFilm, rScene, &pz[1], &fz[1]);
 }
 
-Float RealisticCamera::FocusThickLens(Float focusDistance) {
+Float RealisticCamera::FocusThickLens(Float focusDistance)
+{
     Float pz[2], fz[2];
     ComputeThickLensApproximation(pz, fz);
     LOG(INFO) << StringPrintf(
@@ -476,7 +485,8 @@ Float RealisticCamera::FocusThickLens(Float focusDistance) {
     return elementInterfaces.back().thickness + delta;
 }
 
-Float RealisticCamera::FocusBinarySearch(Float focusDistance) {
+Float RealisticCamera::FocusBinarySearch(Float focusDistance)
+{
     Float filmDistanceLower, filmDistanceUpper;
     // Find _filmDistanceLower_, _filmDistanceUpper_ that bound focus distance
     filmDistanceLower = filmDistanceUpper = FocusThickLens(focusDistance);
@@ -497,7 +507,8 @@ Float RealisticCamera::FocusBinarySearch(Float focusDistance) {
     return 0.5f * (filmDistanceLower + filmDistanceUpper);
 }
 
-Float RealisticCamera::FocusDistance(Float filmDistance) {
+Float RealisticCamera::FocusDistance(Float filmDistance)
+{
     // Find offset ray from film center through lens
     Bounds2f bounds = BoundExitPupil(0, .001 * film->diagonal);
 
@@ -510,7 +521,7 @@ Float RealisticCamera::FocusDistance(Float filmDistance) {
     // more quickly when `aperturediameter` is too small.
     // (e.g. 2 [mm] for `aperturediameter` with wide.22mm.dat),
     bool foundFocusRay = false;
-    for (Float scale : scaleFactors) {
+    for (Float scale: scaleFactors) {
         lu = scale * bounds.pMax[0];
         if (TraceLensesFromFilm(Ray(Point3f(0, 0, LensRearZ() - filmDistance),
                                     Vector3f(lu, 0, filmDistance)),
@@ -535,7 +546,8 @@ Float RealisticCamera::FocusDistance(Float filmDistance) {
     return zFocus;
 }
 
-Bounds2f RealisticCamera::BoundExitPupil(Float pFilmX0, Float pFilmX1) const {
+Bounds2f RealisticCamera::BoundExitPupil(Float pFilmX0, Float pFilmX1) const
+{
     Bounds2f pupilBounds;
     // Sample a collection of points on the rear lens to find exit pupil
     const int nSamples = 1024 * 1024;
@@ -576,7 +588,8 @@ Bounds2f RealisticCamera::BoundExitPupil(Float pFilmX0, Float pFilmX1) const {
 }
 
 void RealisticCamera::RenderExitPupil(Float sx, Float sy,
-                                      const char *filename) const {
+                                      const char *filename) const
+{
     Point3f pFilm(sx, sy, 0);
 
     const int nSamples = 2048;
@@ -617,7 +630,8 @@ void RealisticCamera::RenderExitPupil(Float sx, Float sy,
 
 Point3f RealisticCamera::SampleExitPupil(const Point2f &pFilm,
                                          const Point2f &lensSample,
-                                         Float *sampleBoundsArea) const {
+                                         Float *sampleBoundsArea) const
+{
     // Find exit pupil bound for sample distance from film center
     Float rFilm = std::sqrt(pFilm.x * pFilm.x + pFilm.y * pFilm.y);
     int rIndex = rFilm / (film->diagonal / 2) * exitPupilBounds.size();
@@ -635,7 +649,8 @@ Point3f RealisticCamera::SampleExitPupil(const Point2f &pFilm,
                    sinTheta * pLens.x + cosTheta * pLens.y, LensRearZ());
 }
 
-void RealisticCamera::TestExitPupilBounds() const {
+void RealisticCamera::TestExitPupilBounds() const
+{
     Float filmDiagonal = film->diagonal;
 
     static RNG rng;
@@ -681,7 +696,8 @@ void RealisticCamera::TestExitPupilBounds() const {
     fprintf(stderr, ".");
 }
 
-Float RealisticCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
+Float RealisticCamera::GenerateRay(const CameraSample &sample, Ray *ray) const
+{
     ProfilePhase prof(Prof::GenerateCameraRay);
     ++totalRays;
     // Find point on film, _pFilm_, corresponding to _sample.pFilm_
@@ -718,7 +734,8 @@ Float RealisticCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
 
 RealisticCamera *CreateRealisticCamera(const ParamSet &params,
                                        const AnimatedTransform &cam2world,
-                                       Film *film, const Medium *medium) {
+                                       Film *film, const Medium *medium)
+{
     Float shutteropen = params.FindOneFloat("shutteropen", 0.f);
     Float shutterclose = params.FindOneFloat("shutterclose", 1.f);
     if (shutterclose < shutteropen) {

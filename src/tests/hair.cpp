@@ -58,7 +58,8 @@ TEST(Hair, Reciprocity) {
 }
 
 #endif
-TEST(Hair, Pow) {
+TEST(Hair, Pow)
+{
     EXPECT_EQ(Pow<0>(2.f), 1 << 0);
     EXPECT_EQ(Pow<1>(2.f), 1 << 1);
     EXPECT_EQ(Pow<2>(2.f), 1 << 2);
@@ -92,7 +93,8 @@ TEST(Hair, Pow) {
     EXPECT_EQ(Pow<29>(2.f), 1 << 29);
 }
 
-TEST(Hair, WhiteFurnace) {
+TEST(Hair, WhiteFurnace)
+{
     RNG rng;
     Vector3f wo = UniformSampleSphere({rng.UniformFloat(), rng.UniformFloat()});
     for (Float beta_m = .1; beta_m < 1; beta_m += .2) {
@@ -114,7 +116,8 @@ TEST(Hair, WhiteFurnace) {
     }
 }
 
-TEST(Hair, WhiteFurnaceSampled) {
+TEST(Hair, WhiteFurnaceSampled)
+{
     RNG rng;
     Vector3f wo = UniformSampleSphere({rng.UniformFloat(), rng.UniformFloat()});
     for (Float beta_m = .1; beta_m < 1; beta_m += .2) {
@@ -138,7 +141,8 @@ TEST(Hair, WhiteFurnaceSampled) {
     }
 }
 
-TEST(Hair, SamplingWeights) {
+TEST(Hair, SamplingWeights)
+{
     RNG rng;
     for (Float beta_m = .1; beta_m < 1; beta_m += .2)
         for (Float beta_n = .4; beta_n < 1; beta_n += .2) {
@@ -164,7 +168,8 @@ TEST(Hair, SamplingWeights) {
         }
 }
 
-TEST(Hair, SamplingConsistency) {
+TEST(Hair, SamplingConsistency)
+{
     RNG rng;
     for (Float beta_m = .2; beta_m < 1; beta_m += .2)
         for (Float beta_n = .4; beta_n < 1; beta_n += .2) {

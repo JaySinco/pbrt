@@ -33,11 +33,12 @@
 // textures/checkerboard.cpp*
 #include "textures/checkerboard.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // CheckerboardTexture Method Definitions
 Texture<Float> *CreateCheckerboardFloatTexture(const Transform &tex2world,
-                                               const TextureParams &tp) {
+                                               const TextureParams &tp)
+{
     int dim = tp.FindInt("dimension", 2);
     if (dim != 2 && dim != 3) {
         Error("%d dimensional checkerboard texture not supported", dim);
@@ -93,7 +94,8 @@ Texture<Float> *CreateCheckerboardFloatTexture(const Transform &tex2world,
 }
 
 Texture<Spectrum> *CreateCheckerboardSpectrumTexture(const Transform &tex2world,
-                                                     const TextureParams &tp) {
+                                                     const TextureParams &tp)
+{
     int dim = tp.FindInt("dimension", 2);
     if (dim != 2 && dim != 3) {
         Error("%d dimensional checkerboard texture not supported", dim);

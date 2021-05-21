@@ -45,11 +45,12 @@
 #include "memory.h"
 #include "transform.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Shape Declarations
-class Shape {
-  public:
+class Shape
+{
+public:
     // Shape Interface
     Shape(const Transform *ObjectToWorld, const Transform *WorldToObject,
           bool reverseOrientation);
@@ -59,8 +60,8 @@ class Shape {
     virtual bool Intersect(const Ray &ray, Float *tHit,
                            SurfaceInteraction *isect,
                            bool testAlphaTexture = true) const = 0;
-    virtual bool IntersectP(const Ray &ray,
-                            bool testAlphaTexture = true) const {
+    virtual bool IntersectP(const Ray &ray, bool testAlphaTexture = true) const
+    {
         return Intersect(ray, nullptr, nullptr, testAlphaTexture);
     }
     virtual Float Area() const = 0;

@@ -46,11 +46,12 @@
 #include "mipmap.h"
 #include "imageio.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // GonioPhotometricLight Declarations
-class GonioPhotometricLight : public Light {
-  public:
+class GonioPhotometricLight: public Light
+{
+public:
     // GonioPhotometricLight Public Methods
     Spectrum Sample_Li(const Interaction &ref, const Point2f &u, Vector3f *wi,
                        Float *pdf, VisibilityTester *vis) const;
@@ -59,14 +60,16 @@ class GonioPhotometricLight : public Light {
                           const Spectrum &I, const std::string &texname)
         : Light((int)LightFlags::DeltaPosition, LightToWorld, mediumInterface),
           pLight(LightToWorld(Point3f(0, 0, 0))),
-          I(I) {
+          I(I)
+    {
         // Create _mipmap_ for _GonioPhotometricLight_
         Point2i resolution;
         std::unique_ptr<RGBSpectrum[]> texels = ReadImage(texname, &resolution);
         if (texels)
             mipmap.reset(new MIPMap<RGBSpectrum>(resolution, texels.get()));
     }
-    Spectrum Scale(const Vector3f &w) const {
+    Spectrum Scale(const Vector3f &w) const
+    {
         Vector3f wp = Normalize(WorldToLight(w));
         std::swap(wp.y, wp.z);
         Float theta = SphericalTheta(wp);
@@ -83,7 +86,7 @@ class GonioPhotometricLight : public Light {
     void Pdf_Le(const Ray &, const Normal3f &, Float *pdfPos,
                 Float *pdfDir) const;
 
-  private:
+private:
     // GonioPhotometricLight Private Data
     const Point3f pLight;
     const Spectrum I;

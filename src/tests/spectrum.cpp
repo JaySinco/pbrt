@@ -6,7 +6,8 @@
 
 using namespace pbrt;
 
-TEST(Spectrum, Blackbody) {
+TEST(Spectrum, Blackbody)
+{
     // Relative error.
     auto err = [](Float val, Float ref) { return std::abs(val - ref) / ref; };
 
@@ -30,7 +31,7 @@ TEST(Spectrum, Blackbody) {
     // Use Wien's displacement law to compute maximum wavelength for a few
     // temperatures, then confirm that the value returned by Blackbody() is
     // consistent with this.
-    for (Float T : {2700, 3000, 4500, 5600, 6000}) {
+    for (Float T: {2700, 3000, 4500, 5600, 6000}) {
         Float lambdaMax = 2.8977721e-3 / T * 1e9;
         Float lambda[3] = {Float(.999 * lambdaMax), lambdaMax,
                            Float(1.001 * lambdaMax)};
@@ -41,7 +42,8 @@ TEST(Spectrum, Blackbody) {
     }
 }
 
-TEST(Spectrum, LinearUpsampleSimple) {
+TEST(Spectrum, LinearUpsampleSimple)
+{
     // Linear SPD where val(lambda) = 1 + 2 * lambda.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -57,7 +59,8 @@ TEST(Spectrum, LinearUpsampleSimple) {
     for (int i = 0; i < 5; ++i) EXPECT_EQ(val[i], newVal[i]);
 }
 
-TEST(Spectrum, LinearUpsampleSubset) {
+TEST(Spectrum, LinearUpsampleSubset)
+{
     // Linear SPD where val(lambda) = 1 + 2 * lambda.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -78,7 +81,8 @@ TEST(Spectrum, LinearUpsampleSubset) {
 // Should chase this down to figure out if it's an edge-case in our
 // implementation that happens to work out for other compilers but is
 // actually a bug/ambiguous, or if it's a MSVC issue.
-TEST(Spectrum, LinearUpsample2x) {
+TEST(Spectrum, LinearUpsample2x)
+{
     // Linear SPD where val(lambda) = 1 + 2 * lambda.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -95,7 +99,8 @@ TEST(Spectrum, LinearUpsample2x) {
 }
 #endif
 
-TEST(Spectrum, LinearUpsampleHigher) {
+TEST(Spectrum, LinearUpsampleHigher)
+{
     // Linear SPD where val(lambda) = 1 + 2 * lambda.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -114,7 +119,8 @@ TEST(Spectrum, LinearUpsampleHigher) {
     }
 }
 
-TEST(Spectrum, LinearUpsampling) {
+TEST(Spectrum, LinearUpsampling)
+{
     // Linear SPD where val(lambda) = 1 + 2 * lambda.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -135,7 +141,8 @@ TEST(Spectrum, LinearUpsampling) {
     }
 }
 
-TEST(Spectrum, LinearIrregularResample) {
+TEST(Spectrum, LinearIrregularResample)
+{
     // Irregularly-sampled SPD, where f(lambda) = lambda^2.
     Float lambdaIrreg[] = {-1.5, -.5, .01, .6, 1,   2,     2.1, 3.4, 4.6,
                            5.7,  7,   8.2, 9,  9.8, 11.11, 12,  13,  14.7};
@@ -161,7 +168,8 @@ TEST(Spectrum, LinearIrregularResample) {
     }
 }
 
-TEST(Spectrum, LinearDownsampleBasic) {
+TEST(Spectrum, LinearDownsampleBasic)
+{
     // Another linear SPD.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -182,7 +190,8 @@ TEST(Spectrum, LinearDownsampleBasic) {
     EXPECT_FLOAT_EQ(8.5, newVal[2]);
 }
 
-TEST(Spectrum, LinearDownsampleOffset) {
+TEST(Spectrum, LinearDownsampleOffset)
+{
     // Another linear SPD.
     Float lambda[5] = {0, 1, 2, 3, 4};
     Float val[5] = {1, 3, 5, 7, 9};
@@ -202,7 +211,8 @@ TEST(Spectrum, LinearDownsampleOffset) {
     EXPECT_FLOAT_EQ(8, newVal[3]);
 }
 
-TEST(Spectrum, LinearDownsampleIrreg) {
+TEST(Spectrum, LinearDownsampleIrreg)
+{
     // Generate a very irregular set of lambda values starting at -25, where
     // the SPD is f(lambda) = lambda^2.
     RNG rng;

@@ -42,14 +42,15 @@
 #include "texture.h"
 #include "textures/constant.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Hair Local Declarations
 inline Float I0(Float x), LogI0(Float x);
 
 // Hair Local Functions
 static Float Mp(Float cosThetaI, Float cosThetaO, Float sinThetaI,
-                Float sinThetaO, Float v) {
+                Float sinThetaO, Float v)
+{
     Float a = cosThetaI * cosThetaO / v;
     Float b = sinThetaI * sinThetaO / v;
     Float mp =
@@ -60,7 +61,8 @@ static Float Mp(Float cosThetaI, Float cosThetaO, Float sinThetaI,
     return mp;
 }
 
-inline Float I0(Float x) {
+inline Float I0(Float x)
+{
     Float val = 0;
     Float x2i = 1;
     int64_t ifact = 1;
@@ -75,7 +77,8 @@ inline Float I0(Float x) {
     return val;
 }
 
-inline Float LogI0(Float x) {
+inline Float LogI0(Float x)
+{
     if (x > 12)
         return x + 0.5 * (-std::log(2 * Pi) + std::log(1 / x) + 1 / (8 * x));
     else
@@ -83,7 +86,8 @@ inline Float LogI0(Float x) {
 }
 
 static std::array<Spectrum, pMax + 1> Ap(Float cosThetaO, Float eta, Float h,
-                                         const Spectrum &T) {
+                                         const Spectrum &T)
+{
     std::array<Spectrum, pMax + 1> ap;
     // Compute $p=0$ attenuation at initial cylinder intersection
     Float cosGammaO = SafeSqrt(1 - h * h);
@@ -102,25 +106,30 @@ static std::array<Spectrum, pMax + 1> Ap(Float cosThetaO, Float eta, Float h,
     return ap;
 }
 
-inline Float Phi(int p, Float gammaO, Float gammaT) {
+inline Float Phi(int p, Float gammaO, Float gammaT)
+{
     return 2 * p * gammaT - 2 * gammaO + p * Pi;
 }
 
-inline Float Logistic(Float x, Float s) {
+inline Float Logistic(Float x, Float s)
+{
     x = std::abs(x);
     return std::exp(-x / s) / (s * Sqr(1 + std::exp(-x / s)));
 }
 
-inline Float LogisticCDF(Float x, Float s) {
+inline Float LogisticCDF(Float x, Float s)
+{
     return 1 / (1 + std::exp(-x / s));
 }
 
-inline Float TrimmedLogistic(Float x, Float s, Float a, Float b) {
+inline Float TrimmedLogistic(Float x, Float s, Float a, Float b)
+{
     CHECK_LT(a, b);
     return Logistic(x, s) / (LogisticCDF(b, s) - LogisticCDF(a, s));
 }
 
-inline Float Np(Float phi, int p, Float s, Float gammaO, Float gammaT) {
+inline Float Np(Float phi, int p, Float s, Float gammaO, Float gammaT)
+{
     Float dphi = phi - Phi(p, gammaO, gammaT);
     // Remap _dphi_ to $[-\pi,\pi]$
     while (dphi > Pi) dphi -= 2 * Pi;
@@ -128,7 +137,8 @@ inline Float Np(Float phi, int p, Float s, Float gammaO, Float gammaT) {
     return TrimmedLogistic(dphi, s, -Pi, Pi);
 }
 
-static Float SampleTrimmedLogistic(Float u, Float s, Float a, Float b) {
+static Float SampleTrimmedLogistic(Float u, Float s, Float a, Float b)
+{
     CHECK_LT(a, b);
     Float k = LogisticCDF(b, s) - LogisticCDF(a, s);
     Float x = -s * std::log(1 / (u * k + LogisticCDF(a, s)) - 1);
@@ -140,7 +150,8 @@ static Float SampleTrimmedLogistic(Float u, Float s, Float a, Float b) {
 void HairMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
                                               MemoryArena &arena,
                                               TransportMode mode,
-                                              bool allowMultipleLobes) const {
+                                              bool allowMultipleLobes) const
+{
     Float bm = beta_m->Evaluate(*si);
     Float bn = beta_n->Evaluate(*si);
     Float a = alpha->Evaluate(*si);
@@ -166,7 +177,8 @@ void HairMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     si->bsdf->Add(ARENA_ALLOC(arena, HairBSDF)(h, e, sig_a, bm, bn, a));
 }
 
-HairMaterial *CreateHairMaterial(const TextureParams &mp) {
+HairMaterial *CreateHairMaterial(const TextureParams &mp)
+{
     std::shared_ptr<Texture<Spectrum>> sigma_a =
         mp.GetSpectrumTextureOrNull("sigma_a");
     std::shared_ptr<Texture<Spectrum>> color =
@@ -232,7 +244,8 @@ HairBSDF::HairBSDF(Float h, Float eta, const Spectrum &sigma_a, Float beta_m,
       eta(eta),
       sigma_a(sigma_a),
       beta_m(beta_m),
-      beta_n(beta_n) {
+      beta_n(beta_n)
+{
     CHECK(h >= -1 && h <= 1);
     CHECK(beta_m >= 0 && beta_m <= 1);
     CHECK(beta_n >= 0 && beta_n <= 1);
@@ -261,7 +274,8 @@ HairBSDF::HairBSDF(Float h, Float eta, const Spectrum &sigma_a, Float beta_m,
     }
 }
 
-Spectrum HairBSDF::f(const Vector3f &wo, const Vector3f &wi) const {
+Spectrum HairBSDF::f(const Vector3f &wo, const Vector3f &wi) const
+{
     // Compute hair coordinate system terms related to _wo_
     Float sinThetaO = wo.x;
     Float cosThetaO = SafeSqrt(1 - Sqr(sinThetaO));
@@ -323,7 +337,8 @@ Spectrum HairBSDF::f(const Vector3f &wo, const Vector3f &wi) const {
     return fsum;
 }
 
-std::array<Float, pMax + 1> HairBSDF::ComputeApPdf(Float cosThetaO) const {
+std::array<Float, pMax + 1> HairBSDF::ComputeApPdf(Float cosThetaO) const
+{
     // Compute array of $A_p$ values for _cosThetaO_
     Float sinThetaO = SafeSqrt(1 - cosThetaO * cosThetaO);
 
@@ -350,7 +365,8 @@ std::array<Float, pMax + 1> HairBSDF::ComputeApPdf(Float cosThetaO) const {
 }
 
 Spectrum HairBSDF::Sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u2,
-                            Float *pdf, BxDFType *sampledType) const {
+                            Float *pdf, BxDFType *sampledType) const
+{
     // Compute hair coordinate system terms related to _wo_
     Float sinThetaO = wo.x;
     Float cosThetaO = SafeSqrt(1 - Sqr(sinThetaO));
@@ -443,7 +459,8 @@ Spectrum HairBSDF::Sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u2,
     return f(wo, *wi);
 }
 
-Float HairBSDF::Pdf(const Vector3f &wo, const Vector3f &wi) const {
+Float HairBSDF::Pdf(const Vector3f &wo, const Vector3f &wi) const
+{
     // Compute hair coordinate system terms related to _wo_
     Float sinThetaO = wo.x;
     Float cosThetaO = SafeSqrt(1 - Sqr(sinThetaO));
@@ -495,7 +512,8 @@ Float HairBSDF::Pdf(const Vector3f &wo, const Vector3f &wi) const {
     return pdf;
 }
 
-std::string HairBSDF::ToString() const {
+std::string HairBSDF::ToString() const
+{
     return StringPrintf(
                "[ Hair h: %f gammaO: %f eta: %f beta_m: %f beta_n: %f "
                "v[0]: %f s: %f sigma_a: ",
@@ -503,7 +521,8 @@ std::string HairBSDF::ToString() const {
            sigma_a.ToString() + std::string("  ]");
 }
 
-Spectrum HairBSDF::SigmaAFromConcentration(Float ce, Float cp) {
+Spectrum HairBSDF::SigmaAFromConcentration(Float ce, Float cp)
+{
     Float sigma_a[3];
     Float eumelaninSigmaA[3] = {0.419f, 0.697f, 1.37f};
     Float pheomelaninSigmaA[3] = {0.187f, 0.4f, 1.05f};
@@ -512,7 +531,8 @@ Spectrum HairBSDF::SigmaAFromConcentration(Float ce, Float cp) {
     return Spectrum::FromRGB(sigma_a);
 }
 
-Spectrum HairBSDF::SigmaAFromReflectance(const Spectrum &c, Float beta_n) {
+Spectrum HairBSDF::SigmaAFromReflectance(const Spectrum &c, Float beta_n)
+{
     Spectrum sigma_a;
     for (int i = 0; i < Spectrum::nSamples; ++i)
         sigma_a[i] = Sqr(std::log(c[i]) /

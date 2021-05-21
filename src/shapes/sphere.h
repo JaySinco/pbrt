@@ -41,11 +41,12 @@
 // shapes/sphere.h*
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Sphere Declarations
-class Sphere : public Shape {
-  public:
+class Sphere: public Shape
+{
+public:
     // Sphere Public Methods
     Sphere(const Transform *ObjectToWorld, const Transform *WorldToObject,
            bool reverseOrientation, Float radius, Float zMin, Float zMax,
@@ -56,7 +57,9 @@ class Sphere : public Shape {
           zMax(Clamp(std::max(zMin, zMax), -radius, radius)),
           thetaMin(std::acos(Clamp(std::min(zMin, zMax) / radius, -1, 1))),
           thetaMax(std::acos(Clamp(std::max(zMin, zMax) / radius, -1, 1))),
-          phiMax(Radians(Clamp(phiMax, 0, 360))) {}
+          phiMax(Radians(Clamp(phiMax, 0, 360)))
+    {
+    }
     Bounds3f ObjectBound() const;
     bool Intersect(const Ray &ray, Float *tHit, SurfaceInteraction *isect,
                    bool testAlphaTexture) const;
@@ -68,7 +71,7 @@ class Sphere : public Shape {
     Float Pdf(const Interaction &ref, const Vector3f &wi) const;
     Float SolidAngle(const Point3f &p, int nSamples) const;
 
-  private:
+private:
     // Sphere Private Data
     const Float radius;
     const Float zMin, zMax;

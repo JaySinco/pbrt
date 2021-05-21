@@ -34,24 +34,28 @@ using namespace pbrt;
 
 static std::string inTestDir(const std::string &path) { return path; }
 
-struct TestScene {
+struct TestScene
+{
     std::shared_ptr<Scene> scene;
     std::string description;
     float expected;
 };
 
-struct TestIntegrator {
+struct TestIntegrator
+{
     Integrator *integrator;
     Film *film;
     std::string description;
     TestScene scene;
 };
 
-void PrintTo(const TestIntegrator &tr, ::std::ostream *os) {
+void PrintTo(const TestIntegrator &tr, ::std::ostream *os)
+{
     *os << tr.description;
 }
 
-void CheckSceneAverage(const std::string &filename, float expected) {
+void CheckSceneAverage(const std::string &filename, float expected)
+{
     Point2i resolution;
     std::unique_ptr<RGBSpectrum[]> image = ReadImage(filename, &resolution);
     ASSERT_TRUE(image.get() != nullptr);
@@ -65,7 +69,8 @@ void CheckSceneAverage(const std::string &filename, float expected) {
     EXPECT_NEAR(expected, sum / nPixels, delta);
 }
 
-std::vector<TestScene> GetScenes() {
+std::vector<TestScene> GetScenes()
+{
     std::vector<TestScene> scenes;
 
     {
@@ -248,7 +253,8 @@ std::vector<TestScene> GetScenes() {
 }
 
 std::vector<std::pair<std::shared_ptr<Sampler>, std::string>> GetSamplers(
-    const Bounds2i &sampleBounds) {
+    const Bounds2i &sampleBounds)
+{
     std::vector<std::pair<std::shared_ptr<Sampler>, std::string>> samplers;
 
     samplers.push_back(std::make_pair(
@@ -266,15 +272,16 @@ std::vector<std::pair<std::shared_ptr<Sampler>, std::string>> GetSamplers(
     return samplers;
 }
 
-std::vector<TestIntegrator> GetIntegrators() {
+std::vector<TestIntegrator> GetIntegrators()
+{
     std::vector<TestIntegrator> integrators;
 
     Point2i resolution(10, 10);
     AnimatedTransform identity(new Transform, 0, new Transform, 1);
 
-    for (auto scene : GetScenes()) {
+    for (auto scene: GetScenes()) {
         // Path tracing integrators
-        for (auto sampler : GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
+        for (auto sampler: GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
             std::unique_ptr<Filter> filter(new BoxFilter(Vector2f(0.5, 0.5)));
             Film *film =
                 new Film(resolution, Bounds2f(Point2f(0, 0), Point2f(1, 1)),
@@ -293,7 +300,7 @@ std::vector<TestIntegrator> GetIntegrators() {
                                    scene});
         }
 
-        for (auto sampler : GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
+        for (auto sampler: GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
             std::unique_ptr<Filter> filter(new BoxFilter(Vector2f(0.5, 0.5)));
             Film *film =
                 new Film(resolution, Bounds2f(Point2f(0, 0), Point2f(1, 1)),
@@ -312,7 +319,7 @@ std::vector<TestIntegrator> GetIntegrators() {
         }
 
         // Volume path tracing integrators
-        for (auto sampler : GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
+        for (auto sampler: GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
             std::unique_ptr<Filter> filter(new BoxFilter(Vector2f(0.5, 0.5)));
             Film *film =
                 new Film(resolution, Bounds2f(Point2f(0, 0), Point2f(1, 1)),
@@ -330,7 +337,7 @@ std::vector<TestIntegrator> GetIntegrators() {
                                        scene.description,
                                    scene});
         }
-        for (auto sampler : GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
+        for (auto sampler: GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
             std::unique_ptr<Filter> filter(new BoxFilter(Vector2f(0.5, 0.5)));
             Film *film =
                 new Film(resolution, Bounds2f(Point2f(0, 0), Point2f(1, 1)),
@@ -350,7 +357,7 @@ std::vector<TestIntegrator> GetIntegrators() {
         }
 
         // BDPT
-        for (auto sampler : GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
+        for (auto sampler: GetSamplers(Bounds2i(Point2i(0, 0), resolution))) {
             std::unique_ptr<Filter> filter(new BoxFilter(Vector2f(0.5, 0.5)));
             Film *film =
                 new Film(resolution, Bounds2f(Point2f(0, 0), Point2f(1, 1)),
@@ -411,9 +418,12 @@ std::vector<TestIntegrator> GetIntegrators() {
     return integrators;
 }
 
-struct RenderTest : public testing::TestWithParam<TestIntegrator> {};
+struct RenderTest: public testing::TestWithParam<TestIntegrator>
+{
+};
 
-TEST_P(RenderTest, RadianceMatches) {
+TEST_P(RenderTest, RadianceMatches)
+{
     Options options;
     options.quiet = true;
     pbrtInit(options);

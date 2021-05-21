@@ -36,16 +36,18 @@
 #include "efloat.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Cylinder Method Definitions
-Bounds3f Cylinder::ObjectBound() const {
+Bounds3f Cylinder::ObjectBound() const
+{
     return Bounds3f(Point3f(-radius, -radius, zMin),
                     Point3f(radius, radius, zMax));
 }
 
 bool Cylinder::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
-                         bool testAlphaTexture) const {
+                         bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersect);
     Float phi;
     Point3f pHit;
@@ -142,7 +144,8 @@ bool Cylinder::Intersect(const Ray &r, Float *tHit, SurfaceInteraction *isect,
     return true;
 }
 
-bool Cylinder::IntersectP(const Ray &r, bool testAlphaTexture) const {
+bool Cylinder::IntersectP(const Ray &r, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersectP);
     Float phi;
     Point3f pHit;
@@ -202,7 +205,8 @@ bool Cylinder::IntersectP(const Ray &r, bool testAlphaTexture) const {
 
 Float Cylinder::Area() const { return (zMax - zMin) * radius * phiMax; }
 
-Interaction Cylinder::Sample(const Point2f &u, Float *pdf) const {
+Interaction Cylinder::Sample(const Point2f &u, Float *pdf) const
+{
     Float z = Lerp(u[0], zMin, zMax);
     Float phi = u[1] * phiMax;
     Point3f pObj = Point3f(radius * std::cos(phi), radius * std::sin(phi), z);
@@ -222,7 +226,8 @@ Interaction Cylinder::Sample(const Point2f &u, Float *pdf) const {
 std::shared_ptr<Cylinder> CreateCylinderShape(const Transform *o2w,
                                               const Transform *w2o,
                                               bool reverseOrientation,
-                                              const ParamSet &params) {
+                                              const ParamSet &params)
+{
     Float radius = params.FindOneFloat("radius", 1);
     Float zmin = params.FindOneFloat("zmin", -1);
     Float zmax = params.FindOneFloat("zmax", 1);

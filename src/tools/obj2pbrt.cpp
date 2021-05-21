@@ -1298,13 +1298,15 @@ bool LoadObj(std::vector<shape_t> &shapes,       // [output]
 
 using namespace tinyobj;
 
-static void usage() {
+static void usage()
+{
     fprintf(stderr,
             "usage: obj2pbrt [--ptexquads] <OBJ filename> <pbrt filename>\n");
     exit(1);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     const char *objFilename = nullptr, *pbrtFilename = nullptr;
     bool ptexQuads = false;
     for (int i = 1; i < argc; ++i) {
@@ -1359,7 +1361,7 @@ int main(int argc, char *argv[]) {
     int numMeshes = shapes.size();
 
     // First, make named materials for all of the materials.
-    for (const material_t &mtl : materials) {
+    for (const material_t &mtl: materials) {
         bool hasDiffuseTex = (mtl.diffuse_texname != "");
         if (mtl.diffuse_texname != "") {
             if (mtl.diffuse[0] != 0 || mtl.diffuse[1] != 0 ||
@@ -1437,7 +1439,7 @@ int main(int argc, char *argv[]) {
         fprintf(f, "\n\n");
     }
 
-    for (const shape_t &shape : shapes) {
+    for (const shape_t &shape: shapes) {
         const mesh_t &mesh = shape.mesh;
 
         fprintf(f, "# Name \"%s\"\n", shape.name.c_str());
@@ -1445,10 +1447,10 @@ int main(int argc, char *argv[]) {
 
         // Get the set of material ids used for faces in this mesh.
         std::set<int> materialIds;
-        for (int id : mesh.material_ids) materialIds.insert(id);
+        for (int id: mesh.material_ids) materialIds.insert(id);
 
         // Now emit the chunks of the mesh for each material
-        for (int id : materialIds) {
+        for (int id: materialIds) {
             if (id == -1) {
                 fprintf(f, "# Material unspecified in OBJ file\n");
             } else {
@@ -1472,13 +1474,16 @@ int main(int argc, char *argv[]) {
             }
 
             // Now emit all the faces that have the matching material id.
-            struct Point3f {
+            struct Point3f
+            {
                 float x, y, z;
             };
-            struct Point2f {
+            struct Point2f
+            {
                 float x, y;
             };
-            struct Normal3f {
+            struct Normal3f
+            {
                 float x, y, z;
             };
             std::vector<Point3f> P;
@@ -1574,18 +1579,18 @@ int main(int argc, char *argv[]) {
 
             fprintf(f, "Shape \"trianglemesh\"\n");
             fprintf(f, "  \"point3 P\" [ \n");
-            for (Point3f p : P)
+            for (Point3f p: P)
                 fprintf(f, "\t%.10g %.10g %.10g\n", p.x, p.y, p.z);
             fprintf(f, "]\n");
             if (!N.empty()) {
                 fprintf(f, "  \"normal N\" [ \n");
-                for (Normal3f n : N)
+                for (Normal3f n: N)
                     fprintf(f, "\t%.10g %.10g %.10g\n", n.x, n.y, n.z);
                 fprintf(f, "]\n");
             }
             if (!st.empty()) {
                 fprintf(f, "  \"point2 st\" [ \n");
-                for (Point2f tex : st)
+                for (Point2f tex: st)
                     fprintf(f, "\t%.10g %.10g\n", tex.x, tex.y);
                 fprintf(f, "]\n");
             }
@@ -1594,7 +1599,7 @@ int main(int argc, char *argv[]) {
                 fprintf(f, "%d%s", indices[i], (i % 3) == 2 ? "\n\t" : " ");
             if (!faceIndices.empty()) {
                 fprintf(f, "]\n  \"integer faceIndices\" [\n");
-                for (int i : faceIndices) fprintf(f, "\t%d\n", i);
+                for (int i: faceIndices) fprintf(f, "\t%d\n", i);
             }
             fprintf(f, "]\n\n");
         }

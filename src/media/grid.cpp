@@ -37,12 +37,13 @@
 #include "stats.h"
 #include "interaction.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 STAT_RATIO("Media/Grid steps per Tr() call", nTrSteps, nTrCalls);
 
 // GridDensityMedium Method Definitions
-Float GridDensityMedium::Density(const Point3f &p) const {
+Float GridDensityMedium::Density(const Point3f &p) const
+{
     // Compute voxel coordinates and offsets for _p_
     Point3f pSamples(p.x * nx - .5f, p.y * ny - .5f, p.z * nz - .5f);
     Point3i pi = (Point3i)Floor(pSamples);
@@ -60,7 +61,8 @@ Float GridDensityMedium::Density(const Point3f &p) const {
 
 Spectrum GridDensityMedium::Sample(const Ray &rWorld, Sampler &sampler,
                                    MemoryArena &arena,
-                                   MediumInteraction *mi) const {
+                                   MediumInteraction *mi) const
+{
     ProfilePhase _(Prof::MediumSample);
     Ray ray = WorldToMedium(
         Ray(rWorld.o, Normalize(rWorld.d), rWorld.tMax * rWorld.d.Length()));
@@ -85,7 +87,8 @@ Spectrum GridDensityMedium::Sample(const Ray &rWorld, Sampler &sampler,
     return Spectrum(1.f);
 }
 
-Spectrum GridDensityMedium::Tr(const Ray &rWorld, Sampler &sampler) const {
+Spectrum GridDensityMedium::Tr(const Ray &rWorld, Sampler &sampler) const
+{
     ProfilePhase _(Prof::MediumTr);
     ++nTrCalls;
 

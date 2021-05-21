@@ -37,14 +37,15 @@
 #include "sampling.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // InfiniteAreaLight Method Definitions
 InfiniteAreaLight::InfiniteAreaLight(const Transform &LightToWorld,
                                      const Spectrum &L, int nSamples,
                                      const std::string &texmap)
     : Light((int)LightFlags::Infinite, LightToWorld, MediumInterface(),
-            nSamples) {
+            nSamples)
+{
     // Read texel data from _texmap_ and initialize _Lmap_
     Point2i resolution;
     std::unique_ptr<RGBSpectrum[]> texels(nullptr);
@@ -83,13 +84,15 @@ InfiniteAreaLight::InfiniteAreaLight(const Transform &LightToWorld,
     distribution.reset(new Distribution2D(img.get(), width, height));
 }
 
-Spectrum InfiniteAreaLight::Power() const {
+Spectrum InfiniteAreaLight::Power() const
+{
     return Pi * worldRadius * worldRadius *
            Spectrum(Lmap->Lookup(Point2f(.5f, .5f), .5f),
                     SpectrumType::Illuminant);
 }
 
-Spectrum InfiniteAreaLight::Le(const RayDifferential &ray) const {
+Spectrum InfiniteAreaLight::Le(const RayDifferential &ray) const
+{
     Vector3f w = Normalize(WorldToLight(ray.d));
     Point2f st(SphericalPhi(w) * Inv2Pi, SphericalTheta(w) * InvPi);
     return Spectrum(Lmap->Lookup(st), SpectrumType::Illuminant);
@@ -97,7 +100,8 @@ Spectrum InfiniteAreaLight::Le(const RayDifferential &ray) const {
 
 Spectrum InfiniteAreaLight::Sample_Li(const Interaction &ref, const Point2f &u,
                                       Vector3f *wi, Float *pdf,
-                                      VisibilityTester *vis) const {
+                                      VisibilityTester *vis) const
+{
     ProfilePhase _(Prof::LightSample);
     // Find $(u,v)$ sample coordinates in infinite light texture
     Float mapPdf;
@@ -121,7 +125,8 @@ Spectrum InfiniteAreaLight::Sample_Li(const Interaction &ref, const Point2f &u,
     return Spectrum(Lmap->Lookup(uv), SpectrumType::Illuminant);
 }
 
-Float InfiniteAreaLight::Pdf_Li(const Interaction &, const Vector3f &w) const {
+Float InfiniteAreaLight::Pdf_Li(const Interaction &, const Vector3f &w) const
+{
     ProfilePhase _(Prof::LightPdf);
     Vector3f wi = WorldToLight(w);
     Float theta = SphericalTheta(wi), phi = SphericalPhi(wi);
@@ -133,7 +138,8 @@ Float InfiniteAreaLight::Pdf_Li(const Interaction &, const Vector3f &w) const {
 
 Spectrum InfiniteAreaLight::Sample_Le(const Point2f &u1, const Point2f &u2,
                                       Float time, Ray *ray, Normal3f *nLight,
-                                      Float *pdfPos, Float *pdfDir) const {
+                                      Float *pdfPos, Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightSample);
     // Compute direction for infinite light sample ray
     Point2f u = u1;
@@ -163,7 +169,8 @@ Spectrum InfiniteAreaLight::Sample_Le(const Point2f &u1, const Point2f &u2,
 }
 
 void InfiniteAreaLight::Pdf_Le(const Ray &ray, const Normal3f &, Float *pdfPos,
-                               Float *pdfDir) const {
+                               Float *pdfDir) const
+{
     ProfilePhase _(Prof::LightPdf);
     Vector3f d = -WorldToLight(ray.d);
     Float theta = SphericalTheta(d), phi = SphericalPhi(d);
@@ -174,7 +181,8 @@ void InfiniteAreaLight::Pdf_Le(const Ray &ray, const Normal3f &, Float *pdfPos,
 }
 
 std::shared_ptr<InfiniteAreaLight> CreateInfiniteLight(
-    const Transform &light2world, const ParamSet &paramSet) {
+    const Transform &light2world, const ParamSet &paramSet)
+{
     Spectrum L = paramSet.FindOneSpectrum("L", Spectrum(1.0));
     Spectrum sc = paramSet.FindOneSpectrum("scale", Spectrum(1.0));
     std::string texmap = paramSet.FindOneFilename("mapname", "");

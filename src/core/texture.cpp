@@ -34,10 +34,11 @@
 #include "texture.h"
 #include "shape.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Texture Inline Functions
-inline Float SmoothStep(Float min, Float max, Float value) {
+inline Float SmoothStep(Float min, Float max, Float value)
+{
     Float v = Clamp((value - min) / (max - min), 0, 1);
     return v * v * (-2 * v + 3);
 }
@@ -88,9 +89,12 @@ TextureMapping2D::~TextureMapping2D() {}
 TextureMapping3D::~TextureMapping3D() {}
 
 UVMapping2D::UVMapping2D(Float su, Float sv, Float du, Float dv)
-    : su(su), sv(sv), du(du), dv(dv) {}
+    : su(su), sv(sv), du(du), dv(dv)
+{
+}
 Point2f UVMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
-                         Vector2f *dstdy) const {
+                         Vector2f *dstdy) const
+{
     // Compute texture differentials for 2D identity mapping
     *dstdx = Vector2f(su * si.dudx, sv * si.dvdx);
     *dstdy = Vector2f(su * si.dudy, sv * si.dvdy);
@@ -98,7 +102,8 @@ Point2f UVMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
 }
 
 Point2f SphericalMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
-                                Vector2f *dstdy) const {
+                                Vector2f *dstdy) const
+{
     Point2f st = sphere(si.p);
     // Compute texture coordinate differentials for sphere $(u,v)$ mapping
     const Float delta = .1f;
@@ -119,14 +124,16 @@ Point2f SphericalMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
     return st;
 }
 
-Point2f SphericalMapping2D::sphere(const Point3f &p) const {
+Point2f SphericalMapping2D::sphere(const Point3f &p) const
+{
     Vector3f vec = Normalize(WorldToTexture(p) - Point3f(0, 0, 0));
     Float theta = SphericalTheta(vec), phi = SphericalPhi(vec);
     return Point2f(theta * InvPi, phi * Inv2Pi);
 }
 
 Point2f CylindricalMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
-                                  Vector2f *dstdy) const {
+                                  Vector2f *dstdy) const
+{
     Point2f st = cylinder(si.p);
     // Compute texture coordinate differentials for cylinder $(u,v)$ mapping
     const Float delta = .01f;
@@ -146,7 +153,8 @@ Point2f CylindricalMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
 }
 
 Point2f PlanarMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
-                             Vector2f *dstdy) const {
+                             Vector2f *dstdy) const
+{
     Vector3f vec(si.p);
     *dstdx = Vector2f(Dot(si.dpdx, vs), Dot(si.dpdx, vt));
     *dstdy = Vector2f(Dot(si.dpdy, vs), Dot(si.dpdy, vt));
@@ -154,13 +162,15 @@ Point2f PlanarMapping2D::Map(const SurfaceInteraction &si, Vector2f *dstdx,
 }
 
 Point3f IdentityMapping3D::Map(const SurfaceInteraction &si, Vector3f *dpdx,
-                               Vector3f *dpdy) const {
+                               Vector3f *dpdy) const
+{
     *dpdx = WorldToTexture(si.dpdx);
     *dpdy = WorldToTexture(si.dpdy);
     return WorldToTexture(si.p);
 }
 
-Float Noise(Float x, Float y, Float z) {
+Float Noise(Float x, Float y, Float z)
+{
     // Compute noise cell coordinates and offsets
     int ix = std::floor(x), iy = std::floor(y), iz = std::floor(z);
     Float dx = x - ix, dy = y - iy, dz = z - iz;
@@ -190,7 +200,8 @@ Float Noise(Float x, Float y, Float z) {
 }
 
 Float Noise(const Point3f &p) { return Noise(p.x, p.y, p.z); }
-inline Float Grad(int x, int y, int z, Float dx, Float dy, Float dz) {
+inline Float Grad(int x, int y, int z, Float dx, Float dy, Float dz)
+{
     int h = NoisePerm[NoisePerm[NoisePerm[x] + y] + z];
     h &= 15;
     Float u = h < 8 || h == 12 || h == 13 ? dx : dy;
@@ -198,14 +209,16 @@ inline Float Grad(int x, int y, int z, Float dx, Float dy, Float dz) {
     return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
 }
 
-inline Float NoiseWeight(Float t) {
+inline Float NoiseWeight(Float t)
+{
     Float t3 = t * t * t;
     Float t4 = t3 * t;
     return 6 * t4 * t - 15 * t4 + 10 * t3;
 }
 
 Float FBm(const Point3f &p, const Vector3f &dpdx, const Vector3f &dpdy,
-          Float omega, int maxOctaves) {
+          Float omega, int maxOctaves)
+{
     // Compute number of octaves for antialiased FBm
     Float len2 = std::max(dpdx.LengthSquared(), dpdy.LengthSquared());
     Float n = Clamp(-1 - .5f * Log2(len2), 0, maxOctaves);
@@ -224,7 +237,8 @@ Float FBm(const Point3f &p, const Vector3f &dpdx, const Vector3f &dpdy,
 }
 
 Float Turbulence(const Point3f &p, const Vector3f &dpdx, const Vector3f &dpdy,
-                 Float omega, int maxOctaves) {
+                 Float omega, int maxOctaves)
+{
     // Compute number of octaves for antialiased FBm
     Float len2 = std::max(dpdx.LengthSquared(), dpdy.LengthSquared());
     Float n = Clamp(-1 - .5f * Log2(len2), 0, maxOctaves);
@@ -250,7 +264,8 @@ Float Turbulence(const Point3f &p, const Vector3f &dpdx, const Vector3f &dpdy,
 }
 
 // Texture Function Definitions
-Float Lanczos(Float x, Float tau) {
+Float Lanczos(Float x, Float tau)
+{
     x = std::abs(x);
     if (x < 1e-5f) return 1;
     if (x > 1.f) return 0;

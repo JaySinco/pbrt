@@ -37,8 +37,8 @@
 #include <set>
 #include <map>
 
-namespace pbrt {
-
+namespace pbrt
+{
 struct SDFace;
 struct SDVertex;
 
@@ -47,9 +47,10 @@ struct SDVertex;
 #define PREV(i) (((i) + 2) % 3)
 
 // LoopSubdiv Local Structures
-struct SDVertex {
+struct SDVertex
+{
     // SDVertex Constructor
-    SDVertex(const Point3f &p = Point3f(0, 0, 0)) : p(p) {}
+    SDVertex(const Point3f &p = Point3f(0, 0, 0)): p(p) {}
 
     // SDVertex Methods
     int valence();
@@ -60,9 +61,11 @@ struct SDVertex {
     bool regular = false, boundary = false;
 };
 
-struct SDFace {
+struct SDFace
+{
     // SDFace Constructor
-    SDFace() {
+    SDFace()
+    {
         for (int i = 0; i < 3; ++i) {
             v[i] = nullptr;
             f[i] = nullptr;
@@ -71,7 +74,8 @@ struct SDFace {
     }
 
     // SDFace Methods
-    int vnum(SDVertex *vert) const {
+    int vnum(SDVertex *vert) const
+    {
         for (int i = 0; i < 3; ++i)
             if (v[i] == vert) return i;
         LOG(FATAL) << "Basic logic error in SDFace::vnum()";
@@ -81,7 +85,8 @@ struct SDFace {
     SDFace *prevFace(SDVertex *vert) { return f[PREV(vnum(vert))]; }
     SDVertex *nextVert(SDVertex *vert) { return v[NEXT(vnum(vert))]; }
     SDVertex *prevVert(SDVertex *vert) { return v[PREV(vnum(vert))]; }
-    SDVertex *otherVert(SDVertex *v0, SDVertex *v1) {
+    SDVertex *otherVert(SDVertex *v0, SDVertex *v1)
+    {
         for (int i = 0; i < 3; ++i)
             if (v[i] != v0 && v[i] != v1) return v[i];
         LOG(FATAL) << "Basic logic error in SDVertex::otherVert()";
@@ -92,9 +97,11 @@ struct SDFace {
     SDFace *children[4];
 };
 
-struct SDEdge {
+struct SDEdge
+{
     // SDEdge Constructor
-    SDEdge(SDVertex *v0 = nullptr, SDVertex *v1 = nullptr) {
+    SDEdge(SDVertex *v0 = nullptr, SDVertex *v1 = nullptr)
+    {
         v[0] = std::min(v0, v1);
         v[1] = std::max(v0, v1);
         f[0] = f[1] = nullptr;
@@ -102,7 +109,8 @@ struct SDEdge {
     }
 
     // SDEdge Comparison Function
-    bool operator<(const SDEdge &e2) const {
+    bool operator<(const SDEdge &e2) const
+    {
         if (v[0] == e2.v[0]) return v[1] < e2.v[1];
         return v[0] < e2.v[0];
     }
@@ -116,7 +124,8 @@ static Point3f weightOneRing(SDVertex *vert, Float beta);
 static Point3f weightBoundary(SDVertex *vert, Float beta);
 
 // LoopSubdiv Inline Functions
-inline int SDVertex::valence() {
+inline int SDVertex::valence()
+{
     SDFace *f = startFace;
     if (!boundary) {
         // Compute valence of interior vertex
@@ -133,14 +142,16 @@ inline int SDVertex::valence() {
     }
 }
 
-inline Float beta(int valence) {
+inline Float beta(int valence)
+{
     if (valence == 3)
         return 3.f / 16.f;
     else
         return 3.f / (8.f * valence);
 }
 
-inline Float loopGamma(int valence) {
+inline Float loopGamma(int valence)
+{
     return 1.f / (valence + 3.f / (8.f * beta(valence)));
 }
 
@@ -148,7 +159,8 @@ inline Float loopGamma(int valence) {
 static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
     const Transform *ObjectToWorld, const Transform *WorldToObject,
     bool reverseOrientation, int nLevels, int nIndices,
-    const int *vertexIndices, int nVertices, const Point3f *p) {
+    const int *vertexIndices, int nVertices, const Point3f *p)
+{
     std::vector<SDVertex *> vertices;
     std::vector<SDFace *> faces;
     // Allocate _LoopSubdiv_ vertices and faces
@@ -221,13 +233,13 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
         std::vector<SDVertex *> newVertices;
 
         // Allocate next level of children in mesh tree
-        for (SDVertex *vertex : v) {
+        for (SDVertex *vertex: v) {
             vertex->child = arena.Alloc<SDVertex>();
             vertex->child->regular = vertex->regular;
             vertex->child->boundary = vertex->boundary;
             newVertices.push_back(vertex->child);
         }
-        for (SDFace *face : f) {
+        for (SDFace *face: f) {
             for (int k = 0; k < 4; ++k) {
                 face->children[k] = arena.Alloc<SDFace>();
                 newFaces.push_back(face->children[k]);
@@ -237,7 +249,7 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
         // Update vertex positions and create new edge vertices
 
         // Update vertex positions for even vertices
-        for (SDVertex *vertex : v) {
+        for (SDVertex *vertex: v) {
             if (!vertex->boundary) {
                 // Apply one-ring rule for even vertex
                 if (vertex->regular)
@@ -253,7 +265,7 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
 
         // Compute new odd edge vertices
         std::map<SDEdge, SDVertex *> edgeVerts;
-        for (SDFace *face : f) {
+        for (SDFace *face: f) {
             for (int k = 0; k < 3; ++k) {
                 // Compute odd vertex on _k_th edge
                 SDEdge edge(face->v[k], face->v[NEXT(k)]);
@@ -287,13 +299,13 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
         // Update new mesh topology
 
         // Update even vertex face pointers
-        for (SDVertex *vertex : v) {
+        for (SDVertex *vertex: v) {
             int vertNum = vertex->startFace->vnum(vertex);
             vertex->child->startFace = vertex->startFace->children[vertNum];
         }
 
         // Update face neighbor pointers
-        for (SDFace *face : f) {
+        for (SDFace *face: f) {
             for (int j = 0; j < 3; ++j) {
                 // Update children _f_ pointers for siblings
                 face->children[3]->f[j] = face->children[NEXT(j)];
@@ -310,7 +322,7 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
         }
 
         // Update face vertex pointers
-        for (SDFace *face : f) {
+        for (SDFace *face: f) {
             for (int j = 0; j < 3; ++j) {
                 // Update child vertex pointer to new even vertex
                 face->children[j]->v[j] = face->v[j]->child;
@@ -343,7 +355,7 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
     std::vector<Normal3f> Ns;
     Ns.reserve(v.size());
     std::vector<Point3f> pRing(16, Point3f());
-    for (SDVertex *vertex : v) {
+    for (SDVertex *vertex: v) {
         Vector3f S(0, 0, 0), T(0, 0, 0);
         int valence = vertex->valence();
         if (valence > (int)pRing.size()) pRing.resize(valence);
@@ -401,7 +413,8 @@ static std::vector<std::shared_ptr<Shape>> LoopSubdivide(
 std::vector<std::shared_ptr<Shape>> CreateLoopSubdiv(const Transform *o2w,
                                                      const Transform *w2o,
                                                      bool reverseOrientation,
-                                                     const ParamSet &params) {
+                                                     const ParamSet &params)
+{
     int nLevels = params.FindOneInt("levels", params.FindOneInt("nlevels", 3));
     int nps, nIndices;
     const int *vertexIndices = params.FindInt("indices", &nIndices);
@@ -421,7 +434,8 @@ std::vector<std::shared_ptr<Shape>> CreateLoopSubdiv(const Transform *o2w,
                          vertexIndices, nps, P);
 }
 
-static Point3f weightOneRing(SDVertex *vert, Float beta) {
+static Point3f weightOneRing(SDVertex *vert, Float beta)
+{
     // Put _vert_ one-ring in _pRing_
     int valence = vert->valence();
     Point3f *pRing = ALLOCA(Point3f, valence);
@@ -431,7 +445,8 @@ static Point3f weightOneRing(SDVertex *vert, Float beta) {
     return p;
 }
 
-void SDVertex::oneRing(Point3f *p) {
+void SDVertex::oneRing(Point3f *p)
+{
     if (!boundary) {
         // Get one-ring vertices for interior vertex
         SDFace *face = startFace;
@@ -451,7 +466,8 @@ void SDVertex::oneRing(Point3f *p) {
     }
 }
 
-static Point3f weightBoundary(SDVertex *vert, Float beta) {
+static Point3f weightBoundary(SDVertex *vert, Float beta)
+{
     // Put _vert_ one-ring in _pRing_
     int valence = vert->valence();
     Point3f *pRing = ALLOCA(Point3f, valence);

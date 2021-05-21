@@ -36,12 +36,13 @@
 #include "efloat.h"
 #include "stats.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // Hyperboloid Method Definitions
 Hyperboloid::Hyperboloid(const Transform *o2w, const Transform *w2o, bool ro,
                          const Point3f &point1, const Point3f &point2, Float tm)
-    : Shape(o2w, w2o, ro) {
+    : Shape(o2w, w2o, ro)
+{
     p1 = point1;
     p2 = point2;
     phiMax = Radians(Clamp(tm, 0, 360));
@@ -64,7 +65,8 @@ Hyperboloid::Hyperboloid(const Transform *o2w, const Transform *w2o, bool ro,
     } while (std::isinf(ah) || std::isnan(ah));
 }
 
-Bounds3f Hyperboloid::ObjectBound() const {
+Bounds3f Hyperboloid::ObjectBound() const
+{
     Point3f p1 = Point3f(-rMax, -rMax, zMin);
     Point3f p2 = Point3f(rMax, rMax, zMax);
     return Bounds3f(p1, p2);
@@ -72,7 +74,8 @@ Bounds3f Hyperboloid::ObjectBound() const {
 
 bool Hyperboloid::Intersect(const Ray &r, Float *tHit,
                             SurfaceInteraction *isect,
-                            bool testAlphaTexture) const {
+                            bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersect);
     Float phi, v;
     Point3f pHit;
@@ -171,7 +174,8 @@ bool Hyperboloid::Intersect(const Ray &r, Float *tHit,
     return true;
 }
 
-bool Hyperboloid::IntersectP(const Ray &r, bool testAlphaTexture) const {
+bool Hyperboloid::IntersectP(const Ray &r, bool testAlphaTexture) const
+{
     ProfilePhase p(Prof::ShapeIntersectP);
     Float phi, v;
     Point3f pHit;
@@ -227,7 +231,8 @@ bool Hyperboloid::IntersectP(const Ray &r, bool testAlphaTexture) const {
 
 #define SQR(a) ((a) * (a))
 #define QUAD(a) ((SQR(a)) * (SQR(a)))
-Float Hyperboloid::Area() const {
+Float Hyperboloid::Area() const
+{
     return phiMax / 6.f *
            (2 * QUAD(p1.x) - 2 * p1.x * p1.x * p1.x * p2.x + 2 * QUAD(p2.x) +
             2 * (p1.y * p1.y + p1.y * p2.y + p2.y * p2.y) *
@@ -245,7 +250,8 @@ Float Hyperboloid::Area() const {
 
 #undef SQR
 #undef QUAD
-Interaction Hyperboloid::Sample(const Point2f &u, Float *pdf) const {
+Interaction Hyperboloid::Sample(const Point2f &u, Float *pdf) const
+{
     LOG(FATAL) << "Hyperboloid::Sample not implemented.";
     return Interaction();
 }
@@ -253,7 +259,8 @@ Interaction Hyperboloid::Sample(const Point2f &u, Float *pdf) const {
 std::shared_ptr<Shape> CreateHyperboloidShape(const Transform *o2w,
                                               const Transform *w2o,
                                               bool reverseOrientation,
-                                              const ParamSet &params) {
+                                              const ParamSet &params)
+{
     Point3f p1 = params.FindOnePoint3f("p1", Point3f(0, 0, 0));
     Point3f p2 = params.FindOnePoint3f("p2", Point3f(1, 1, 1));
     Float phimax = params.FindOneFloat("phimax", 360);

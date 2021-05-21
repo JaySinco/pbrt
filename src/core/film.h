@@ -46,17 +46,19 @@
 #include "stats.h"
 #include "parallel.h"
 
-namespace pbrt {
-
+namespace pbrt
+{
 // FilmTilePixel Declarations
-struct FilmTilePixel {
+struct FilmTilePixel
+{
     Spectrum contribSum = 0.f;
     Float filterWeightSum = 0.f;
 };
 
 // Film Declarations
-class Film {
-  public:
+class Film
+{
+public:
     // Film Public Methods
     Film(const Point2i &resolution, const Bounds2f &cropWindow,
          std::unique_ptr<Filter> filter, Float diagonal,
@@ -78,9 +80,10 @@ class Film {
     const std::string filename;
     Bounds2i croppedPixelBounds;
 
-  private:
+private:
     // Film Private Data
-    struct Pixel {
+    struct Pixel
+    {
         Pixel() { xyz[0] = xyz[1] = xyz[2] = filterWeightSum = 0; }
         Float xyz[3];
         Float filterWeightSum;
@@ -95,7 +98,8 @@ class Film {
     const Float maxSampleLuminance;
 
     // Film Private Methods
-    Pixel &GetPixel(const Point2i &p) {
+    Pixel &GetPixel(const Point2i &p)
+    {
         CHECK(InsideExclusive(p, croppedPixelBounds));
         int width = croppedPixelBounds.pMax.x - croppedPixelBounds.pMin.x;
         int offset = (p.x - croppedPixelBounds.pMin.x) +
@@ -104,8 +108,9 @@ class Film {
     }
 };
 
-class FilmTile {
-  public:
+class FilmTile
+{
+public:
     // FilmTile Public Methods
     FilmTile(const Bounds2i &pixelBounds, const Vector2f &filterRadius,
              const Float *filterTable, int filterTableSize,
@@ -115,10 +120,12 @@ class FilmTile {
           invFilterRadius(1 / filterRadius.x, 1 / filterRadius.y),
           filterTable(filterTable),
           filterTableSize(filterTableSize),
-          maxSampleLuminance(maxSampleLuminance) {
+          maxSampleLuminance(maxSampleLuminance)
+    {
         pixels = std::vector<FilmTilePixel>(std::max(0, pixelBounds.Area()));
     }
-    void AddSample(const Point2f &pFilm, Spectrum L, Float sampleWeight = 1.) {
+    void AddSample(const Point2f &pFilm, Spectrum L, Float sampleWeight = 1.)
+    {
         ProfilePhase _(Prof::AddFilmSample);
         if (L.y() > maxSampleLuminance) L *= maxSampleLuminance / L.y();
         // Compute sample's raster bounds
@@ -157,14 +164,16 @@ class FilmTile {
             }
         }
     }
-    FilmTilePixel &GetPixel(const Point2i &p) {
+    FilmTilePixel &GetPixel(const Point2i &p)
+    {
         CHECK(InsideExclusive(p, pixelBounds));
         int width = pixelBounds.pMax.x - pixelBounds.pMin.x;
         int offset =
             (p.x - pixelBounds.pMin.x) + (p.y - pixelBounds.pMin.y) * width;
         return pixels[offset];
     }
-    const FilmTilePixel &GetPixel(const Point2i &p) const {
+    const FilmTilePixel &GetPixel(const Point2i &p) const
+    {
         CHECK(InsideExclusive(p, pixelBounds));
         int width = pixelBounds.pMax.x - pixelBounds.pMin.x;
         int offset =
@@ -173,7 +182,7 @@ class FilmTile {
     }
     Bounds2i GetPixelBounds() const { return pixelBounds; }
 
-  private:
+private:
     // FilmTile Private Data
     const Bounds2i pixelBounds;
     const Vector2f filterRadius, invFilterRadius;

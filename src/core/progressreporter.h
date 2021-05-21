@@ -44,19 +44,22 @@
 #include <chrono>
 #include <thread>
 
-namespace pbrt {
-
+namespace pbrt
+{
 // ProgressReporter Declarations
-class ProgressReporter {
-  public:
+class ProgressReporter
+{
+public:
     // ProgressReporter Public Methods
     ProgressReporter(int64_t totalWork, const std::string &title);
     ~ProgressReporter();
-    void Update(int64_t num = 1) {
+    void Update(int64_t num = 1)
+    {
         if (num == 0 || PbrtOptions.quiet) return;
         workDone += num;
     }
-    Float ElapsedMS() const {
+    Float ElapsedMS() const
+    {
         std::chrono::system_clock::time_point now =
             std::chrono::system_clock::now();
         int64_t elapsedMS =
@@ -67,7 +70,7 @@ class ProgressReporter {
     }
     void Done();
 
-  private:
+private:
     // ProgressReporter Private Methods
     void PrintBar();
 

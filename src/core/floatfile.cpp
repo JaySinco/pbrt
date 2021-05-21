@@ -35,9 +35,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-namespace pbrt {
-
-bool ReadFloatFile(const char *filename, std::vector<Float> *values) {
+namespace pbrt
+{
+bool ReadFloatFile(const char *filename, std::vector<Float> *values)
+{
     FILE *f = fopen(filename, "r");
     if (!f) {
         Error("Unable to open file \"%s\"", filename);
