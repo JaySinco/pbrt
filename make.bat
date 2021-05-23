@@ -31,7 +31,7 @@ cmake -G Ninja ^
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=%~dp0%BINDIR%\ ^
     -DCMAKE_BUILD_TYPE=%BUILDTYPE% ^
     ..
-IF %ERRORLEVEL% == 0 (ninja)
+IF %ERRORLEVEL% == 0 (cmake --build .)
 POPD
 
 :end

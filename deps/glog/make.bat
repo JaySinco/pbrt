@@ -20,5 +20,5 @@ cmake -G Ninja ^
     -DCMAKE_INSTALL_PREFIX=%~dp0%BUILDTYPE% ^
     -DCMAKE_BUILD_TYPE=%BUILDTYPE% ^
     ..\src
-IF %ERRORLEVEL% == 0 (ninja && ninja install)
+IF %ERRORLEVEL% == 0 (cmake --build . && cmake --install .)
 POPD
